@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>data-process-flow</artifactId>
+    <artifactId>data-process-flow-service</artifactId>
 
 
 </project>
