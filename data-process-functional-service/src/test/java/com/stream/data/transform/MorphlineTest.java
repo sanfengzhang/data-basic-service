@@ -1,7 +1,7 @@
 package com.stream.data.transform;
 
 import com.codahale.metrics.SharedMetricRegistries;
-import com.stream.data.transform.model.Commands;
+import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.api.CommandBuildService;
 import com.google.common.base.Preconditions;
 import com.stream.data.transform.utils.TypeUtils;
@@ -72,7 +72,7 @@ public class MorphlineTest {
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
-        Commands commands = Commands.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand).addCommand(recordFieldTypeCommand).
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand).addCommand(recordFieldTypeCommand).
                 addCommand(javaMethodCommand).addCommand(expressCommand).addCommand(jdbcCommand);
 
         Map<String, Object> configMap = commands.get();

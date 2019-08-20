@@ -6,8 +6,9 @@ import java.util.*;
  * @author: Hanl
  * @date :2019/8/3
  * @desc:
+ * 数据转换命令管道,是由多种配置转换规则组合而成的一个数据转换管道
  */
-public class  Commands {
+public class CommandPipeline {
 
     /**
      * 唯一ID
@@ -26,26 +27,25 @@ public class  Commands {
 
     private Map<String, Object> commandsMap = new HashMap<>();
 
-    public Commands(String id) {
+    public CommandPipeline(String id) {
         this(id, Collections.emptyList());
     }
 
-    public Commands(String id, List<String> importCommands) {
+    public CommandPipeline(String id, List<String> importCommands) {
         commandsMap.put("id", id);
         List<String> importCommandsTmp = new ArrayList<>();
         importCommandsTmp.add("org.kitesdk.**");
         importCommandsTmp.addAll(importCommands);
         commandsMap.put("importCommands", importCommandsTmp);
-
         commandsMap.put("commands", commands);
     }
 
-    public Commands addCommand(Map<String, Object> command) {
+    public CommandPipeline addCommand(Map<String, Object> command) {
         commands.add(command);
         return this;
     }
 
-    public Commands addAllCommand(List<Map<String, Object>> commandList) {
+    public CommandPipeline addAllCommand(List<Map<String, Object>> commandList) {
         commands.add(commandList);
         return this;
     }
@@ -75,17 +75,14 @@ public class  Commands {
         this.commandsMap = commandsMap;
     }
 
-    public void addCommand(String command) {
 
+    public static CommandPipeline build(String id) {
+
+        return new CommandPipeline(id);
     }
 
-    public static Commands build(String id) {
+    public static CommandPipeline build(String id, List<String> importCommands) {
 
-        return new Commands(id);
-    }
-
-    public static Commands build(String id, List<String> importCommands) {
-
-        return new Commands(id, importCommands);
+        return new CommandPipeline(id, importCommands);
     }
 }
