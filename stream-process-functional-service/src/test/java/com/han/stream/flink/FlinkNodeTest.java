@@ -1,12 +1,23 @@
 package com.han.stream.flink;
 
 
+import com.han.stream.flink.node.FlinkSinkNode;
 import com.han.stream.flink.node.FlinkSourceNode;
+import com.han.stream.flink.node.FlinkTransformNode;
+import com.han.stream.flink.support.CommonMessage;
+import com.stream.data.transform.api.CommandBuildService;
+import com.stream.data.transform.model.CommandPipeline;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -17,8 +28,27 @@ public class FlinkNodeTest {
 
     StreamExecutionEnvironment env = null;
 
+    Map<String, CommandPipeline> commandPipelineMap = new HashMap<>();
+
     @Before
     public void setup() {
+
+        Map<String, Object> readLineMap = new HashMap<>();
+        Map<String, Object> charsetMap = new HashMap<>();
+        charsetMap.put("charset", "UTF-8");
+        readLineMap.put("readLine", charsetMap);
+        List<String> outputFields = new ArrayList<>();
+        outputFields.add("trans_date");
+        outputFields.add("trans_channel_id");
+        outputFields.add("trans_ip");
+
+        Map<String, Object> splitCommand = CommandBuildService.spilt("message", outputFields, "|", false, false, false, 3);
+
+        List<String> imports = new ArrayList<>();
+        imports.add("com.stream.data.transform.command.*");
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand);
+        commandPipelineMap.put("test-type", commands);
+
         env = StreamExecutionEnvironment.getExecutionEnvironment();
         // job失败重启的策略
         env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 1000L));
@@ -33,16 +63,16 @@ public class FlinkNodeTest {
     }
 
     @Test
-    public void testFlinkNode() {
-        FlinkSourceNode sourceNode = new FlinkSourceNode();
-        sourceNode.setOperatorEnum(OperatorEnum.SOURCE_KAFKA);
-
-        FlinkSourceNode transformNode = new FlinkSourceNode();
-        transformNode.setOperatorEnum(OperatorEnum.MAP);
-
-
-
-
+    public void testFlinkNode() throws Exception {
+        FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
+        sourceNode.setDataProcessNodeName("socket");
+        FlinkTransformNode flinkTransformNode = new FlinkTransformNode(commandPipelineMap);
+        flinkTransformNode.setDataProcessNodeName("transform");
+        FlinkSinkNode flinkSinkNode = new FlinkSinkNode();
+        DataStream<CommonMessage> dataStream = sourceNode.source(env);
+        DataStream<Map<String, Object>> mapDataStream = flinkTransformNode.map(dataStream);
+        flinkSinkNode.sink(mapDataStream);
+        env.execute();
     }
 
 }

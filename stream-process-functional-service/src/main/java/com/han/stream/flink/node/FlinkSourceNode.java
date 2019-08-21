@@ -37,6 +37,19 @@ public class FlinkSourceNode extends AbstractDataProcessNode {
 
     private String dataType;
 
+    public FlinkSourceNode() {
+
+    }
+
+    public static FlinkSourceNode buildSocket(String host, int port, String dataType) {
+        FlinkSourceNode flinkSourceNode = new FlinkSourceNode();
+        flinkSourceNode.setHost(host);
+        flinkSourceNode.setPort(port);
+        flinkSourceNode.setDataType(dataType);
+        flinkSourceNode.setOperatorEnum(OperatorEnum.SOURCE_SOCKET);
+        return flinkSourceNode;
+    }
+
     public DataStream<CommonMessage> source(StreamExecutionEnvironment env) {
         DataStream<CommonMessage> dataStreamSource;
         if (operatorEnum == OperatorEnum.SOURCE_KAFKA) {

@@ -1,5 +1,6 @@
 package com.stream.data.transform.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -8,8 +9,9 @@ import java.util.*;
  * @desc:
  * 数据转换命令管道,是由多种配置转换规则组合而成的一个数据转换管道
  */
-public class CommandPipeline {
+public class CommandPipeline implements Serializable {
 
+    private static final long serialVersionUID = -2398090491675922927L;
     /**
      * 唯一ID
      */
