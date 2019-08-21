@@ -2,8 +2,10 @@ package com.han.stream.flink;
 
 import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.BuildJobService;
+import com.han.stream.flink.node.AbstractFlinkNode;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.util.List;
@@ -32,10 +34,29 @@ public class FlinkBuildJobService implements BuildJobService {
         return env;
     }
 
-    @Override
-    public void buildJobFromDataProcessFlow(List<List<AbstractDataProcessNode>> flows, Map<String, Object> jobParamters) {
+    private StreamExecutionEnvironment buildJob(List<List<AbstractDataProcessNode>> flows, Map<String, Object> jobParamters) {
         StreamExecutionEnvironment env = creatStreamExecutionEnvironment();
+        flows.forEach(flow -> {
+            DataStream preDtaStream = null;
+            for (int i = 0; i < flow.size(); i++) {
+                AbstractDataProcessNode abstractDataProcessNode = flow.get(i);
+                if (abstractDataProcessNode instanceof AbstractFlinkNode) {
+                    AbstractFlinkNode abstractFlinkNode = (AbstractFlinkNode) abstractDataProcessNode;
+                    preDtaStream = abstractFlinkNode.handle(env, preDtaStream);
+                }
+            }
+        });
+        return env;
+    }
 
+    @Override
+    public void run(List<List<AbstractDataProcessNode>> flows, Map<String, Object> jobParamters) {
+        StreamExecutionEnvironment env = buildJob(flows, jobParamters);
+        try {
+            env.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

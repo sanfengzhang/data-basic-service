@@ -19,7 +19,7 @@ import java.util.Properties;
  * @desc:
  */
 @Data
-public class FlinkSourceNode extends AbstractDataProcessNode {
+public class FlinkSourceNode extends AbstractFlinkNode {
 
     private static final long serialVersionUID = -5559592007464859647L;
 

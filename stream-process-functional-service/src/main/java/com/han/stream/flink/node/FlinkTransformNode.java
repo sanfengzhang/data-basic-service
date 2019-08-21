@@ -16,11 +16,10 @@ import java.util.Map;
  * @desc:
  */
 @Slf4j
-public class FlinkTransformNode extends AbstractDataProcessNode {
+public class FlinkTransformNode extends AbstractFlinkNode {
 
     private static final long serialVersionUID = 3893838649799734961L;
 
-    private int parallelism;
 
     public Map<String, CommandPipeline> commandPipelineMap;
 

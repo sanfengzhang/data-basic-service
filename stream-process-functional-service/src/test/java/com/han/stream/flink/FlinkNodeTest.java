@@ -1,6 +1,7 @@
 package com.han.stream.flink;
 
 
+import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.flink.node.FlinkSinkNode;
 import com.han.stream.flink.node.FlinkSourceNode;
 import com.han.stream.flink.node.FlinkTransformNode;
@@ -26,8 +27,6 @@ import java.util.Map;
  */
 public class FlinkNodeTest {
 
-    StreamExecutionEnvironment env = null;
-
     Map<String, CommandPipeline> commandPipelineMap = new HashMap<>();
 
     @Before
@@ -48,8 +47,12 @@ public class FlinkNodeTest {
         imports.add("com.stream.data.transform.command.*");
         CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand);
         commandPipelineMap.put("test-type", commands);
+    }
 
-        env = StreamExecutionEnvironment.getExecutionEnvironment();
+    @Test
+    public void testFlinkNode() throws Exception {
+
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // job失败重启的策略
         env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 1000L));
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
@@ -60,10 +63,6 @@ public class FlinkNodeTest {
         env.getCheckpointConfig().setCheckpointTimeout(5000L);
         env.setParallelism(2);
 
-    }
-
-    @Test
-    public void testFlinkNode() throws Exception {
         FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
         sourceNode.setDataProcessNodeName("socket");
         FlinkTransformNode flinkTransformNode = new FlinkTransformNode(commandPipelineMap);
@@ -75,4 +74,24 @@ public class FlinkNodeTest {
         env.execute();
     }
 
+    @Test
+    public void testFlinkBuildService() {
+        FlinkBuildJobService flinkBuildJobService = new FlinkBuildJobService();
+
+        FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
+        sourceNode.setDataProcessNodeName("socket");
+        FlinkTransformNode flinkTransformNode = new FlinkTransformNode(commandPipelineMap);
+        flinkTransformNode.setDataProcessNodeName("transform");
+        FlinkSinkNode flinkSinkNode = new FlinkSinkNode();
+
+        List<AbstractDataProcessNode> list = new ArrayList<>();
+        list.add(sourceNode);
+        list.add(flinkTransformNode);
+        list.add(flinkSinkNode);
+
+        List<List<AbstractDataProcessNode>> result = new ArrayList<>();
+        result.add(list);
+
+        flinkBuildJobService.run(result, null);
+    }
 }

@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface BuildJobService {
 
-    public void buildJobFromDataProcessFlow(List<List<AbstractDataProcessNode>> flows, Map<String,Object> jobParamters);
+    public void run(List<List<AbstractDataProcessNode>> flows, Map<String,Object> jobParamters);
 
 }

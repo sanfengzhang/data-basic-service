@@ -11,7 +11,7 @@ import java.util.Map;
  * @date :2019/8/20
  * @desc:
  */
-public class FlinkSinkNode extends AbstractDataProcessNode {
+public class FlinkSinkNode extends AbstractFlinkNode {
 
     private static final long serialVersionUID = 1793687255516466473L;
 
