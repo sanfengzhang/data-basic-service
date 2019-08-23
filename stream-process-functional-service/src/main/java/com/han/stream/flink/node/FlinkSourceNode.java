@@ -1,6 +1,5 @@
 package com.han.stream.flink.node;
 
-import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.flink.OperatorEnum;
 import com.han.stream.flink.support.CommonMessage;
 import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;

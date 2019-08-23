@@ -1,6 +1,5 @@
 package com.han.stream.flink.node;
 
-import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.flink.OperatorEnum;
 import org.apache.flink.streaming.api.datastream.DataStream;
 

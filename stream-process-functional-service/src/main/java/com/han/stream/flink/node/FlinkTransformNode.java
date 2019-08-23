@@ -1,7 +1,6 @@
 package com.han.stream.flink.node;
 
 import com.google.common.base.Preconditions;
-import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.flink.function.DefaultTransformFunction;
 import com.han.stream.flink.support.CommonMessage;
 import com.stream.data.transform.model.CommandPipeline;
