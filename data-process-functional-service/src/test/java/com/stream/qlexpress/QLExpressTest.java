@@ -50,7 +50,7 @@ public class QLExpressTest {
         System.out.println(result1);
 
         DefaultContext<String, Object> context2 = new DefaultContext<String, Object>();
-        context2.put("age", 13);
+        context2.put("age", -1);
         context2.put("name", "zhangsan");
         Object result2 = runner.execute("age<0||age>200?60:age", context2, null, false, false);
         System.out.println(result2);

@@ -39,7 +39,7 @@ public abstract class AbstractTransformFunction<OUT> extends RichMapFunction<Com
 
     private Map<String, Command> dataTypeToCommand = null;
 
-    private Map<String, Collector> dataTypeToCollector = null;
+    private Map<String, Collector> dataTypeToCollector = new ConcurrentHashMap<>();
 
     private MorphlineContext morphlineContext = null;
 

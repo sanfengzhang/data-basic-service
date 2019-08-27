@@ -43,9 +43,15 @@ public class FlinkNodeTest {
 
         Map<String, Object> splitCommand = CommandBuildService.spilt("message", outputFields, "|", false, false, false, 3);
 
+        Map<String, String> expressMap = new HashMap<>();
+        expressMap.put("trans_channel_id<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_channel_id_example");
+        Map<String, Object> cacheWarmingData = new HashMap<>();
+        cacheWarmingData.put("trans_channel_id", "999");
+        Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
+
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
-        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand);
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand).addCommand(expressCommand);
         commandPipelineMap.put("test-type", commands);
     }
 

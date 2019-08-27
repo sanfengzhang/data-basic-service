@@ -14,7 +14,7 @@ public class FiledTypeModel {
 
     private String fieldType;
 
-    private int fieldLen;
+    private int fieldLength;
 
     private String analyzer;
 
