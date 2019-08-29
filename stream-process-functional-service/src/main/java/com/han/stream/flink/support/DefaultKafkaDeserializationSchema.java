@@ -10,47 +10,51 @@ import java.nio.charset.Charset;
 
 /**
  * 定义为CommonMessage,kafka的消息类继承{@ CommonMessage}
- * 
- * @author hanlin01
  *
+ * @author hanlin01
  */
 public class DefaultKafkaDeserializationSchema implements KafkaDeserializationSchema<CommonMessage> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final SimpleStringSchema simpleStringSchema;
+    private final SimpleStringSchema simpleStringSchema;
 
-	public DefaultKafkaDeserializationSchema() {
+    public DefaultKafkaDeserializationSchema() {
 
-		simpleStringSchema = new SimpleStringSchema(Charset.forName("UTF-8"));
-	}
+        this("UTF-8");
+    }
 
-	public CommonMessage deserialize(ConsumerRecord<byte[], byte[]> record) throws Exception {
-		byte[] messageKey = record.key();
-		byte[] message = record.value();
+    public DefaultKafkaDeserializationSchema(String charSet) {
 
-		DefaultKafkaMessage result = new DefaultKafkaMessage();
-		if (null != messageKey) {
-			result.setKey(simpleStringSchema.deserialize(messageKey));
-		}
-		if (null != message) {
-			result.setValue(simpleStringSchema.deserialize(message));
-		}
+        simpleStringSchema = new SimpleStringSchema(Charset.forName(charSet));
+    }
 
-		result.setTopic(record.topic());
-		result.setType(record.topic());
-		result.setPartition(record.partition());
+    public CommonMessage deserialize(ConsumerRecord<byte[], byte[]> record) throws Exception {
+        byte[] messageKey = record.key();
+        byte[] message = record.value();
 
-		return result;
-	}
+        DefaultKafkaMessage result = new DefaultKafkaMessage();
+        if (null != messageKey) {
+            result.setKey(simpleStringSchema.deserialize(messageKey));
+        }
+        if (null != message) {
+            result.setValue(simpleStringSchema.deserialize(message));
+        }
 
-	public boolean isEndOfStream(CommonMessage nextElement) {
+        result.setTopic(record.topic());
+        result.setType(record.topic());
+        result.setPartition(record.partition());
 
-		return false;
-	}
+        return result;
+    }
 
-	public TypeInformation<CommonMessage> getProducedType() {
-		return Types.POJO(CommonMessage.class);
-	}
+    public boolean isEndOfStream(CommonMessage nextElement) {
+
+        return false;
+    }
+
+    public TypeInformation<CommonMessage> getProducedType() {
+        return Types.POJO(CommonMessage.class);
+    }
 
 }

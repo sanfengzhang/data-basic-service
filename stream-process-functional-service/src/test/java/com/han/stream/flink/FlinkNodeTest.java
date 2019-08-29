@@ -76,19 +76,19 @@ public class FlinkNodeTest {
         FlinkSinkNode flinkSinkNode = new FlinkSinkNode();
         DataStream<CommonMessage> dataStream = sourceNode.source(env);
         DataStream<Map<String, Object>> mapDataStream = flinkTransformNode.map(dataStream);
-        flinkSinkNode.sink(mapDataStream);
+        flinkSinkNode.sink(mapDataStream,env);
         env.execute();
     }
 
     @Test
-    public void testFlinkBuildService() {
+    public void testSocketFlinkBuildService() {
         FlinkBuildJobService flinkBuildJobService = new FlinkBuildJobService();
 
         FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
         sourceNode.setDataProcessNodeName("socket");
         FlinkTransformNode flinkTransformNode = new FlinkTransformNode(commandPipelineMap);
         flinkTransformNode.setDataProcessNodeName("transform");
-        FlinkSinkNode flinkSinkNode = new FlinkSinkNode();
+        FlinkSinkNode flinkSinkNode = FlinkSinkNode.buildPrintSink();
 
         List<AbstractDataProcessNode> list = new ArrayList<>();
         list.add(sourceNode);
@@ -100,4 +100,6 @@ public class FlinkNodeTest {
 
         flinkBuildJobService.run(result, null);
     }
+
+
 }

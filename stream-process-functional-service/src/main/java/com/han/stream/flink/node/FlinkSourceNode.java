@@ -11,6 +11,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * @author: Hanl
@@ -30,15 +31,16 @@ public class FlinkSourceNode extends AbstractFlinkNode {
 
     private Properties props;
 
+    private Pattern pattern;
+
+    private String charSet;
+
     private String host;
 
     private int port;
 
     private String dataType;
 
-    public FlinkSourceNode() {
-
-    }
 
     public static FlinkSourceNode buildSocket(String host, int port, String dataType) {
         FlinkSourceNode flinkSourceNode = new FlinkSourceNode();
@@ -49,13 +51,38 @@ public class FlinkSourceNode extends AbstractFlinkNode {
         return flinkSourceNode;
     }
 
+    public static FlinkSourceNode buildKafkaSource(List<String> topics, Properties kafkaProps, String charSet) {
+        FlinkSourceNode flinkSourceNode = new FlinkSourceNode();
+        flinkSourceNode.setTopics(topics);
+        flinkSourceNode.setProps(kafkaProps);
+        flinkSourceNode.setCharSet(charSet);
+        flinkSourceNode.setOperatorEnum(OperatorEnum.SOURCE_KAFKA);
+        return flinkSourceNode;
+    }
+
+    public static FlinkSourceNode buildKafkaSource(Pattern pattern, Properties kafkaProps, String charSet) {
+        FlinkSourceNode flinkSourceNode = new FlinkSourceNode();
+        flinkSourceNode.setPattern(pattern);
+        flinkSourceNode.setProps(kafkaProps);
+        flinkSourceNode.setCharSet(charSet);
+        flinkSourceNode.setOperatorEnum(OperatorEnum.SOURCE_KAFKA);
+        return flinkSourceNode;
+    }
+
+
     public DataStream<CommonMessage> source(StreamExecutionEnvironment env) {
         DataStream<CommonMessage> dataStreamSource;
         if (operatorEnum == OperatorEnum.SOURCE_KAFKA) {
-            dataStreamSource = env.addSource(new FlinkKafkaConsumer010(topics, new DefaultKafkaDeserializationSchema(), props),
-                    "FLINK-KAFKA-SOURCE").name(getDataProcessNodeName());
+            if (null == pattern) {
+                dataStreamSource = env.addSource(new FlinkKafkaConsumer010(topics, new DefaultKafkaDeserializationSchema(charSet), props),
+                        "FLINK-KAFKA-SOURCE").name(getDataProcessNodeName());
+            } else {
+                dataStreamSource = env.addSource(new FlinkKafkaConsumer010(pattern, new DefaultKafkaDeserializationSchema(charSet), props),
+                        "FLINK-KAFKA-SOURCE").name(getDataProcessNodeName());
+            }
             return dataStreamSource;
-        } else if (operatorEnum == OperatorEnum.SOURCE_SOCKET) {
+        }
+        if (operatorEnum == OperatorEnum.SOURCE_SOCKET) {
             DataStream<String> dataStreamSourceTmp = env.socketTextStream(host, port).name(getDataProcessNodeName());
             dataStreamSource = dataStreamSourceTmp.map(new MapFunction<String, CommonMessage>() {
                 private static final long serialVersionUID = 1L;

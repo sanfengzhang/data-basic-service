@@ -24,7 +24,7 @@ public abstract class AbstractFlinkNode extends AbstractDataProcessNode {
             return flinkTransformNode.map(preDataStream);
         } else if (this instanceof FlinkSinkNode) {
             FlinkSinkNode flinkSinkNode = (FlinkSinkNode) this;
-            flinkSinkNode.sink(preDataStream);
+            flinkSinkNode.sink(preDataStream, env);
         }
 
         return null;
