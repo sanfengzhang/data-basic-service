@@ -1,5 +1,6 @@
 package com.han.stream.flink.function;
 
+import com.han.stream.flink.exception.TransformException;
 import com.han.stream.flink.support.CommonMessage;
 
 import java.util.Collection;

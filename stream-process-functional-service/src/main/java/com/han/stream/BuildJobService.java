@@ -1,6 +1,7 @@
 package com.han.stream;
 
 import com.han.dataflow.api.model.AbstractDataProcessNode;
+import com.han.stream.flink.JobConfigContext;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,6 @@ import java.util.Map;
  */
 public interface BuildJobService {
 
-    public void run(List<List<AbstractDataProcessNode>> flows, Map<String,Object> jobParamters);
+    public void run(List<List<AbstractDataProcessNode>> flows, JobConfigContext jobConfigContext);
 
 }

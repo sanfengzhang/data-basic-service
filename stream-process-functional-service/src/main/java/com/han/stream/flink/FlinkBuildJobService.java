@@ -19,7 +19,7 @@ import java.util.Map;
 public class FlinkBuildJobService implements BuildJobService {
 
 
-    public StreamExecutionEnvironment creatStreamExecutionEnvironment() {
+    public StreamExecutionEnvironment creatStreamExecutionEnvironment(JobConfigContext jobConfigContext) {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // job失败重启的策略
@@ -34,8 +34,8 @@ public class FlinkBuildJobService implements BuildJobService {
         return env;
     }
 
-    private StreamExecutionEnvironment buildJob(List<List<AbstractDataProcessNode>> flows, Map<String, Object> jobParamters) {
-        StreamExecutionEnvironment env = creatStreamExecutionEnvironment();
+    private StreamExecutionEnvironment buildJob(List<List<AbstractDataProcessNode>> flows, JobConfigContext jobConfigContext) {
+        StreamExecutionEnvironment env = creatStreamExecutionEnvironment(jobConfigContext);
         flows.forEach(flow -> {
             DataStream preDtaStream = null;
             for (int i = 0; i < flow.size(); i++) {
@@ -50,13 +50,12 @@ public class FlinkBuildJobService implements BuildJobService {
     }
 
     @Override
-    public void run(List<List<AbstractDataProcessNode>> flows, Map<String, Object> jobParamters) {
-        StreamExecutionEnvironment env = buildJob(flows, jobParamters);
+    public void run(List<List<AbstractDataProcessNode>> flows, JobConfigContext jobConfigContext) {
+        StreamExecutionEnvironment env = buildJob(flows, jobConfigContext);
         try {
             env.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
