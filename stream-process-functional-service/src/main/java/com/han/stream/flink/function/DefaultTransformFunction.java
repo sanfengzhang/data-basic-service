@@ -40,20 +40,17 @@ public class DefaultTransformFunction extends ProcessFunction<Message, Map<Strin
 
     private Map<String, CommandPipeline> commandPipelines;
 
-    private String charset;
-
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public DefaultTransformFunction(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
-        this.charset = charset;
+    public DefaultTransformFunction(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
         this.commandPipelines = commandPipelines;
         this.transformContextName = transformContextName;
     }
 
     @Override
     public void open(Configuration parameters) throws Exception {
-        transform = new DefaultMorphlineTransform(transformContextName, commandPipelines, charset);
+        transform = new DefaultMorphlineTransform(transformContextName, commandPipelines);
         this.successProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(TRANSFORM_SUCCEEDED_METRICS_COUNTER);
         this.failedProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(TRANSFORM_FAILED_METRICS_COUNTER);
     }

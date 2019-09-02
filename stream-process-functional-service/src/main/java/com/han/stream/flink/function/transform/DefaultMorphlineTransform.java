@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class DefaultMorphlineTransform extends MorphlineTransform<Map<String, Object>> {
 
-    public DefaultMorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
+    public DefaultMorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
 
-        super(transformContextName, commandPipelines, charset);
+        super(transformContextName, commandPipelines);
     }
 
     @Override

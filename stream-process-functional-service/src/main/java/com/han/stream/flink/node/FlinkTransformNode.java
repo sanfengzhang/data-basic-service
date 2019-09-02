@@ -23,26 +23,23 @@ public class FlinkTransformNode extends AbstractFlinkNode {
 
     private OperatorEnum operatorEnum;
 
-    private String charset;
-
     private String transformContextName;
 
     private Map<String, CommandPipeline> commandPipelines;
 
-    public FlinkTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
-        this.charset = charset;
+    public FlinkTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
         this.transformContextName = transformContextName;
         this.commandPipelines = commandPipelines;
     }
 
-    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
+    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
 
-        return new FlinkTransformNode(transformContextName, commandPipelines, charset);
+        return new FlinkTransformNode(transformContextName, commandPipelines);
     }
 
     public DataStream<Map<String, Object>> process(DataStream<Message> preDataStream) {
 
-        return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines, charset)).name(getDataProcessNodeName());
+        return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
     }
 
 }

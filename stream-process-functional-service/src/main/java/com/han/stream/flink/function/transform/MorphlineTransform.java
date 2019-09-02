@@ -32,12 +32,9 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
 
     private Map<String, Collector> collectors = new ConcurrentHashMap<>();
 
-    private String charset;
-
     private MorphlineContext morphlineContext;
 
-    protected MorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
-        this.charset = charset;
+    protected MorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
 
