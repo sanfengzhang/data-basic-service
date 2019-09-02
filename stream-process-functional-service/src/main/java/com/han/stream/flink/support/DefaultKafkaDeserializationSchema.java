@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
  *
  * @author hanlin01
  */
-public class DefaultKafkaDeserializationSchema implements KafkaDeserializationSchema<CommonMessage> {
+public class DefaultKafkaDeserializationSchema implements KafkaDeserializationSchema<Message> {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +29,7 @@ public class DefaultKafkaDeserializationSchema implements KafkaDeserializationSc
         simpleStringSchema = new SimpleStringSchema(Charset.forName(charSet));
     }
 
-    public CommonMessage deserialize(ConsumerRecord<byte[], byte[]> record) throws Exception {
+    public Message deserialize(ConsumerRecord<byte[], byte[]> record) throws Exception {
         byte[] messageKey = record.key();
         byte[] message = record.value();
 
@@ -48,13 +48,13 @@ public class DefaultKafkaDeserializationSchema implements KafkaDeserializationSc
         return result;
     }
 
-    public boolean isEndOfStream(CommonMessage nextElement) {
+    public boolean isEndOfStream(Message nextElement) {
 
         return false;
     }
 
-    public TypeInformation<CommonMessage> getProducedType() {
-        return Types.POJO(CommonMessage.class);
+    public TypeInformation<Message> getProducedType() {
+        return Types.POJO(Message.class);
     }
 
 }

@@ -1,13 +1,11 @@
 package com.han.stream.flink.node;
 
-import com.google.common.base.Preconditions;
 import com.han.stream.flink.OperatorEnum;
 import com.han.stream.flink.function.DefaultTransformFunction;
-import com.han.stream.flink.support.CommonMessage;
+import com.han.stream.flink.support.Message;
 import com.stream.data.transform.model.CommandPipeline;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 import java.util.Map;
@@ -42,9 +40,9 @@ public class FlinkTransformNode extends AbstractFlinkNode {
         return new FlinkTransformNode(transformContextName, commandPipelines, charset);
     }
 
-    public DataStream<Map<String, Object>> map(DataStream<CommonMessage> preDataStream) {
+    public DataStream<Map<String, Object>> process(DataStream<Message> preDataStream) {
 
-        return preDataStream.map(new DefaultTransformFunction(transformContextName, commandPipelines, charset)).name(getDataProcessNodeName());
+        return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines, charset)).name(getDataProcessNodeName());
     }
 
 }

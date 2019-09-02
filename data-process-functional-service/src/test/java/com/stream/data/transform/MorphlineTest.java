@@ -121,7 +121,34 @@ public class MorphlineTest {
         Map<String, Object> charsetMap = new HashMap<>();
         charsetMap.put("charset", "UTF-8");
         readLineMap.put("readLine", charsetMap);
-        commandList.add(readLineMap);
+//        commandList.add(readLineMap);
+
+
+        List<String> outputFields = new ArrayList<>();
+        outputFields.add("trans_date");
+        outputFields.add("trans_code");
+        outputFields.add("trans_channel_id");
+        outputFields.add("trans_start_datetime");
+        outputFields.add("trans_end_datetime");
+        outputFields.add("trans_cust_time");
+        outputFields.add("trans_org_id");
+        outputFields.add("trans_clerk");
+        outputFields.add("trans_return_code");
+        outputFields.add("trans_err_msg");
+        outputFields.add("trans_tuexdo_name");
+        Map<String, Object> splitCommand = CommandBuildService.spilt("message", outputFields, "|", false, false, false, 11);
+
+        commandList.add(splitCommand);
+
+
+        List<String> outputFields1 = new ArrayList<>();
+        outputFields1.add("trans_date_year");
+        outputFields1.add("trans_date_month");
+        outputFields1.add("trans_date_date");
+        Map<String, Object> splitCommand1 = CommandBuildService.spilt("trans_date", outputFields1, "-", false, false, false, 3);
+
+        commandList.add(splitCommand1);
+
 
         configMap.put("commands", commandList);
         Config config = ConfigFactory.parseMap(configMap);
@@ -133,11 +160,13 @@ public class MorphlineTest {
 
         Record record = new Record();
         String msg = "2018-03-25|801507|12|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|999996|读取保函注销接口表失败[BHZX201803251590217],记录不存在|";
-        record.put(Fields.ATTACHMENT_BODY, msg.getBytes());
+        record.put(Fields.MESSAGE, msg);
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 1; i++) {
             cmd.process(record);
+            record = finalChid.getRecords().get(0);
+            System.out.println(record);
         }
 
         long end = System.currentTimeMillis();

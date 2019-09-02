@@ -45,7 +45,7 @@ public class FlinkNodeTest {
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
-        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand).addCommand(expressCommand);
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(expressCommand);
         commandPipelineMap.put("test-type", commands);
     }
 

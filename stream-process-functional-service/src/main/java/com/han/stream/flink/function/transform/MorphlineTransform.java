@@ -3,10 +3,11 @@ package com.han.stream.flink.function.transform;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.han.stream.flink.exception.TransformException;
 import com.han.stream.flink.function.Transform;
-import com.han.stream.flink.support.CommonMessage;
+import com.han.stream.flink.support.Message;
 import com.stream.data.transform.model.CommandPipeline;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import lombok.Data;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;
 import org.kitesdk.morphline.api.Record;
@@ -15,7 +16,6 @@ import org.kitesdk.morphline.base.FaultTolerance;
 import org.kitesdk.morphline.base.Fields;
 import org.kitesdk.morphline.base.Notifications;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date :2019/8/30
  * @desc:
  */
-public abstract class MorphlineTransform<OUT> implements Transform<CommonMessage, OUT> {
-
-    private Map<String, CommandPipeline> commandPipelines;
+@Data
+public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT> {
 
     private Map<String, Command> commands = new ConcurrentHashMap<>();
 
@@ -35,14 +34,10 @@ public abstract class MorphlineTransform<OUT> implements Transform<CommonMessage
 
     private String charset;
 
-
     private MorphlineContext morphlineContext;
 
     protected MorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines, String charset) {
-
-        this.commandPipelines = commandPipelines;
         this.charset = charset;
-
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
 
@@ -57,7 +52,7 @@ public abstract class MorphlineTransform<OUT> implements Transform<CommonMessage
     }
 
     @Override
-    public Map<String, Collection<Object>> process(CommonMessage message) {
+    public Map<String, Collection<Object>> process(Message message) {
         String dataType = message.getType();
         Command cmd = commands.get(dataType);
         Collector finalChild = collectors.get(dataType);
@@ -70,21 +65,26 @@ public abstract class MorphlineTransform<OUT> implements Transform<CommonMessage
                 collectors.put(dataType, finalChild);
             }
             Record record = new Record();
-            byte[] messageBytesBody = message.getValue().getBytes(charset);
-            record.put(Fields.ATTACHMENT_BODY, messageBytesBody);
+
+            //FIXME 这里目前就是支持String类型的数据
+            record.put(Fields.MESSAGE, message.getValue());
             Notifications.notifyStartSession(cmd);
             if (!cmd.process(record)) {
 
-                throw new TransformException("Failed to transform record,dataType=" + message + ",message=" + message);
+                throw new TransformException("Failed to process record,dataType=" + message + ",message=" + message);
             }
             record = finalChild.getRecords().get(0);
             Map<String, Collection<Object>> result = record.getFields().asMap();
             return result;
-        } catch (UnsupportedEncodingException e) {
-            throw new TransformException("Unsupported encoding ", e);
+        } catch (Exception e) {
+            throw new TransformException("Failed to transform Exception ", e);
         } finally {
-            finalChild.reset();
-            Notifications.notifyShutdown(cmd);
+            if (null != finalChild) {
+                finalChild.reset();
+            }
+            if (null != cmd) {
+                Notifications.notifyShutdown(cmd);
+            }
         }
     }
 }

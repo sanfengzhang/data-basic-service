@@ -2,7 +2,7 @@ package com.han.stream.flink.support;
 
 import java.io.Serializable;
 
-public class CommonMessage implements Serializable {
+public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -10,11 +10,11 @@ public class CommonMessage implements Serializable {
 
     private String value;
 
-    public CommonMessage() {
+    public Message() {
 
     }
 
-    public CommonMessage(String type, String value) {
+    public Message(String type, String value) {
         this.type = type;
         this.value = value;
     }

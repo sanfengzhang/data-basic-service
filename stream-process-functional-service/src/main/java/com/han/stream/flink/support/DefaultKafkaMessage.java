@@ -1,6 +1,6 @@
 package com.han.stream.flink.support;
 
-public class DefaultKafkaMessage extends CommonMessage {
+public class DefaultKafkaMessage extends Message {
 
 	private static final long serialVersionUID = 1L;
 

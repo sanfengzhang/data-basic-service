@@ -1,7 +1,7 @@
 package com.han.stream.flink.node;
 
 import com.han.stream.flink.OperatorEnum;
-import com.han.stream.flink.support.CommonMessage;
+import com.han.stream.flink.support.Message;
 import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;
 import lombok.Data;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -70,8 +70,8 @@ public class FlinkSourceNode extends AbstractFlinkNode {
     }
 
 
-    public DataStream<CommonMessage> source(StreamExecutionEnvironment env) {
-        DataStream<CommonMessage> dataStreamSource;
+    public DataStream<Message> source(StreamExecutionEnvironment env) {
+        DataStream<Message> dataStreamSource;
         if (operatorEnum == OperatorEnum.SOURCE_KAFKA) {
             if (null == pattern) {
                 dataStreamSource = env.addSource(new FlinkKafkaConsumer010(topics, new DefaultKafkaDeserializationSchema(charSet), props),
@@ -84,12 +84,12 @@ public class FlinkSourceNode extends AbstractFlinkNode {
         }
         if (operatorEnum == OperatorEnum.SOURCE_SOCKET) {
             DataStream<String> dataStreamSourceTmp = env.socketTextStream(host, port).name(getDataProcessNodeName());
-            dataStreamSource = dataStreamSourceTmp.map(new MapFunction<String, CommonMessage>() {
+            dataStreamSource = dataStreamSourceTmp.map(new MapFunction<String, Message>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public CommonMessage map(String value) throws Exception {
-                    CommonMessage message = new CommonMessage(dataType, value);
+                public Message map(String value) throws Exception {
+                    Message message = new Message(dataType, value);
                     return message;
                 }
             });

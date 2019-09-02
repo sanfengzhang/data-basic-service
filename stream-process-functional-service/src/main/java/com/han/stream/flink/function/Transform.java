@@ -1,7 +1,6 @@
 package com.han.stream.flink.function;
 
-import com.han.stream.flink.exception.TransformException;
-import com.han.stream.flink.support.CommonMessage;
+import com.han.stream.flink.support.Message;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,14 +10,14 @@ import java.util.Map;
  * @date :2019/8/20
  * @desc:
  */
-public interface Transform<IN extends CommonMessage, OUT> {
+public interface Transform<IN extends Message, OUT> {
 
     /**
      *定义数据转换的主要接口方法，所有的数据转换操作均是在此方法中执行
      * @param commonMessage
      * @return
      */
-    public Map<String, Collection<Object>> process(CommonMessage commonMessage);
+    public Map<String, Collection<Object>> process(Message commonMessage);
 
 
     /**
