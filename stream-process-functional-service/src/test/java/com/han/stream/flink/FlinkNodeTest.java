@@ -55,7 +55,7 @@ public class FlinkNodeTest {
 
         FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
         sourceNode.setDataProcessNodeName("socket");
-        FlinkTransformNode flinkTransformNode = FlinkTransformNode.buildDefaultTransformNode("Default Morphline Context",commandPipelineMap);
+        FlinkTransformNode flinkTransformNode = FlinkTransformNode.buildDefaultTransformNode("Default Morphline Context", commandPipelineMap, false);
         flinkTransformNode.setDataProcessNodeName("transform");
         FlinkSinkNode flinkSinkNode = FlinkSinkNode.buildPrintSink();
 

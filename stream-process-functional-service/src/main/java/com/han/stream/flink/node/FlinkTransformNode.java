@@ -1,11 +1,14 @@
 package com.han.stream.flink.node;
 
 import com.han.stream.flink.OperatorEnum;
+import com.han.stream.flink.config.ConfigParameters;
+import com.han.stream.flink.function.ConfigurableMorphlineTransformFunction;
 import com.han.stream.flink.function.DefaultTransformFunction;
 import com.han.stream.flink.support.Message;
 import com.stream.data.transform.model.CommandPipeline;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 import java.util.Map;
@@ -25,21 +28,39 @@ public class FlinkTransformNode extends AbstractFlinkNode {
 
     private String transformContextName;
 
-    private Map<String, CommandPipeline> commandPipelines;
+    private boolean configurable;
+
+    private DataStream connectDataStream;
+
+    private BroadcastStream<ConfigParameters> broadcastStream;
+
+    private  Map<String, CommandPipeline>  commandPipelines;
 
     public FlinkTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
+        this(transformContextName, commandPipelines, false);
+    }
+
+    public FlinkTransformNode(String transformContextName,  Map<String, CommandPipeline>  commandPipelines, boolean configurable) {
         this.transformContextName = transformContextName;
         this.commandPipelines = commandPipelines;
+        this.configurable = configurable;
     }
 
-    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
-
-        return new FlinkTransformNode(transformContextName, commandPipelines);
+    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines, boolean configurable) {
+        if (!configurable)
+            return new FlinkTransformNode(transformContextName, commandPipelines, false);
+        else
+            return new FlinkTransformNode(transformContextName, commandPipelines, true);
     }
+
 
     public DataStream<Map<String, Object>> process(DataStream<Message> preDataStream) {
+        if (!configurable)
+            return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
+        else {
 
-        return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
+            return preDataStream.connect(broadcastStream).process(new ConfigurableMorphlineTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
+        }
     }
 
 }

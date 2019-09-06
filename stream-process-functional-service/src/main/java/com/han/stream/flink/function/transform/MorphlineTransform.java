@@ -1,6 +1,7 @@
 package com.han.stream.flink.function.transform;
 
 import com.codahale.metrics.SharedMetricRegistries;
+import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.exception.TransformException;
 import com.han.stream.flink.function.Transform;
 import com.han.stream.flink.support.Message;
@@ -8,6 +9,8 @@ import com.stream.data.transform.model.CommandPipeline;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.utils.CopyOnWriteMap;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;
 import org.kitesdk.morphline.api.Record;
@@ -26,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @desc:
  */
 @Data
+@Slf4j
 public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT> {
 
     private Map<String, Command> commands = new ConcurrentHashMap<>();
@@ -83,5 +87,29 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
                 Notifications.notifyShutdown(cmd);
             }
         }
+    }
+
+    /**
+     * FIXME Update or add command
+     * 1.实现Command配置更新可以自己去实现配置方式、发布或订阅或者定时任务去获取变化
+     * 2.通过Flink的{@BroadcastProcessFunction}的方式去下发变化
+     *
+     * @param configParameters
+     */
+    public void updateOrAddCommand(ConfigParameters configParameters) {
+        configParameters.getConfig().forEach((dataType, commandPipelineObj) -> {
+            Map<String, Object> commandMap = null;
+            CommandPipeline commandPipeline = null;
+            if (commandPipelineObj instanceof CommandPipeline) {
+                commandPipeline = (CommandPipeline) commandPipelineObj;
+                commandMap = commandPipeline.get();
+            }
+            Config config = ConfigFactory.parseMap(commandMap);
+            Collector finalChild = new Collector();
+            Command cmd = new Compiler().compile(config, morphlineContext, finalChild);
+            commands.put(dataType, cmd);
+            collectors.put(dataType, finalChild);
+        });
+        log.info("Update morphline config success,config={}", configParameters);
     }
 }

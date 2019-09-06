@@ -19,6 +19,8 @@ public class DefaultMorphlineTransform extends MorphlineTransform<Map<String, Ob
         super(transformContextName, commandPipelines);
     }
 
+
+
     @Override
     public Map<String, Object> output(Map<String, Collection<Object>> value) {
         Iterator<Map.Entry<String, Collection<Object>>> it = value.entrySet().iterator();
