@@ -1,6 +1,8 @@
 package com.stream.data.transform;
 
 import com.codahale.metrics.SharedMetricRegistries;
+import com.stream.data.transform.command.CallSubPipeBuilder;
+import com.stream.data.transform.command.SubPipeSelector;
 import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.api.CommandBuildService;
 import com.google.common.base.Preconditions;
@@ -54,7 +56,9 @@ public class MorphlineTest {
 
         Map<String, Object> javaCommand = CommandBuildService.java(null,
                 "logger.debug(\"printing my log info\"); return child.process(record);");
-        Map<String, Object> javaMethodCommand = CommandBuildService.javaMethod("com.stream.data.transform.utils.IpaddressUtil", "getIplongValue", "trans_tuexdo_name", "ipLongValue", "java.lang.String");
+        Map<String, Object> javaMethodCommand = CommandBuildService.javaMethod("com.stream.data.transform.utils.IpaddressUtil", "getIplongValue",
+                "trans_tuexdo_name", "ipLongValue", "java.lang.String");
+
 
         Map<String, String> expressMap = new HashMap<>();
         expressMap.put("trans_return_code<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_return_code");
@@ -63,12 +67,16 @@ public class MorphlineTest {
         Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
 
 
-        Map<String, Object> jdbcCommand = CommandBuildService.jdbcEnrich("trans_channel_id", "trans_channel_name", "jdbc:mysql://localhost:3306/han", "com.mysql.jdbc.Driver",
-                "root", "123456", 0, true, "SELECT channel_name FROM t_channel where channel_id=?", "没有渠道", "select channel_id,channel_name from t_channel");
+        Map<String, Object> jdbcCommand = CommandBuildService.jdbcEnrich("trans_channel_id", "trans_channel_name",
+                "jdbc:mysql://localhost:3306/han", "com.mysql.jdbc.Driver",
+                "root", "123456", 0, true, "SELECT channel_name FROM t_channel where channel_id=?",
+                "没有渠道", "select channel_id,channel_name from t_channel");
+
 
         Map<String, String> recordFieldType = new HashMap<>();
         recordFieldType.put("trans_channel_id", TypeUtils.INT);
         Map<String, Object> recordFieldTypeCommand = CommandBuildService.recordFieldType(recordFieldType);
+
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
@@ -87,11 +95,11 @@ public class MorphlineTest {
         Notifications.notifyStartSession(cmd);
 
         long start = System.currentTimeMillis();
-        int total = 100_0000;
+        int total = 1;
         for (int i = 0; i < total; i++) {
             cmd.process(record);
-//            record = finalChid.getRecords().get(0);
-//            System.out.println(record);
+            record = finalChid.getRecords().get(0);
+            System.out.println(record);
         }
         long end = System.currentTimeMillis();
         double cust = (end - start) / 1000;
@@ -173,12 +181,64 @@ public class MorphlineTest {
         System.out.println(end - start);
     }
 
+
+    @Test
+    public void testSubCommands() throws Exception {
+        List<String> outputFields = new ArrayList<>();
+        outputFields.add("trans_date");
+        outputFields.add("trans_code");
+        outputFields.add("trans_channel_id");
+        outputFields.add("trans_start_datetime");
+        Map<String, Object> splitCommand = CommandBuildService.spilt("message", outputFields, "|", false, false, false, 4);
+
+
+
+        Map<String, String> recordFieldType = new HashMap<>();
+        recordFieldType.put("trans_channel_id", TypeUtils.INT);
+        Map<String, Object> recordFieldTypeCommand = CommandBuildService.recordFieldType(recordFieldType);
+
+
+        Map<String, Object> callSubCommand=CommandBuildService.callSubPipe(false);
+
+        List<String> imports = new ArrayList<>();
+        imports.add("com.stream.data.transform.command.*");
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(recordFieldTypeCommand).addCommand(callSubCommand);
+
+
+        Map<String, Object> javaCommand = CommandBuildService.java(null,
+                "System.out.println(\"Execute subprocess!\"); return child.process(record);");
+        CommandPipeline subcommands = CommandPipeline.build("trad_conf_sub", imports).addCommand(javaCommand);
+        Config config1 = ConfigFactory.parseMap(subcommands.get());
+        Command subcmd = new Compiler().compile(config1, morphlineContext, finalChid);
+
+        Map<Integer,Command> subCmdMap=new HashMap<>();
+        subCmdMap.put(12,subcmd);
+        Set<Integer> set=new HashSet<>();
+        set.add(12);
+        SubPipeSelector subPipeSelector=new KeyValueSubPipeSelector("trans_channel_id",set,subCmdMap);
+       this.morphlineContext.getSettings().put(CallSubPipeBuilder.SUB_PIPE_SELECTOR,subPipeSelector);
+
+
+        Collector finalChid = new Collector();
+        Config config = ConfigFactory.parseMap(commands.get());
+        Command cmd = new Compiler().compile(config, morphlineContext, finalChid);
+        Notifications.notifyStartSession(cmd);
+        Record record = new Record();
+        String msg = "2018-03-25|zhangsan|12|武汉市";
+        record.put(Fields.MESSAGE, msg);
+        cmd.process(record);
+        record = finalChid.getRecords().get(0);
+        System.out.println(record);
+
+    }
+
     @Before
     public void setUp() {
         PropertyConfigurator.configure("src/main/resources/log4j.properties");
         FaultTolerance faultTolerance = new FaultTolerance(false, false);
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(faultTolerance)
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate("testId")).build();
+
         finalChid = new Collector();
     }
 

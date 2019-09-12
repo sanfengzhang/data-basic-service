@@ -6,8 +6,7 @@ import java.util.*;
 /**
  * @author: Hanl
  * @date :2019/8/3
- * @desc:
- * 数据转换命令管道,是由多种配置转换规则组合而成的一个数据转换管道
+ * @desc: 数据转换命令管道, 是由多种配置转换规则组合而成的一个数据转换管道
  */
 public class CommandPipeline implements Serializable {
 
@@ -86,5 +85,15 @@ public class CommandPipeline implements Serializable {
     public static CommandPipeline build(String id, List<String> importCommands) {
 
         return new CommandPipeline(id, importCommands);
+    }
+
+    @Override
+    public String toString() {
+        return "CommandPipeline{" +
+                "id='" + id + '\'' +
+                ", processDesc='" + processDesc + '\'' +
+                ", commands=" + commands +
+                ", commandsMap=" + commandsMap +
+                '}';
     }
 }

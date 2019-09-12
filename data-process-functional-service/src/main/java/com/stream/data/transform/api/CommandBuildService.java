@@ -93,4 +93,12 @@ public class CommandBuildService {
         return recordFieldTypeMap;
     }
 
+    public static Map<String, Object> callSubPipe(boolean continueParentPipe) {
+        Map<String, Object> callSubPipeMap = new HashMap<>();
+        Map<String, Object> propsMap = new HashMap<>();
+        propsMap.put("continueParentPipe", continueParentPipe);
+        callSubPipeMap.put("callSubPipe", propsMap);
+        return callSubPipeMap;
+    }
+
 }
