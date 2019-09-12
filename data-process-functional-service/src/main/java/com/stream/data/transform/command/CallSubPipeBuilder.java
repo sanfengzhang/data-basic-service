@@ -1,16 +1,13 @@
 package com.stream.data.transform.command;
 
-import com.stream.data.transform.model.CommandPipeline;
 import com.typesafe.config.Config;
 import org.kitesdk.morphline.api.*;
 import org.kitesdk.morphline.base.AbstractCommand;
-import org.kitesdk.morphline.base.Configs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -64,6 +61,7 @@ public class CallSubPipeBuilder implements CommandBuilder {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Do not continue with the parent process");
                 }
+
                 return true;
             }
             return super.doProcess(record);

@@ -198,18 +198,19 @@ public class MorphlineTest {
         Map<String, Object> recordFieldTypeCommand = CommandBuildService.recordFieldType(recordFieldType);
 
 
-        Map<String, Object> callSubCommand=CommandBuildService.callSubPipe(false);
+        Map<String, Object> callSubCommand=CommandBuildService.callSubPipe(true);
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
         CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(recordFieldTypeCommand).addCommand(callSubCommand);
 
 
+        Collector finalChid1 = new Collector();
         Map<String, Object> javaCommand = CommandBuildService.java(null,
                 "System.out.println(\"Execute subprocess!\"); return child.process(record);");
         CommandPipeline subcommands = CommandPipeline.build("trad_conf_sub", imports).addCommand(javaCommand);
         Config config1 = ConfigFactory.parseMap(subcommands.get());
-        Command subcmd = new Compiler().compile(config1, morphlineContext, finalChid);
+        Command subcmd = new Compiler().compile(config1, morphlineContext, finalChid1);
 
         Map<Integer,Command> subCmdMap=new HashMap<>();
         subCmdMap.put(12,subcmd);
@@ -219,15 +220,15 @@ public class MorphlineTest {
        this.morphlineContext.getSettings().put(CallSubPipeBuilder.SUB_PIPE_SELECTOR,subPipeSelector);
 
 
-        Collector finalChid = new Collector();
+
         Config config = ConfigFactory.parseMap(commands.get());
-        Command cmd = new Compiler().compile(config, morphlineContext, finalChid);
+        Command cmd = new Compiler().compile(config, morphlineContext, finalChid1);
         Notifications.notifyStartSession(cmd);
         Record record = new Record();
         String msg = "2018-03-25|zhangsan|12|武汉市";
         record.put(Fields.MESSAGE, msg);
         cmd.process(record);
-        record = finalChid.getRecords().get(0);
+        record = finalChid1.getRecords().get(0);
         System.out.println(record);
 
     }

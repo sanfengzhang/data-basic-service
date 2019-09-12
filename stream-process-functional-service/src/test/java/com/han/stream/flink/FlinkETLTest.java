@@ -1,6 +1,5 @@
 package com.han.stream.flink;
 
-import com.alibaba.fastjson.JSON;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.function.ConfigurableMorphlineTransformFunction;
 import com.han.stream.flink.function.DefaultTransformFunction;
@@ -9,9 +8,7 @@ import com.han.stream.flink.support.Message;
 import com.stream.data.transform.api.CommandBuildService;
 import com.stream.data.transform.model.CommandPipeline;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
-import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -38,6 +35,7 @@ public class FlinkETLTest {
 
     @Before
     public void setup() {
+        System.out.println(null instanceof  Map);
         Map<String, Object> readLineMap = new HashMap<>();
         Map<String, Object> charsetMap = new HashMap<>();
         charsetMap.put("charset", "UTF-8");
