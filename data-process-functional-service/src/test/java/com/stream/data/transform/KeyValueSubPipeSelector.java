@@ -1,7 +1,6 @@
 package com.stream.data.transform;
 
 import com.stream.data.transform.command.SubPipeSelector;
-import com.stream.data.transform.model.CommandPipeline;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.Record;
 

@@ -1,5 +1,6 @@
 package com.stream.data.transform.command;
 
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.stream.data.transform.utils.TypeUtils;
 import com.typesafe.config.Config;
 import org.kitesdk.morphline.api.*;
@@ -34,12 +35,18 @@ public class RecordFieldTypeConvertBuilder implements CommandBuilder {
 
         private Map<String, String[]> fieldTypeMap = new HashMap<>();
 
+        private ParserConfig parserConfig = null;
+
         public RecordFieldTypeConvert(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) {
             super(builder, config, parent, child, context);
             Config fieldTypeConfig = getConfigs().getConfig(config, "fieldTypeMap");
             for (Map.Entry<String, Object> entry : new Configs().getEntrySet(fieldTypeConfig)) {
                 String valueArr[] = entry.getValue().toString().split(",");
                 fieldTypeMap.put(entry.getKey(), valueArr);
+            }
+            this.parserConfig = (ParserConfig) context.getSettings().get("parserConfig");
+            if (null == parserConfig) {
+                throw new MorphlineCompilationException("RecordFieldType init failed because of parserConfig is null", config);
             }
             validateArguments();
         }
@@ -48,8 +55,7 @@ public class RecordFieldTypeConvertBuilder implements CommandBuilder {
         protected boolean doProcess(Record record) {
 
             fieldTypeMap.forEach((k, v) -> {
-
-                Object target = TypeUtils.convert(record.getFirstValue(k).toString(), v[0], null);
+                Object target = TypeUtils.fastJsonCast(record.getFirstValue(k), v[0], parserConfig);
                 record.replaceValues(k, target);
             });
             return super.doProcess(record);

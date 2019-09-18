@@ -17,8 +17,6 @@ import java.util.Set;
  */
 public class CallSubPipeBuilder implements CommandBuilder {
 
-    public static final String SUB_PIPE_SELECTOR = "subPipeSelector";
-
     @Override
     public Collection<String> getNames() {
         return Collections.singletonList("callSubPipe");
@@ -39,13 +37,16 @@ public class CallSubPipeBuilder implements CommandBuilder {
 
         private SubPipeSelector subPipeSelector;
 
+        private String pipelineSelectorKey;
+
         private boolean continueParentPipe = true;
 
 
         public CallSubPipe(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) throws Exception {
             super(builder, config, parent, child, context);
             continueParentPipe = getConfigs().getBoolean(config, "continueParentPipe");
-            this.subPipeSelector = (SubPipeSelector) context.getSettings().get(SUB_PIPE_SELECTOR);
+            pipelineSelectorKey=getConfigs().getString(config, "pipelineSelectorKey");
+            this.subPipeSelector = (SubPipeSelector) context.getSettings().get(pipelineSelectorKey);
         }
 
         @Override
