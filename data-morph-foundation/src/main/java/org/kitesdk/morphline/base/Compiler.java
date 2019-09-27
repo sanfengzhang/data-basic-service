@@ -18,6 +18,9 @@ package org.kitesdk.morphline.base;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import org.kitesdk.morphline.api.Command;
@@ -29,6 +32,8 @@ import org.kitesdk.morphline.stdlib.PipeBuilder;
 import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tool to parse and compile a morphline file or morphline config.
@@ -36,8 +41,16 @@ import com.typesafe.config.ConfigFactory;
 public final class Compiler {
 
   private static final Object LOCK = new Object();
+
+  private static volatile boolean hadLoadJar = false;
+
+  public static final String COMMAND_CLASS_EXPORT_ID = "command.class.export.dir";
+
+  private static final Logger logger = LoggerFactory.getLogger(Compiler.class);
   
-  public Compiler() {}
+  public Compiler() {
+
+  }
   
   /**
    * Parses the given morphlineFile, then finds the morphline with the given morphlineId within,
@@ -47,8 +60,9 @@ public final class Compiler {
   public Command compile(File morphlineFile, String morphlineId, MorphlineContext morphlineContext, Command finalChild, Config... overrides) {
     Config config;
     try {
+      loadExportJar(morphlineContext);
       config = parse(morphlineFile, overrides);
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new MorphlineCompilationException("Cannot parse morphline file: " + morphlineFile, null, e);
     }
     Config morphlineConfig = find(morphlineId, config, morphlineFile.getPath());
@@ -120,10 +134,42 @@ public final class Compiler {
    * will feed records into finalChild or into /dev/null if finalChild is null.
    */
   public Command compile(Config morphlineConfig, MorphlineContext morphlineContext, Command finalChild) {
+    try {
+      loadExportJar(morphlineContext);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     if (finalChild == null) {
       finalChild = new DropRecordBuilder().build(null, null, null, morphlineContext);
     }
     return new PipeBuilder().build(morphlineConfig, null, finalChild, morphlineContext);
+  }
+
+  private void loadExportJar(MorphlineContext context) throws Exception {
+    if (hadLoadJar) {
+      return;
+    }
+    Object obj = context.getSettings().get(COMMAND_CLASS_EXPORT_ID);
+    if (obj != null) {
+      String jarFileDirPath = obj.toString();
+      File jarFileDir = new File(jarFileDirPath);
+      if (jarFileDir.isDirectory()) {
+        File jars[] = jarFileDir.listFiles();
+        if (jars.length > 0) {
+          URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+          Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+          add.setAccessible(true);
+          int size = jars.length;
+          Object[] urlArray = new Object[size];
+          for (int i = 0; i < size; i++) {
+            urlArray[i] = jars[0].toURI().toURL();
+            logger.info("add export jar url={}", urlArray[i]);
+          }
+          add.invoke(classLoader, urlArray);
+        }
+      }
+    }
+    hadLoadJar = true;
   }
 
 }

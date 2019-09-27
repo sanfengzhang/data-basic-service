@@ -11,11 +11,11 @@ import org.kitesdk.morphline.api.SkipCommandSelector;
 public class KeySkipCommandSelector implements SkipCommandSelector {
 
     @Override
-    public boolean skip(Record record, String className) {
+    public boolean skip(Record record, String commandInstanceId) {
         if (null == record) {
             return true;
         }
-        if (className.equals("MySplit")) {
+        if (commandInstanceId.equals("313db3153f2347c782a720b9abd41b45")) {
             if (record.getFirstValue("name").toString().equals("zhangsan")) {
                 return true;
             }

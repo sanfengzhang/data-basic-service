@@ -65,8 +65,8 @@ public class MorplineTest {
     @Test
     public void testSplitKeyValue() {
 
-        //morphlineContext.getSettings().put(Compiler.COMMAND_CLASS_EXPORT_ID, "C:\\Users\\hanlin01\\Desktop\\jar\\");
-        // morphlineContext.getSettings().put(AbstractCommand.SKIP_COMMAND_SELECTOR, new KeySkipCommandSelector());
+        morphlineContext.getSettings().put(Compiler.COMMAND_CLASS_EXPORT_ID, "C:\\Users\\hanlin01\\Desktop\\jar\\");
+        morphlineContext.getSettings().put(AbstractCommand.SKIP_COMMAND_SELECTOR, new KeySkipCommandSelector());
         Command command = new Compiler().compile(new File("src/test/resources/test-morphlines/split1.conf"), "morphline1",
                 morphlineContext, finalChild, ConfigFactory.empty());
         Notifications.notifyStartSession(command);

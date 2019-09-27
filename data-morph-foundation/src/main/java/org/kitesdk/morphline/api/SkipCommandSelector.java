@@ -7,5 +7,5 @@ package org.kitesdk.morphline.api;
  */
 public interface SkipCommandSelector {
 
-    public boolean skip(Record record, String commandName);
+    public boolean skip(Record record, String commandInstanceId);
 }
