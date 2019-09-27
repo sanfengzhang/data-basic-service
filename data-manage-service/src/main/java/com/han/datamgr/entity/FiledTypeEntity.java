@@ -1,4 +1,4 @@
-package com.han.datamgr.model;
+package com.han.datamgr.entity;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @desc:
  */
 @Data
-public class FiledTypeModel {
+public class FiledTypeEntity {
 
     private String fieldName;
 
