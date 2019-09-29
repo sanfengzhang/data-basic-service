@@ -22,9 +22,7 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private List<CommandVO> processCommandDetail;//数据处理流程明细，命令配置集合。
 
-    private String filterCmdCondition;//某些命令过滤条件,可以支持一些ELExpress的bool表达式
-
-    private String dstDesc;//目标输出
+    private String loadExternalLibsPath;//需要加载外部实现的命令插件
 
     private Date createTime;//数据处理流程创建时间
 
