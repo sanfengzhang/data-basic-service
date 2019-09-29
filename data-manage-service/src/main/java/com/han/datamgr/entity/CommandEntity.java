@@ -17,6 +17,8 @@ public class CommandEntity implements Serializable {
 
     private String commandName;
 
+    private String commandClazz;//当前Command所属的原始java类名称
+
     private String commandType;
 
     private String commandParams;//命令本身的构建需要的参数，Map<String,Object>的JSON的字符串

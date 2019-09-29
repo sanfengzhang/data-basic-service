@@ -21,9 +21,11 @@ public class CommandVO extends BaseVO<CommandEntity> {
 
     private String commandName;
 
-    private String commandType;//Command类型，解析类型、富化类型
+    private String commandClazz;//当前Command所属的原始java类名称
 
-    private Map<String,Object> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
+    private String commandType;//按Command功能分类型，解析类型、富化类型
+
+    private Map<String, Object> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
 
     private List<FiledTypeVO> commandInputParams;//命令入参，List<FiledTypeEntity>的JSON的字符串
 

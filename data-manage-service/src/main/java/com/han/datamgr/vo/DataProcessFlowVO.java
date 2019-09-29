@@ -25,7 +25,7 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private List<CommandVO> processCommandDetail;//数据处理流程明细，命令配置集合。
 
-    private String loadExternalLibsPath;//需要加载外部实现的命令插件
+    private String loadExternalLibsPath;//需要加载外部实现的命令插件,创建数据流程的时候会校验当前command是否都存在！
 
     private Date createTime;//数据处理流程创建时间
 

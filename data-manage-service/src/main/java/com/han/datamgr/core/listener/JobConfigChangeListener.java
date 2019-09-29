@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
  * 1.平台的基本参数配置变化，比如checkPoint时间、并行度
  * 2.ETL处理过程中的变化，比如EL表达式变化等、是否禁用某个命令
  * 3.任务操作等都可以从该web平台发送出去
+ * FIXME 找个Listener的触发时机应该是在所有服务操作事物commit之后再下发，
+ *    不要在事物范围内执行
  */
 @Service
-public class DataProcessFlowChangeListener implements EventListener {
+public class JobConfigChangeListener implements EventListener {
 
     @Override
     public EventVO listen(EventVO event) throws EventException {
