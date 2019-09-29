@@ -19,7 +19,7 @@ public class CommandEntity implements Serializable {
 
     private String getCommandType;
 
-    private String commandParams;//命令本身的构建需要的参数，List<FiledTypeEntity>的JSON的字符串
+    private String commandParams;//命令本身的构建需要的参数，Map<String,Object>的JSON的字符串
 
     private String commandInputParams;//命令入参，List<FiledTypeEntity>的JSON的字符串
 

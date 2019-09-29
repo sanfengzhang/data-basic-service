@@ -32,6 +32,6 @@ public interface DataTypeService {
      * @param dataType
      * @throws DataTypeException
      */
-    public void deleteDataType(BusDataTypeEntity dataType)throws DataTypeException;
+    public void removeDataType(BusDataTypeEntity dataType)throws DataTypeException;
 
 }
