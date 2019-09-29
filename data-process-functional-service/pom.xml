@@ -12,19 +12,9 @@
     <artifactId>data-process-functional-service</artifactId>
     <dependencies>
         <dependency>
-            <groupId>org.kitesdk</groupId>
-            <artifactId>kite-morphlines-core</artifactId>
-            <version>1.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.typesafe</groupId>
-                    <artifactId>config</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.han.databasic-service</groupId>
+            <artifactId>data-morph-foundation</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -39,7 +29,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.60</version>
+            <version>1.2.60_preview_04</version>
         </dependency>
     </dependencies>
 </project>

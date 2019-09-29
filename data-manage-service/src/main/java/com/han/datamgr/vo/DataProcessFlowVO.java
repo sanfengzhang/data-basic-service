@@ -4,6 +4,7 @@ import com.han.datamgr.entity.DataProcessFlowEntity;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: Hanl
@@ -19,9 +20,9 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private String sourceDesc;//数据源描述
 
-    private String processCommandDetail;//数据处理流程明细，命令配置集合。
+    private List<CommandVO> processCommandDetail;//数据处理流程明细，命令配置集合。
 
-    private String filterCmdCondition;//某些命令过滤条件
+    private String filterCmdCondition;//某些命令过滤条件,可以支持一些ELExpress的bool表达式
 
     private String dstDesc;//目标输出
 

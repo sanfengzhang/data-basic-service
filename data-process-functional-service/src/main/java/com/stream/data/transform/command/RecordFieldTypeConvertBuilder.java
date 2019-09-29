@@ -13,6 +13,10 @@ import java.util.*;
  * @author: Hanl
  * @date :2019/8/8
  * @desc:
+ * 字段类型转换，使用FastJson里面的类型转换功能，
+ * 基本的数据类型功能,和JSON字符串转对象的功能
+ * 或者将Map转换为JavaBean对象等功能
+ *
  */
 public class RecordFieldTypeConvertBuilder implements CommandBuilder {
 

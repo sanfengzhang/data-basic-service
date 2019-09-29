@@ -3,7 +3,6 @@ package com.stream.data.transform;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.stream.data.transform.api.CommandBuildService;
-import com.stream.data.transform.command.CallSubPipeBuilder;
 import com.stream.data.transform.command.SubPipeSelector;
 import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.utils.TypeUtils;
@@ -33,6 +32,7 @@ public class KeyValueSubPipeSelectorTest {
 
     @Before
     public void setUp() {
+        System.out.println(String[].class.getName());
         PropertyConfigurator.configure("src/main/resources/log4j.properties");
         FaultTolerance faultTolerance = new FaultTolerance(false, false);
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(faultTolerance)
@@ -63,7 +63,7 @@ public class KeyValueSubPipeSelectorTest {
 
         Map<String, String> recordFieldType = new HashMap<>();
         recordFieldType.put("trans_channel_id", TypeUtils.INT);
-        recordFieldType.put("trans_date", TypeUtils.DATE);
+        recordFieldType.put("trans_date", Map.class.getName());
         Map<String, Object> recordFieldTypeCommand = CommandBuildService.recordFieldType(recordFieldType);
 
 
@@ -93,7 +93,7 @@ public class KeyValueSubPipeSelectorTest {
         Command cmd = new Compiler().compile(config, morphlineContext, finalChid1);
         Notifications.notifyStartSession(cmd);
         Record record = new Record();
-        String msg = "2018-03-25|zhangsan|12|武汉市";
+        String msg = "{\"start_date\":\"2018-03-25\",\"end_date\":\"2018-03-26\"}|zhangsan|12|武汉市";
         record.put(Fields.MESSAGE, msg);
         cmd.process(record);
         record = finalChid1.getRecords().get(0);

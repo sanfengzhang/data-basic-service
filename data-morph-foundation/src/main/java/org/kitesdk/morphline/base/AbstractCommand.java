@@ -52,6 +52,10 @@ public abstract class AbstractCommand implements Command {
 
     private SkipCommandSelector skipCommandSelector;
 
+    public static final String CMD_INPUT_PARAMS="cmd.input.params";
+
+    public static final String CMD_OUTPUT_PARAMS="cmd.output.params";
+
     private String commandInstanceId;
 
     private static final boolean IS_MEASURING_METRICS =
@@ -160,6 +164,7 @@ public abstract class AbstractCommand implements Command {
         } else {
             LOG.debug("beforeNotify()");
         }
+
     }
 
     /**

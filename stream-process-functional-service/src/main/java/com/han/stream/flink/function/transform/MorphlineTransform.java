@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT> {
 
+    //FIXME 在Flink流式处理中不存在这种并发操作的问题
     private Map<String, Command> commands = new ConcurrentHashMap<>();
 
     private Map<String, Collector> collectors = new ConcurrentHashMap<>();
@@ -40,12 +41,12 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
     protected MorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
-
+        Compiler compiler=new Compiler();
         commandPipelines.forEach((dataType, commandPipeline) -> {
             Map<String, Object> commandMap = commandPipeline.get();
             Config config = ConfigFactory.parseMap(commandMap);
             Collector finalChild = new Collector();
-            Command cmd = new Compiler().compile(config, morphlineContext, finalChild);
+            Command cmd = compiler.compile(config, morphlineContext, finalChild);
             commands.put(dataType, cmd);
             collectors.put(dataType, finalChild);
         });

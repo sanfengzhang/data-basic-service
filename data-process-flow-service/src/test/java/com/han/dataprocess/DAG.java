@@ -88,7 +88,7 @@ public class DAG<T> {
         edgeList.add(edge9);
         List<Node> path = new ArrayList<>();
         List<List<Node>> allPaths = new LinkedList<>();
-        findPath(edgeList, edge.srcNode, edge8.dstNode, path, allPaths);
+        findPath(edgeList, edge.srcNode, edge3.dstNode, path, allPaths);
 
         System.out.println(allPaths);
         System.out.println();

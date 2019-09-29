@@ -1,6 +1,9 @@
 package com.stream.data.transform;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.codahale.metrics.SharedMetricRegistries;
+import com.google.common.base.Splitter;
 import com.stream.data.transform.command.CallSubPipeBuilder;
 import com.stream.data.transform.command.SubPipeSelector;
 import com.stream.data.transform.model.CommandPipeline;
@@ -80,30 +83,34 @@ public class MorphlineTest {
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
-        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(readLineMap).addCommand(splitCommand).addCommand(recordFieldTypeCommand).
+        CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(recordFieldTypeCommand).
                 addCommand(javaMethodCommand).addCommand(expressCommand).addCommand(jdbcCommand);
 
         Map<String, Object> configMap = commands.get();
 
+        System.out.println(JSON.toJSONString(configMap));
         Config config = ConfigFactory.parseMap(configMap);
         System.out.println(config);
         Collector finalChid = new Collector();
         Command cmd = new Compiler().compile(config, morphlineContext, finalChid);
-        Record record = new Record();
-        String msg = "2018-03-25|801507|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1";
-        record.put(Fields.ATTACHMENT_BODY, msg.getBytes());
+
+
+
         Notifications.notifyStartSession(cmd);
 
         long start = System.currentTimeMillis();
         int total = 1;
         for (int i = 0; i < total; i++) {
+            String msg = i+"|801507|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1";
+            Record record = new Record();
+            record.put(Fields.MESSAGE, msg);
             cmd.process(record);
-            record = finalChid.getRecords().get(0);
-            System.out.println(record);
+           // record = finalChid.getRecords().get(0);
+          //  System.out.println(record);
         }
         long end = System.currentTimeMillis();
-        double cust = (end - start) / 1000;
-        System.out.println(total / cust);
+        double cust = (end - start);
+        System.out.println(cust / 1000);
 
     }
 
@@ -112,6 +119,8 @@ public class MorphlineTest {
         Integer a = 234;
         System.out.println(a.hashCode());
     }
+
+
 
 
     @Test
@@ -188,7 +197,7 @@ public class MorphlineTest {
         FaultTolerance faultTolerance = new FaultTolerance(false, false);
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(faultTolerance)
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate("testId")).build();
-
+        this.morphlineContext.getSettings().put("parserConfig", new ParserConfig());
         finalChid = new Collector();
     }
 

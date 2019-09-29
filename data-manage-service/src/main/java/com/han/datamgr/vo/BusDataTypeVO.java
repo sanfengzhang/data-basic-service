@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: Hanl
@@ -24,7 +25,7 @@ public class BusDataTypeVO extends BaseVO<BusDataTypeEntity> {
     @AlreadyInDB(sql = "")
     private String dataTypeName;
 
-    private String dataSchema;
+    private List<FiledTypeVO> dataSchema;//
 
     private String dataTypeLineage;
 
