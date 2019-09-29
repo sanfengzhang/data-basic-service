@@ -1,7 +1,7 @@
 package com.han.datamgr.core;
 
-import com.han.datamgr.exception.DataTypeException;
 import com.han.datamgr.entity.BusDataTypeEntity;
+import com.han.datamgr.exception.BusException;
 
 /**
  * @author: Hanl
@@ -14,24 +14,24 @@ public interface DataTypeService {
     /**
      * 创建数据类型
      * @param dataType
-     * @throws DataTypeException
+     * @throws BusException
      */
-    public void createDataType(BusDataTypeEntity dataType) throws DataTypeException;
+    public void createDataType(BusDataTypeEntity dataType) throws BusException;
 
 
     /**
      * 更新数据类型
      * @param dataType
-     * @throws DataTypeException
+     * @throws BusException
      */
-    public void updateDataType(BusDataTypeEntity dataType) throws DataTypeException;
+    public void updateDataType(BusDataTypeEntity dataType) throws BusException;
 
 
     /**
      * 删除数据类型
      * @param dataType
-     * @throws DataTypeException
+     * @throws BusException
      */
-    public void removeDataType(BusDataTypeEntity dataType)throws DataTypeException;
+    public void removeDataType(BusDataTypeEntity dataType)throws BusException;
 
 }

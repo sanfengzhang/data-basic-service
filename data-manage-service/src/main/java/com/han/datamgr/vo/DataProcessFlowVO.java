@@ -2,9 +2,11 @@ package com.han.datamgr.vo;
 
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -12,6 +14,7 @@ import java.util.List;
  * @desc:
  */
 @Data
+@ToString
 public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private String id;

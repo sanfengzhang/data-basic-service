@@ -3,6 +3,7 @@ package com.han.datamgr.vo;
 import com.han.datamgr.entity.BusDataTypeEntity;
 import com.han.datamgr.support.AlreadyInDB;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @desc:
  */
 @Data
+@ToString
 public class BusDataTypeVO extends BaseVO<BusDataTypeEntity> {
 
     private String id;

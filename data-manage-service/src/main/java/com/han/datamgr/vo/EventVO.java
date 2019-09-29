@@ -2,6 +2,7 @@ package com.han.datamgr.vo;
 
 import com.han.datamgr.entity.EventEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
  * @desc:
  */
 @Data
+@ToString
 public class EventVO extends BaseVO<EventEntity> {
 
     private String id;

@@ -2,6 +2,7 @@ package com.han.datamgr.vo;
 
 import com.han.datamgr.entity.CommandEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -13,13 +14,14 @@ import java.util.Map;
  * @desc:
  */
 @Data
+@ToString
 public class CommandVO extends BaseVO<CommandEntity> {
 
     private String id;
 
     private String commandName;
 
-    private String getCommandType;
+    private String commandType;//Command类型，解析类型、富化类型
 
     private Map<String,Object> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
 

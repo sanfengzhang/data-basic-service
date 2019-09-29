@@ -2,6 +2,7 @@ package com.han.datamgr.vo;
 
 import com.han.datamgr.entity.FiledTypeEntity;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @author: Hanl
@@ -9,6 +10,7 @@ import lombok.Data;
  * @desc:
  */
 @Data
+@ToString
 public class FiledTypeVO extends BaseVO<FiledTypeEntity>{
 
     private String fieldName;
