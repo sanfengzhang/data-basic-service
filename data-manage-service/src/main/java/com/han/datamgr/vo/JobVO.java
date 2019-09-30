@@ -20,9 +20,6 @@ public class JobVO extends BaseVO<JobEntity> {
 
     private String jobName;
 
-    //FIXME Job关联了那些数据处理流程，当前设计时静态数据类型关联，需要考虑自定方式选择数据处理流程?
-    private Map<String,DataProcessFlowVO> dataTypeToDataProcessFlow;//该Job处理的所有数据类类型，对应的数据处理流程
-
     private Map<String, Object> jobConfig;//Job级别的配置参数
 
     private Date createTime;//任务创建时间

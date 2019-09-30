@@ -1,7 +1,12 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,24 +16,27 @@ import java.util.Date;
  * @desc:
  */
 @Data
+@Entity
+@Table(name = "command")
 public class CommandEntity implements Serializable {
 
+    @Id
+    @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
     private String id;
 
+    @Column(name = "cmd_name")
     private String commandName;
 
+    @Column(name = "cmd_clazz")
     private String commandClazz;//当前Command所属的原始java类名称
 
+    @Column(name = "cmd_type")
     private String commandType;
 
-    private String commandParams;//命令本身的构建需要的参数，Map<String,Object>的JSON的字符串
-
-    private String commandInputParams;//命令入参，List<FiledTypeEntity>的JSON的字符串
-
-    private String commandOutputParams;//命令出参，List<FiledTypeEntity>的JSON的字符串
-
+    @Column(name = "create_time")
     private Date createTime;//数据处理流程创建时间
 
+    @Column(name = "update_time")
     private Date updateTime;//数据流程更新时间
 
 

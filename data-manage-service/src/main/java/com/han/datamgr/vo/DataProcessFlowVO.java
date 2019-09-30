@@ -21,15 +21,15 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private String dataProcessFlowName;//数据处理流程名称
 
-    private String sourceDesc;//数据源描述
-
-    private List<CommandVO> processCommandDetail;//数据处理流程明细，命令配置集合。
+    private List<CommandInstanceVO> processCommandDetail;//数据处理流程明细，命令配置集合。
 
     private String loadExternalLibsPath;//需要加载外部实现的命令插件,创建数据流程的时候会校验当前command是否都存在！
 
+    private String filterCmdCondition;
+
     private Date createTime;//数据处理流程创建时间
 
-    private Date updateTime;//数据流程更新时间
+    private int version;
 
     @Override
     public DataProcessFlowEntity to() {

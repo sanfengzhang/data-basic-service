@@ -15,7 +15,13 @@ import org.springframework.stereotype.Service;
  * 2.ETL处理过程中的变化，比如EL表达式变化等、是否禁用某个命令
  * 3.任务操作等都可以从该web平台发送出去
  * FIXME 找个Listener的触发时机应该是在所有服务操作事物commit之后再下发，
- *    不要在事物范围内执行
+ *    不要在事物范围内执行，假如listener触发失败，有重试机制，重试如果仍然失败
+ *    则再考虑系统使用性上，保留该数据流程新增或修改记录。并提示用户和系统管理
+ *    员，当前的情况。
+ *    所以关于数据流程的设计，我们应当保留相同名称的数据流程，设定一个版本号。因为
+ *    上述情况，可能配置发送失败。但是用户修改的流程可以保存下来，后续可以继续使用
+ *    避免重复配置。
+ *
  */
 @Service
 public class JobConfigChangeListener implements EventListener {
