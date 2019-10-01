@@ -1,6 +1,7 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -34,5 +35,16 @@ public class JobDataProcessFlowRelationEntity implements Serializable {
     private DataProcessFlowEntity dataProcessFlowEntity;
 
     @Column(name = "create_time")
+    @CreationTimestamp
     private Date createTime;
+
+    @Override
+    public String toString() {
+        return "JobDataProcessFlowRelationEntity{" +
+                "id='" + id + '\'' +
+                ", jobEntity=" + jobEntity.getId() +
+                ", dataProcessFlowEntity=" + dataProcessFlowEntity.getId() +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

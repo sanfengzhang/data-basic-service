@@ -1,5 +1,6 @@
 package com.han.datamgr.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import lombok.Data;
 
@@ -32,17 +33,33 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
     //的时候就总是跳过当前cmd的执行
     private String skipCmdCondition;
 
-    private String commandId;
+    private CommandVO commandVO;
 
     private Date createTime;
 
     @Override
     public CommandInstanceEntity to() {
-        return null;
+        CommandInstanceEntity entity = new CommandInstanceEntity();
+        entity.setId(this.getId());
+        entity.setCommand(this.commandVO.to());
+        entity.setCommandInstanceName(this.commandInstanceName);
+        entity.setCommandInstanceParams(JSON.toJSONString(commandParams));
+        entity.setCommandInputParams(JSON.toJSONString(commandInputParams));
+        entity.setCommandOutputParams(JSON.toJSONString(commandOutputParams));
+        entity.setCreateTime(this.createTime);
+        return entity;
     }
 
     @Override
-    public BaseVO from(CommandInstanceEntity commandInstanceEntity) {
-        return null;
+    public BaseVO from(CommandInstanceEntity entity) {
+        CommandInstanceVO commandInstanceVO = new CommandInstanceVO();
+        commandInstanceVO.setId(entity.getId());
+        commandInstanceVO.setCommandParams(JSON.parseObject(entity.getCommandInstanceParams(), Map.class));
+        commandInstanceVO.setCommandInputParams(JSON.parseArray(entity.getCommandInputParams(), FiledTypeVO.class));
+        commandInstanceVO.setCommandOutputParams(JSON.parseArray(entity.getCommandOutputParams(), FiledTypeVO.class));
+        commandInstanceVO.setSkipCmdSelectorClazz(entity.getSkipCmdSelectorClazz());
+        commandInstanceVO.setSkipCmdCondition(entity.getSkipCmdCondition());
+        commandInstanceVO.setCreateTime(entity.getCreateTime());
+        return commandInstanceVO;
     }
 }

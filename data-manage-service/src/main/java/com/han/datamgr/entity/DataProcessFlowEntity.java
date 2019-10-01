@@ -1,7 +1,7 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
-import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -15,7 +15,6 @@ import java.util.List;
  * @desc:
  */
 @Data
-@ToString
 @Entity
 @Table(name = "data_process_flow")
 public class DataProcessFlowEntity implements java.io.Serializable {
@@ -35,13 +34,20 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     private String filterCmdCondition;//某些命令过滤条件
 
     @Column(name = "create_time")
+    @CreationTimestamp
     private Date createTime;//数据处理流程创建时间
 
     @Column(name = "version")
     private int version;
 
-    @OneToMany(targetEntity = JobDataProcessFlowRelationEntity.class, mappedBy = "dataProcessFlowEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = JobDataProcessFlowRelationEntity.class, mappedBy = "dataProcessFlowEntity",
+            cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobDataProcessFlowRelationEntity> relationEntities = new ArrayList<>();
+
+
+    @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "dataProcessFlowEntity",
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DataProcessFlowCmdInstanceRelation> cmdInstanceEntityList = new ArrayList<>();
 
 
 }

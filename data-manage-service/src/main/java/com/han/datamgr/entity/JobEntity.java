@@ -3,7 +3,10 @@ package com.han.datamgr.entity;
 import com.google.j2objc.annotations.ObjectiveCName;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,7 +20,6 @@ import java.util.List;
  * @desc:
  */
 @Data
-@ToString
 @Entity
 @Table(name = "job")
 public class JobEntity implements Serializable {
@@ -33,18 +35,15 @@ public class JobEntity implements Serializable {
     @Column(name = "job_config_params")
     private String jobConfigParams;//Job级别的配置参数
 
-//    @ManyToMany
-//    @JoinTable(name = "job_data_process_flow_relation", joinColumns = @JoinColumn(name = "job_id",referencedColumnName="id"),
-//            inverseJoinColumns = @JoinColumn(name = "data_process_flow_id",referencedColumnName="id"))
-//    private List<DataProcessFlowEntity> dataProcessFlowEntityList=new ArrayList<>();
-
     @OneToMany( targetEntity = JobDataProcessFlowRelationEntity.class,mappedBy = "jobEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobDataProcessFlowRelationEntity> relationEntities = new ArrayList<>();
 
     @Column(name = "create_time")
+    @CreationTimestamp
     private Date createTime;//任务创建时间
 
     @Column(name = "update_time")
+    @LastModifiedDate
     private Date updateTime;//任务更新时间
 
 }
