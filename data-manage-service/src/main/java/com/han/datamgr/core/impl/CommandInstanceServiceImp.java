@@ -5,6 +5,7 @@ import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.CommandInstanceRepository;
 import com.han.datamgr.vo.CommandInstanceVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CommandInstanceServiceImp implements CommandInstanceService {
 
+    @Autowired
     private CommandInstanceRepository commandInstanceRepository;
 
     @Override

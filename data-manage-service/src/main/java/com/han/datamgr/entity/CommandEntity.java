@@ -1,13 +1,12 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author: Hanl
@@ -21,6 +20,7 @@ public class CommandEntity implements Serializable {
 
     @Id
     @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "jpa-uuid")
     private String id;
 
     @Column(name = "cmd_name")
@@ -34,6 +34,7 @@ public class CommandEntity implements Serializable {
 
 
     @Column(name = "create_time")
+    @CreationTimestamp
     private Date createTime;//数据处理流程创建时间
 
     @Column(name = "update_time")

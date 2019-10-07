@@ -1,7 +1,6 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -25,34 +24,34 @@ public class CommandInstanceEntity implements Serializable {
     private String id;
 
     @Column(name = "cmd_instance_name")
-    private String commandInstanceName;
+    private String commandInstanceName;//cmd实例名称,比如soc的EL算子
 
     @Column(name = "cmd_instance_params")
-    private String commandInstanceParams;
+    private String commandInstanceParams;//ETL算子的初始化参数
 
     @Column(name = "cmd_input")
-    private String commandInputParams;
+    private String commandInputParams;//cmd的的输入参数，Record中的参数
 
     @Column(name = "cmd_output")
-    private String commandOutputParams;
+    private String commandOutputParams;//cmd的输出参数
 
     @Column(name = "skip_cmd_selector")
-    private String skipCmdSelectorClazz;
+    private String skipCmdSelectorClazz;//是否执行当前算子的操作
     ;
 
     @Column(name = "skip_cmd_condition")
-    private String skipCmdCondition;
+    private String skipCmdCondition;//逻辑表达式
 
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity",
             cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();
+    private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();//关联哪些数据流程
 
     @ManyToOne(cascade = {CascadeType.REMOVE})
     @JoinColumn(name = "cmd_id")
-    private CommandEntity command;
+    private CommandEntity command;//属于哪个Command的实例对象
 
     @Column(name = "version")
-    private int version;
+    private int version;//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
 
     @Column(name = "create_time")
     @CreationTimestamp

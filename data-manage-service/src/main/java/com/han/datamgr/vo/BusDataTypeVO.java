@@ -5,9 +5,9 @@ import com.han.datamgr.support.AlreadyInDB;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
