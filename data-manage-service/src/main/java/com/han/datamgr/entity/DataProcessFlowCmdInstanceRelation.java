@@ -18,6 +18,7 @@ public class DataProcessFlowCmdInstanceRelation implements Serializable {
 
     @Id
     @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "jpa-uuid")
     private String id;
 
     @ManyToOne(targetEntity = DataProcessFlowEntity.class)
@@ -28,7 +29,7 @@ public class DataProcessFlowCmdInstanceRelation implements Serializable {
     @JoinColumn(name="cmd_instance_id")
     private CommandInstanceEntity commandInstanceEntity;
 
-    @Column(name = "cmd_order")
+    @Column(name = "cmd_order",columnDefinition = "命令实例在数据处理流程中的顺序")
     private int order;
 
 }

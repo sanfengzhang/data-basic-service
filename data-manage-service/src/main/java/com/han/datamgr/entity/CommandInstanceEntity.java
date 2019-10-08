@@ -21,37 +21,38 @@ import java.util.List;
 public class CommandInstanceEntity implements Serializable {
     @Id
     @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "jpa-uuid")
     private String id;
 
-    @Column(name = "cmd_instance_name")
-    private String commandInstanceName;//cmd实例名称,比如soc的EL算子
+    @Column(name = "cmd_instance_name", columnDefinition = "cmd实例名称,比如soc的EL算子")
+    private String commandInstanceName;
 
-    @Column(name = "cmd_instance_params")
-    private String commandInstanceParams;//ETL算子的初始化参数
+    @Column(name = "cmd_instance_params", columnDefinition = "ETL算子的初始化参数")
+    private String commandInstanceParams;
 
-    @Column(name = "cmd_input")
-    private String commandInputParams;//cmd的的输入参数，Record中的参数
+    @Column(name = "cmd_input", columnDefinition = "cmd的的输入参数，Record中的参数")
+    private String commandInputParams;
 
-    @Column(name = "cmd_output")
-    private String commandOutputParams;//cmd的输出参数
+    @Column(name = "cmd_output", columnDefinition = "cmd的输出参数")
+    private String commandOutputParams;
 
-    @Column(name = "skip_cmd_selector")
-    private String skipCmdSelectorClazz;//是否执行当前算子的操作
+    @Column(name = "skip_cmd_selector", columnDefinition = "是否跳过当前算子的操作的选择器")
+    private String skipCmdSelectorClazz;
     ;
 
-    @Column(name = "skip_cmd_condition")
-    private String skipCmdCondition;//逻辑表达式
+    @Column(name = "skip_cmd_condition", columnDefinition = "选择器的逻辑表达式")
+    private String skipCmdCondition;
 
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity",
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();//关联哪些数据流程
 
     @ManyToOne(cascade = {CascadeType.REMOVE})
-    @JoinColumn(name = "cmd_id")
-    private CommandEntity command;//属于哪个Command的实例对象
+    @JoinColumn(name = "cmd_id", columnDefinition = "属于哪个Command的实例对象")
+    private CommandEntity command;
 
-    @Column(name = "version")
-    private int version;//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
+    @Column(name = "version", columnDefinition = "同一个业务下面的同一个算子，可能在不同的时候使用版本不一样")
+    private int version;
 
     @Column(name = "create_time")
     @CreationTimestamp
