@@ -3,6 +3,7 @@ package com.han.datamgr.vo;
 import com.alibaba.fastjson.JSON;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @desc:
  */
 @Data
+@ToString
 public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
 
     private String id;

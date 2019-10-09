@@ -1,4 +1,4 @@
-package com.han.datamgr.support;
+package com.han.datamgr.web.support;
 
 import com.han.datamgr.vo.EventVO;
 import org.aspectj.lang.JoinPoint;
@@ -40,7 +40,7 @@ public class WebRequestAspect {
     @Before("request()")
     public void doBefore(JoinPoint joinPoint) {        //方法里面注入连接点
         EventVO eventVO = userEventVOThreadLocal.get();
-        String id = UUID.fromString("WebRequestAspect").toString();
+        String id = UUID.randomUUID().toString();
         if (null == eventVO) {
             eventVO = new EventVO();
             eventVO.setId(id);
@@ -73,7 +73,7 @@ public class WebRequestAspect {
                 eventVO.setTookTime(tookTime);
                 id = eventVO.getId();
             }
-            logger.info("end request event id={},result={}", id, returnValue);
+            logger.info("end request event requestId={},result={}", id, returnValue);
             //FIXME 可以将数据入库异步丢到事件线程池中去
         } catch (Exception e) {
             logger.warn("WebRequestAspect doAfter failed.", e);

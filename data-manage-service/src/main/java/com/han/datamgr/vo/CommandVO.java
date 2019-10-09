@@ -3,11 +3,8 @@ package com.han.datamgr.vo;
 import com.han.datamgr.entity.CommandEntity;
 import lombok.Data;
 import lombok.ToString;
-import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Hanl

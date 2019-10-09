@@ -32,7 +32,7 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_type")
     private String commandType;
 
-    @Column(name = "cmd_provider",columnDefinition = "当前command的提供者，系统默认或者外部业务方提供")
+    @Column(name = "cmd_provider",columnDefinition = "当前command的提供者,系统默认或者外部业务方提供")
     private String commandProvider;
 
     @Column(name = "create_time")
