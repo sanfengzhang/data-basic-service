@@ -1,15 +1,15 @@
-package com.han.datamgr.web.support;
+package com.han.datamgr.web;
 
+import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.EventVO;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,23 +21,25 @@ import java.util.UUID;
  * @author: Hanl
  * @date :2019/9/29
  * @desc:
+ * 作为web请求日志记录用拦截器更合理，用切面在方法异常有些场景不是很适用
  */
 
-@Aspect     // 表示一个切面bean
-@Component  // bean容器的组件注解。虽然放在contrller包里，但它不是控制器。如果注入service,但我们又没有放在service包里
-@Order(3)   // 有多个日志时，ORDER可以定义切面的执行顺序（数字越大，前置越后执行，后置越前执行）
+//@Aspect     // 表示一个切面bean
+//@Component  // bean容器的组件注解。虽然放在contrller包里，但它不是控制器。如果注入service,但我们又没有放在service包里
+@Order(0)   // 有多个日志时，ORDER可以定义切面的执行顺序（数字越大，前置越后执行，后置越前执行）
+@Deprecated
 public class WebRequestAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(WebRequestAspect.class);
 
     ThreadLocal<EventVO> userEventVOThreadLocal = new ThreadLocal<>();  //线程副本类去记录各个线程的开始时间
 
-    @Pointcut("execution(public * com.*.*.web.*.*(..))")
+    @Pointcut("execution(public * com.*.*.web.controller.*.*(..))")
     private void request() {
     }
 
 
-    @Before("request()")
+     @Before("request()")
     public void doBefore(JoinPoint joinPoint) {        //方法里面注入连接点
         EventVO eventVO = userEventVOThreadLocal.get();
         String id = UUID.randomUUID().toString();
@@ -60,7 +62,7 @@ public class WebRequestAspect {
 
 
     //方法的返回值注入给ret
-    @AfterReturning(returning = "returnValue", pointcut = "request()")
+     @AfterReturning(returning = "returnValue", pointcut = "request()")
     public void doAfter(Object returnValue) {
         try {
             EventVO eventVO = userEventVOThreadLocal.get();
@@ -81,6 +83,37 @@ public class WebRequestAspect {
             //将该对象移除掉
             userEventVOThreadLocal.remove();
         }
+    }
+
+//    @Around("request()")
+    public Object aroundRequest(ProceedingJoinPoint proceedingJoinPoint) throws Exception {
+        /*result为连接点的放回结果*/
+        Object result = null;
+        String methodName = proceedingJoinPoint.getSignature().getName();
+
+        /*前置通知方法*/
+        System.out.println("前置通知方法>目标方法名：" + methodName + ",参数为：" + Arrays.asList(proceedingJoinPoint.getArgs()));
+
+        /*执行目标方法*/
+        try {
+            result = proceedingJoinPoint.proceed();
+
+            /*返回通知方法*/
+            System.out.println("返回通知方法>目标方法名" + methodName + ",返回结果为：" + result);
+        } catch (Throwable e) {
+            /*异常通知方法*/
+            System.out.println("异常通知方法>目标方法名" + methodName + ",异常为：" + e);
+            if (e instanceof BusException) {
+                throw (BusException) e;
+            } else if (e instanceof BindException) {
+                throw (BindException) e;
+            } else {
+                throw (Exception) e;
+            }
+        }
+        /*后置通知*/
+        System.out.println("后置通知方法>目标方法名" + methodName);
+        return result;
     }
 
 }

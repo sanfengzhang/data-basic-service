@@ -1,4 +1,4 @@
-package com.han.datamgr.web;
+package com.han.datamgr.web.controller;
 
 /**
  * @author: Hanl

@@ -1,4 +1,4 @@
-package com.han.datamgr.web;
+package com.han.datamgr.web.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

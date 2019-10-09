@@ -7,6 +7,11 @@ package com.han.datamgr.exception;
  */
 public class BusException extends Exception {
 
+    public BusException(String message) {
+
+        super(message, null);
+    }
+
     public BusException(String message, Throwable cause) {
 
         super(message, cause);
