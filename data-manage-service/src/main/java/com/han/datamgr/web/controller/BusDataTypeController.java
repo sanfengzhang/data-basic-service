@@ -1,7 +1,9 @@
 package com.han.datamgr.web.controller;
 
+import com.han.datamgr.core.DataTypeService;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.BusDataTypeVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +20,9 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/data_type")
 public class BusDataTypeController {
 
+    @Autowired
+    private DataTypeService dataTypeService;
+
     @RequestMapping(method = RequestMethod.POST)
     public String createDataTypeRequest(@Valid BusDataTypeVO busDataTypeVO) {
         System.out.println(busDataTypeVO);
@@ -29,6 +34,12 @@ public class BusDataTypeController {
         if(name.equals("zhangsan")){
             throw  new BusException("参数错误");
         }
+        return "success";
+    }
+
+    @RequestMapping(value = "import",method = RequestMethod.POST)
+    public String importDataTypeRequest()throws BusException {
+        dataTypeService.createDataType(new BusDataTypeVO());
         return "success";
     }
 

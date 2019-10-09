@@ -1,7 +1,10 @@
 package com.han.datamgr.core;
 
-import com.han.datamgr.entity.BusDataTypeEntity;
 import com.han.datamgr.exception.BusException;
+import com.han.datamgr.vo.BusDataTypeVO;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 /**
  * @author: Hanl
@@ -9,6 +12,7 @@ import com.han.datamgr.exception.BusException;
  * @desc:
  * 数据类型管理基本服务
  */
+@Validated
 public interface DataTypeService {
 
     /**
@@ -16,7 +20,8 @@ public interface DataTypeService {
      * @param dataType
      * @throws BusException
      */
-    public void createDataType(BusDataTypeEntity dataType) throws BusException;
+
+    public void createDataType(@Valid  BusDataTypeVO dataType) throws BusException;
 
 
     /**
@@ -24,7 +29,7 @@ public interface DataTypeService {
      * @param dataType
      * @throws BusException
      */
-    public void updateDataType(BusDataTypeEntity dataType) throws BusException;
+    public void updateDataType(BusDataTypeVO dataType) throws BusException;
 
 
     /**
@@ -32,6 +37,6 @@ public interface DataTypeService {
      * @param dataType
      * @throws BusException
      */
-    public void removeDataType(BusDataTypeEntity dataType)throws BusException;
+    public void removeDataType(BusDataTypeVO dataType)throws BusException;
 
 }
