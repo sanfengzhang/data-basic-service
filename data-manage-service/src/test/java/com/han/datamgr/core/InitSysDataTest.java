@@ -1,13 +1,17 @@
 package com.han.datamgr.core;
 
 import com.han.datamgr.Application;
+import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.entity.JobDataProcessFlowRelationEntity;
 import com.han.datamgr.entity.JobEntity;
 import com.han.datamgr.exception.BusException;
+import com.han.datamgr.repository.CommandRepository;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.repository.JobRepository;
+import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
+import com.stream.data.transform.api.CommandBuildService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +20,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -38,6 +40,9 @@ public class InitSysDataTest {
     @Autowired
     private CommandService commandService;
 
+    @Autowired
+    private CommandInstanceService commandInstanceService;
+
     @Transactional(rollbackFor = {Exception.class})
     @Test
     @Rollback(false)
@@ -51,6 +56,24 @@ public class InitSysDataTest {
         } catch (BusException e) {
             e.printStackTrace();
         }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void createCmdInstanceTest() throws BusException {
+        CommandInstanceVO vo = new CommandInstanceVO();
+        List<CommandEntity> commandVOS = commandService.queryAllCommands();
+        vo.setCommandEntity(commandVOS.get(0));
+        vo.setCommandInstanceName("SOC网关日志EL算子");
+
+        Map<String, String> expressMap = new HashMap<>();
+        expressMap.put("trans_return_code<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_return_code");
+        Map<String, Object> cacheWarmingData = new HashMap<>();
+        cacheWarmingData.put("trans_return_code", "999");
+        Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
+        vo.setCommandParams(expressCommand);
+        commandInstanceService.createCmdInstance(vo);
     }
 
 

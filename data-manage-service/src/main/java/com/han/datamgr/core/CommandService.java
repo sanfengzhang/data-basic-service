@@ -1,8 +1,11 @@
 package com.han.datamgr.core;
 
+import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.CommandVO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author: Hanl
@@ -34,4 +37,7 @@ public interface CommandService {
      * @param commandVO
      */
     public void removeCommand(CommandVO commandVO) throws BusException;
+
+
+    public List<CommandEntity> queryAllCommands()throws BusException;
 }

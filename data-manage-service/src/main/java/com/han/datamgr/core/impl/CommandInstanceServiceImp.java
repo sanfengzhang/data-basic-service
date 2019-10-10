@@ -23,7 +23,6 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
     @Override
     @Transactional
     public void createCmdInstance(CommandInstanceVO commandInstanceVO) throws BusException {
-
         CommandInstanceEntity commandInstanceEntity = commandInstanceVO.to();
         commandInstanceRepository.save(commandInstanceEntity);
     }

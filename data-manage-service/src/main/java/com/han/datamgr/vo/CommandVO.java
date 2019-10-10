@@ -41,6 +41,13 @@ public class CommandVO extends BaseVO<CommandEntity> {
 
     @Override
     public BaseVO from(CommandEntity commandEntity) {
-        return null;
+        CommandVO vo = new CommandVO();
+        vo.setId(commandEntity.getId());
+        vo.setCommandName(commandEntity.getCommandName());
+        vo.setCommandClazz(commandEntity.getCommandClazz());
+        vo.setCommandType(commandEntity.getCommandType());
+        vo.setCreateTime(commandEntity.getCreateTime());
+        vo.setUpdateTime(commandEntity.getUpdateTime());
+        return vo;
     }
 }
