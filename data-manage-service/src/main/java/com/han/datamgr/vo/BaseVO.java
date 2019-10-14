@@ -1,5 +1,7 @@
 package com.han.datamgr.vo;
 
+import java.util.List;
+
 /**
  * @author: Hanl
  * @date :2019/9/27
@@ -7,8 +9,10 @@ package com.han.datamgr.vo;
  */
 public abstract class BaseVO<T> implements java.io.Serializable {
 
+    private List<T> entities;
+
     public abstract T to();
 
-    public abstract BaseVO from(T t);
+    public abstract void from(T t);
 
 }

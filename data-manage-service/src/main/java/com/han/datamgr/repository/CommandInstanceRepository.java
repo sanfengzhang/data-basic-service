@@ -1,7 +1,7 @@
 package com.han.datamgr.repository;
 
 import com.han.datamgr.entity.CommandInstanceEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.han.datamgr.repository.support.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @desc:
  */
 @Repository
-public interface CommandInstanceRepository extends JpaRepository<CommandInstanceEntity, String> {
+public interface CommandInstanceRepository extends BaseRepository<CommandInstanceEntity, String> {
 }

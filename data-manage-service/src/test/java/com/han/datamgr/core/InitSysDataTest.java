@@ -1,19 +1,17 @@
 package com.han.datamgr.core;
 
+import com.alibaba.fastjson.JSON;
 import com.han.datamgr.Application;
-import com.han.datamgr.entity.CommandEntity;
-import com.han.datamgr.entity.DataProcessFlowEntity;
-import com.han.datamgr.entity.JobDataProcessFlowRelationEntity;
-import com.han.datamgr.entity.JobEntity;
+import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
-import com.han.datamgr.repository.CommandRepository;
-import com.han.datamgr.repository.DataProcessFlowRepository;
-import com.han.datamgr.repository.JobRepository;
+import com.han.datamgr.repository.*;
 import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
 import com.stream.data.transform.api.CommandBuildService;
+import net.bytebuddy.asm.Advice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.internal.util.collections.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -42,6 +40,56 @@ public class InitSysDataTest {
 
     @Autowired
     private CommandInstanceService commandInstanceService;
+
+    @Autowired
+    private FiledRepository filedRepository;
+
+    @Autowired
+    private CommandInstanceRepository commandInstanceRepository;
+
+    @Autowired
+    private ParamRepository pa;
+
+    @Autowired
+    private CommandParamRepository commandParamRepository;
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void createCmdParamTest() {
+
+        CommandParamEntity commandParamEntity = new CommandParamEntity();
+        commandParamEntity.setFieldName("expresses");
+        commandParamEntity.setFieldType("java.util.HashMap");
+        commandParamEntity.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
+        commandParamRepository.save(commandParamEntity);
+
+    }
+
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void createQueryTest() {
+
+        CommandInstanceEntity commandInstanceEntity = commandInstanceRepository.findById("8adb929b6db489f7016db48a173a0000").get();
+        System.out.println(commandInstanceEntity.toString());
+    }
+
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void createFiledTest() {
+        FiledEntity filedEntity = filedRepository.findById("8adb929b6dbe052a016dbe0548270000").get();
+
+        FiledEntity filedEntity1 = new FiledEntity();
+        filedEntity1.setFieldName("struct");
+        filedEntity1.setFieldType("map");
+        List<FiledEntity> list = new ArrayList<>();
+        list.add(filedEntity);
+        filedRepository.save(filedEntity1);
+    }
 
     @Transactional(rollbackFor = {Exception.class})
     @Test
@@ -72,7 +120,11 @@ public class InitSysDataTest {
         Map<String, Object> cacheWarmingData = new HashMap<>();
         cacheWarmingData.put("trans_return_code", "999");
         Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
-        vo.setCommandParams(expressCommand);
+        expressCommand.forEach((k, v) -> {
+
+        });
+
+        //vo.setCommandParams(expressCommand);
         commandInstanceService.createCmdInstance(vo);
     }
 

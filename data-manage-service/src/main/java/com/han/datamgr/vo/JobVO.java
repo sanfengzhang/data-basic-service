@@ -32,7 +32,7 @@ public class JobVO extends BaseVO<JobEntity> {
     }
 
     @Override
-    public BaseVO from(JobEntity jobEntity) {
-        return null;
+    public void from(JobEntity jobEntity) {
+
     }
 }

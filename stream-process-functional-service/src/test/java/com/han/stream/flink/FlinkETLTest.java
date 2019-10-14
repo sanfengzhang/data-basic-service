@@ -59,6 +59,8 @@ public class FlinkETLTest {
         commandPipelineMap.put("test-type", commands);
     }
 
+
+
     @Test
     public void testSocketFlink() throws Exception {
         FlinkBuildJobService flinkBuildJobService = new FlinkBuildJobService();

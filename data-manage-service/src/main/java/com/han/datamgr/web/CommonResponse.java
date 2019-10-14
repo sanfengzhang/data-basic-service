@@ -14,8 +14,6 @@ import java.io.Serializable;
 @ToString
 public class CommonResponse implements Serializable {
 
-    private int code;
-
     private Object data;
 
     public static CommonResponse buildWithSuccess(Object data) {

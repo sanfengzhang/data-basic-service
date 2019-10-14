@@ -9,7 +9,6 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Hanl

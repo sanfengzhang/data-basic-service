@@ -1,7 +1,7 @@
 package com.han.datamgr.repository;
 
 import com.han.datamgr.entity.JobEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.han.datamgr.repository.support.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * @desc:
  */
 @Repository
-public interface JobRepository extends JpaRepository<JobEntity, String> {
+public interface JobRepository extends BaseRepository<JobEntity, String> {
 
 }

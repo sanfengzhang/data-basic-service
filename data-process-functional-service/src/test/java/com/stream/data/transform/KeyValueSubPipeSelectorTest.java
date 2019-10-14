@@ -40,6 +40,16 @@ public class KeyValueSubPipeSelectorTest {
         this.morphlineContext.getSettings().put("parserConfig", new ParserConfig());
     }
 
+    @Test
+    public void testEL(){
+        Map<String, String> expressMap = new HashMap<>();
+        expressMap.put("trans_return_code<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_return_code");
+        Map<String, Object> cacheWarmingData = new HashMap<>();
+        cacheWarmingData.put("trans_return_code", "999");
+        Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
+        System.out.println(expressCommand.toString());
+    }
+
 
     @Test
     public void testKeyValueSubPipeSelector() throws Exception {

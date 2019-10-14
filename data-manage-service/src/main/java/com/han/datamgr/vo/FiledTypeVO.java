@@ -1,6 +1,6 @@
 package com.han.datamgr.vo;
 
-import com.han.datamgr.entity.FiledTypeEntity;
+import com.han.datamgr.entity.FiledEntity;
 import lombok.Data;
 import lombok.ToString;
 
@@ -11,11 +11,13 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class FiledTypeVO extends BaseVO<FiledTypeEntity>{
+public class FiledTypeVO extends BaseVO<FiledEntity>{
 
     private String fieldName;
 
     private String fieldType;
+
+    private String filedValue;
 
     private int fieldLength;
 
@@ -24,12 +26,12 @@ public class FiledTypeVO extends BaseVO<FiledTypeEntity>{
     private String format;
 
     @Override
-    public FiledTypeEntity to() {
+    public FiledEntity to() {
         return null;
     }
 
     @Override
-    public BaseVO from(FiledTypeEntity filedTypeEntity) {
-        return null;
+    public void from(FiledEntity filedEntity) {
+
     }
 }

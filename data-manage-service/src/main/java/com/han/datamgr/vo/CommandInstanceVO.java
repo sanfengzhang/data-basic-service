@@ -6,6 +6,7 @@ import com.han.datamgr.entity.CommandInstanceEntity;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
 
     private String commandInstanceName;
 
-    private Map<String, Object> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
+    private List<FiledTypeVO> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
 
     private List<FiledTypeVO> commandInputParams;//命令入参，List<FiledTypeEntity>的JSON的字符串
 
@@ -40,13 +41,19 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
 
     private Date createTime;
 
+    private String name;
+
+    private String type;
+
+    private String ico = "el-icon-time";
+
     @Override
     public CommandInstanceEntity to() {
         CommandInstanceEntity entity = new CommandInstanceEntity();
         entity.setId(this.getId());
         entity.setCommand(commandEntity);
         entity.setCommandInstanceName(this.commandInstanceName);
-        entity.setCommandInstanceParams(JSON.toJSONString(commandParams));
+        //   entity.setCommandInstanceParams(JSON.toJSONString(commandParams));
         entity.setCommandInputParams(JSON.toJSONString(commandInputParams));
         entity.setCommandOutputParams(JSON.toJSONString(commandOutputParams));
         entity.setCreateTime(this.createTime);
@@ -54,16 +61,22 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
     }
 
     @Override
-    public BaseVO from(CommandInstanceEntity entity) {
-        CommandInstanceVO commandInstanceVO = new CommandInstanceVO();
-        commandInstanceVO.setId(entity.getId());
-        commandInstanceVO.setCommandParams(JSON.parseObject(entity.getCommandInstanceParams(), Map.class));
-        commandInstanceVO.setCommandInputParams(JSON.parseArray(entity.getCommandInputParams(), FiledTypeVO.class));
-        commandInstanceVO.setCommandOutputParams(JSON.parseArray(entity.getCommandOutputParams(), FiledTypeVO.class));
-        commandInstanceVO.setSkipCmdSelectorClazz(entity.getSkipCmdSelectorClazz());
-        commandInstanceVO.setSkipCmdCondition(entity.getSkipCmdCondition());
-        commandInstanceVO.setCreateTime(entity.getCreateTime());
-        commandInstanceVO.setCommandEntity(entity.getCommand());
-        return commandInstanceVO;
+    public void from(CommandInstanceEntity entity) {
+        this.setId(entity.getId());
+        List<FiledTypeVO> cmdInstanceParams = new ArrayList<>();
+        entity.getCmdInstanceParams().forEach(commandParamEntity -> {
+            FiledTypeVO filedTypeVO = new FiledTypeVO();
+            filedTypeVO.from(commandParamEntity);
+            cmdInstanceParams.add(filedTypeVO);
+        });
+        this.setCommandParams(cmdInstanceParams);
+        this.setCommandInputParams(JSON.parseArray(entity.getCommandInputParams(), FiledTypeVO.class));
+        this.setCommandOutputParams(JSON.parseArray(entity.getCommandOutputParams(), FiledTypeVO.class));
+        this.setSkipCmdSelectorClazz(entity.getSkipCmdSelectorClazz());
+        this.setSkipCmdCondition(entity.getSkipCmdCondition());
+        this.setCreateTime(entity.getCreateTime());
+        this.setCommandEntity(entity.getCommand());
+        this.setName(entity.getCommandInstanceName());
+        this.setType(entity.getCommand().getCommandType());
     }
 }

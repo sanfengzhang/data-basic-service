@@ -26,8 +26,12 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_name")
     private String commandName;
 
+    @Column(name = "cmd_morph_name")
+    private String commandMorphName;
+
     @Column(name = "cmd_clazz",columnDefinition = "当前Command所属的原始java类名称")
     private String commandClazz;
+
 
     @Column(name = "cmd_type")
     private String commandType;

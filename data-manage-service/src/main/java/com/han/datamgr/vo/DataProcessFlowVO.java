@@ -37,7 +37,7 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
     }
 
     @Override
-    public BaseVO from(DataProcessFlowEntity dataProcessFlowEntity) {
-        return null;
+    public void from(DataProcessFlowEntity dataProcessFlowEntity) {
+
     }
 }

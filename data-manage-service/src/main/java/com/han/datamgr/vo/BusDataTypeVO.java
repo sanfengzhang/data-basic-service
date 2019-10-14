@@ -46,8 +46,7 @@ public class BusDataTypeVO extends BaseVO<BusDataTypeEntity> {
     }
 
     @Override
-    public BaseVO from(BusDataTypeEntity busDataTypeEntity) {
+    public void from(BusDataTypeEntity busDataTypeEntity) {
 
-        return null;
     }
 }

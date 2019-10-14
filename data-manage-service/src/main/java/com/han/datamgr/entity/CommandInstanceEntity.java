@@ -27,10 +27,9 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "cmd_instance_name", columnDefinition = "cmd实例名称,比如soc的EL算子")
     private String commandInstanceName;
 
-    @Column(name = "cmd_instance_params", columnDefinition = "ETL算子的初始化参数")
-    private String commandInstanceParams;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity")
+    private List<CommandParamEntity> cmdInstanceParams = new ArrayList<>();
 
-    //FIXME 这个输入、输出参数不需要单独的表维护,就设计成一个JSONArray的FiledTypeVO字符串即可？
     @Column(name = "cmd_input", columnDefinition = "cmd的的输入参数，Record中的参数")
     private String commandInputParams;
 

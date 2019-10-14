@@ -39,7 +39,7 @@ public class EventVO extends BaseVO<EventEntity> {
     }
 
     @Override
-    public BaseVO from(EventEntity userEventEntity) {
-        return null;
+    public void from(EventEntity userEventEntity) {
+
     }
 }

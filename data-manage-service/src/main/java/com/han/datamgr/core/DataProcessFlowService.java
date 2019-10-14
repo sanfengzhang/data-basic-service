@@ -15,7 +15,7 @@ import java.util.List;
 public interface DataProcessFlowService {
 
 
-    public List<DataProcessFlowVO> queryDataProcessFlows()throws BusException;
+    public List<DataProcessFlowVO> queryDataProcessFlows(DataProcessFlowVO queryParams)throws BusException;
 
     /**
      * 创建数据流程

@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class CommandBuildService {
 
+
     public static Map<String, Object> readLine(String charset, boolean ignoreFirstLine) {
         Map<String, Object> readLineMap = new HashMap<>();
         Map<String, Object> charsetMap = new HashMap<>();
