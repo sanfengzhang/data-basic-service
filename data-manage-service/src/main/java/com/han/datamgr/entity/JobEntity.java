@@ -32,7 +32,7 @@ public class JobEntity implements Serializable {
     @Column(name = "job_name")
     private String jobName;
 
-    @Column(name = "job_config_params", columnDefinition = "Job级别的配置参数")
+    @Column(name = "job_config_params")//Job级别的配置参数
     private String jobConfigParams;
 
     @OneToMany(targetEntity = JobDataProcessFlowRelationEntity.class, mappedBy = "jobEntity", cascade = CascadeType.ALL, orphanRemoval = true)

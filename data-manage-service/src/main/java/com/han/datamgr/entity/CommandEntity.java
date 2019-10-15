@@ -31,13 +31,13 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_morph_name")
     private String commandMorphName;
 
-    @Column(name = "cmd_clazz", columnDefinition = "当前Command所属的原始java类名称")
+    @Column(name = "cmd_clazz")
     private String commandClazz;
 
     @Column(name = "cmd_type")
     private String commandType;
 
-    @Column(name = "cmd_provider", columnDefinition = "当前command的提供者,系统默认或者外部业务方提供")
+    @Column(name = "cmd_provider")
     private String commandProvider;
 
     @OneToMany(mappedBy = "command", fetch = FetchType.EAGER)
