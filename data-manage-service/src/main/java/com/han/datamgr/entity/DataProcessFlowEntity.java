@@ -46,7 +46,7 @@ public class DataProcessFlowEntity implements java.io.Serializable {
 
 
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "dataProcessFlowEntity",
-            cascade = CascadeType.ALL, orphanRemoval = true)
+            cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<DataProcessFlowCmdInstanceRelation> cmdInstanceEntityList = new ArrayList<>();
 
 

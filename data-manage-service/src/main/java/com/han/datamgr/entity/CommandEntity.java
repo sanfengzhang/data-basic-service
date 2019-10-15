@@ -40,7 +40,7 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_provider", columnDefinition = "当前command的提供者,系统默认或者外部业务方提供")
     private String commandProvider;
 
-    @OneToMany(mappedBy = "command")
+    @OneToMany(mappedBy = "command", fetch = FetchType.EAGER)
     private List<CommandInstanceEntity> commandInstanceEntityList = new ArrayList<>();
 
 
@@ -51,5 +51,22 @@ public class CommandEntity implements Serializable {
     @Column(name = "update_time")
     private Date updateTime;//数据流程更新时间
 
-
+    @Override
+    public String toString() {
+        List<String> ids = new ArrayList<>();
+        commandInstanceEntityList.forEach(data -> {
+            ids.add(data.getId());
+        });
+        return "CommandEntity{" +
+                "id='" + id + '\'' +
+                ", commandName='" + commandName + '\'' +
+                ", commandMorphName='" + commandMorphName + '\'' +
+                ", commandClazz='" + commandClazz + '\'' +
+                ", commandType='" + commandType + '\'' +
+                ", commandProvider='" + commandProvider + '\'' +
+                ", commandInstanceEntityList=" + ids +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }

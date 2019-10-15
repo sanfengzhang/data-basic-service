@@ -43,8 +43,7 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "skip_cmd_condition", columnDefinition = "选择器的逻辑表达式")
     private String skipCmdCondition;
 
-    @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity",
-            cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity")
     private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();//关联哪些数据流程
 
     @ManyToOne
@@ -60,15 +59,21 @@ public class CommandInstanceEntity implements Serializable {
 
     @Override
     public String toString() {
+        List<String> dataFlowCmdInstanceListIds=new ArrayList<>();
+        dataFlowCmdInstanceList.forEach(data->{
+            dataFlowCmdInstanceListIds.add(data.getId());
+        });
+        String commandId=command.getId();
         return "CommandInstanceEntity{" +
                 "id='" + id + '\'' +
                 ", commandInstanceName='" + commandInstanceName + '\'' +
+                ", command=" + commandId +
                 ", cmdInstanceParams=" + cmdInstanceParams +
                 ", commandInputParams='" + commandInputParams + '\'' +
                 ", commandOutputParams='" + commandOutputParams + '\'' +
                 ", skipCmdSelectorClazz='" + skipCmdSelectorClazz + '\'' +
                 ", skipCmdCondition='" + skipCmdCondition + '\'' +
-                ", dataFlowCmdInstanceList=" + dataFlowCmdInstanceList +
+                ", dataFlowCmdInstanceList=" + dataFlowCmdInstanceListIds +
                 ", version=" + version +
                 ", createTime=" + createTime +
                 '}';

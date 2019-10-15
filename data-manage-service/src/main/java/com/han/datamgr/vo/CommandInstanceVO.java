@@ -38,7 +38,7 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
     //的时候就总是跳过当前cmd的执行
     private String skipCmdCondition;
 
-    private CommandEntity commandEntity = new CommandEntity();
+    private CommandVO commandVO;
 
     private Date createTime;
 
@@ -52,7 +52,7 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
     public CommandInstanceEntity to() {
         CommandInstanceEntity entity = new CommandInstanceEntity();
         entity.setId(this.getId());
-        entity.setCommand(commandEntity);
+        entity.setCommand(commandVO.to());
         entity.setCommandInstanceName(this.commandInstanceName);
 
         List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
@@ -81,7 +81,9 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
         this.setSkipCmdSelectorClazz(entity.getSkipCmdSelectorClazz());
         this.setSkipCmdCondition(entity.getSkipCmdCondition());
         this.setCreateTime(entity.getCreateTime());
-        this.setCommandEntity(entity.getCommand());
+        CommandVO commandVO = new CommandVO();
+        commandVO.from(entity.getCommand());
+        this.setCommandVO(commandVO);
         this.setName(entity.getCommandInstanceName());
         this.setType(entity.getCommand().getCommandType());
     }

@@ -22,14 +22,23 @@ public class DataProcessFlowCmdInstanceRelation implements Serializable {
     private String id;
 
     @ManyToOne(targetEntity = DataProcessFlowEntity.class)
-    @JoinColumn(name="data_process_flow_id")
+    @JoinColumn(name = "data_process_flow_id")
     private DataProcessFlowEntity dataProcessFlowEntity;
 
     @ManyToOne(targetEntity = CommandInstanceEntity.class)
-    @JoinColumn(name="cmd_instance_id")
+    @JoinColumn(name = "cmd_instance_id")
     private CommandInstanceEntity commandInstanceEntity;
 
-    @Column(name = "cmd_order",columnDefinition = "命令实例在数据处理流程中的顺序")
+    @Column(name = "cmd_order", columnDefinition = "命令实例在数据处理流程中的顺序")
     private int order;
 
+    @Override
+    public String toString() {
+        return "DataProcessFlowCmdInstanceRelation{" +
+                "id='" + id + '\'' +
+                ", dataProcessFlowEntity=" + (dataProcessFlowEntity == null ? "" : dataProcessFlowEntity.getId()) +
+                ", commandInstanceEntity=" + (commandInstanceEntity == null ? "" : commandInstanceEntity.getId()) +
+                ", order=" + order +
+                '}';
+    }
 }

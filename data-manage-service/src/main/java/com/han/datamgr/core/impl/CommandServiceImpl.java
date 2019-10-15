@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -29,6 +30,7 @@ public class CommandServiceImpl implements CommandService {
 
 
     @Override
+    @Transactional
     public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException {
         List<LeftMenuVO> result = new ArrayList<>();
         List<CommandEntity> allCmd = commandRepository.findAll();

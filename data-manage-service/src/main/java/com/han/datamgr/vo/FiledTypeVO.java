@@ -11,7 +11,9 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class FiledTypeVO extends BaseVO<FiledEntity>{
+public class FiledTypeVO extends BaseVO<FiledEntity> {
+
+    private String id;
 
     private String fieldName;
 
@@ -31,7 +33,11 @@ public class FiledTypeVO extends BaseVO<FiledEntity>{
     }
 
     @Override
-    public void from(FiledEntity filedEntity) {
+    public void from(FiledEntity entity) {
 
+        this.setFieldName(entity.getFieldName());
+        this.setId(entity.getId());
+        this.setFieldType(entity.getFieldType());
+        this.setFiledValue(entity.getFiledValue());
     }
 }
