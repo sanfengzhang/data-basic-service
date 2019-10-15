@@ -47,7 +47,7 @@ public class CommandInstanceEntity implements Serializable {
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();//关联哪些数据流程
 
-    @ManyToOne(cascade = {CascadeType.REMOVE})
+    @ManyToOne
     @JoinColumn(name = "cmd_id", columnDefinition = "属于哪个Command的实例对象")
     private CommandEntity command;
 
@@ -57,4 +57,20 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
+
+    @Override
+    public String toString() {
+        return "CommandInstanceEntity{" +
+                "id='" + id + '\'' +
+                ", commandInstanceName='" + commandInstanceName + '\'' +
+                ", cmdInstanceParams=" + cmdInstanceParams +
+                ", commandInputParams='" + commandInputParams + '\'' +
+                ", commandOutputParams='" + commandOutputParams + '\'' +
+                ", skipCmdSelectorClazz='" + skipCmdSelectorClazz + '\'' +
+                ", skipCmdCondition='" + skipCmdCondition + '\'' +
+                ", dataFlowCmdInstanceList=" + dataFlowCmdInstanceList +
+                ", version=" + version +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

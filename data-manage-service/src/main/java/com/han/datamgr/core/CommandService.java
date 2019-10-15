@@ -3,6 +3,7 @@ package com.han.datamgr.core;
 import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.CommandVO;
+import com.han.datamgr.vo.LeftMenuVO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,9 @@ import java.util.List;
  */
 @Service
 public interface CommandService {
+
+
+    public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException;
 
     /**
      * 创建命令

@@ -16,7 +16,6 @@ import java.util.Map;
  * @desc:
  */
 public class DefaultBaseRepository <T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
-
     private final EntityManager em;
 
     public DefaultBaseRepository(Class<T> domainClass, EntityManager em)

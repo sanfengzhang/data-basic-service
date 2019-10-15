@@ -28,38 +28,6 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
     private CommandInstanceRepository commandInstanceRepository;
 
     @Override
-    public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException {
-        List<LeftMenuVO> result = new ArrayList<>();
-        List<CommandInstanceEntity> allCmdInstances = commandInstanceRepository.findAll();
-        Map<String, List<CommandInstanceVO>> typeToCmdList = new HashMap<>();
-        if (!CollectionUtils.isEmpty(allCmdInstances)) {
-            allCmdInstances.forEach(cmd -> {
-                String type = cmd.getCommand().getCommandType();
-                List<CommandInstanceVO> cmdList = typeToCmdList.get(type);
-                if (null == cmdList) {
-                    cmdList = new ArrayList<>();
-                    typeToCmdList.put(type, cmdList);
-                }
-                CommandInstanceVO vo = new CommandInstanceVO();
-                vo.from(cmd);
-                cmdList.add(vo);
-            });
-            Iterator<Map.Entry<String, List<CommandInstanceVO>>> it = typeToCmdList.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, List<CommandInstanceVO>> en = it.next();
-                LeftMenuVO leftMenuVO = new LeftMenuVO();
-                leftMenuVO.setType("group");
-                leftMenuVO.setName(en.getKey());
-                leftMenuVO.setIco("'el-icon-video-play'");
-                leftMenuVO.setChildren(en.getValue());
-                result.add(leftMenuVO);
-            }
-        }
-        return result;
-    }
-
-
-    @Override
     @Transactional
     public void createCmdInstance(CommandInstanceVO commandInstanceVO) throws BusException {
         CommandInstanceEntity commandInstanceEntity = commandInstanceVO.to();

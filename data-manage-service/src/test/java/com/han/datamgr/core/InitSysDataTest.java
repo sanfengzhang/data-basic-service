@@ -53,6 +53,9 @@ public class InitSysDataTest {
     @Autowired
     private CommandParamRepository commandParamRepository;
 
+    @Autowired
+    private CommandRepository commandRepository;
+
     @Transactional(rollbackFor = {Exception.class})
     @Test
     @Rollback(false)
@@ -64,6 +67,16 @@ public class InitSysDataTest {
         commandParamEntity.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
         commandParamRepository.save(commandParamEntity);
 
+    }
+
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void queryCmdTest() {
+
+        List<CommandEntity> commandInstanceEntity = commandRepository.findAll();
+        System.out.println(commandInstanceEntity.toString());
     }
 
 

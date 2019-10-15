@@ -21,6 +21,4 @@ public interface CommandInstanceService {
 
     public void removeCmdInstance(CommandInstanceVO commandInstanceVO) throws BusException;
 
-    public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException;
-
 }

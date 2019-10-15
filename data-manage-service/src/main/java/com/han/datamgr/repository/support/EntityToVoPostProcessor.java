@@ -4,12 +4,10 @@ package com.han.datamgr.repository.support;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.framework.ProxyFactory;
-
-import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.support.RepositoryProxyPostProcessor;
 
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
 
 /**
  * @author: Hanl
@@ -21,15 +19,21 @@ public class EntityToVoPostProcessor implements RepositoryProxyPostProcessor {
     @Override
     public void postProcess(ProxyFactory proxyFactory, RepositoryInformation repositoryInformation) {
 
+
     }
 
-    static enum EntityToVoAdvice implements MethodInterceptor {
+    static class EntityToVoAdvice implements MethodInterceptor {
 
-        INSTANCE;
+        RepositoryInformation repositoryInformation;
+
+        EntityToVoAdvice(RepositoryInformation repositoryInformation) {
+            this.repositoryInformation = repositoryInformation;
+        }
 
         @Override
         public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-            methodInvocation.proceed();
+
+
             return null;
         }
     }

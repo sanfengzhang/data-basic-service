@@ -3,6 +3,7 @@ package com.han.datamgr.vo;
 import com.alibaba.fastjson.JSON;
 import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
+import com.han.datamgr.entity.CommandParamEntity;
 import lombok.Data;
 import lombok.ToString;
 
@@ -24,11 +25,11 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
 
     private String commandInstanceName;
 
-    private List<FiledTypeVO> commandParams;//命令本身的构建需要的参数，可以是command参数，子流程调用
+    private List<FiledTypeVO> commandParams = new ArrayList<>();//命令本身的构建需要的参数，可以是command参数，子流程调用
 
-    private List<FiledTypeVO> commandInputParams;//命令入参，List<FiledTypeEntity>的JSON的字符串
+    private List<FiledTypeVO> commandInputParams = new ArrayList<>();//命令入参，List<FiledTypeEntity>的JSON的字符串
 
-    private List<FiledTypeVO> commandOutputParams;//命令出参，List<FiledTypeEntity>的JSON的字符串
+    private List<FiledTypeVO> commandOutputParams = new ArrayList<>();//命令出参，List<FiledTypeEntity>的JSON的字符串
 
     //当前命令是否根据Selector逻辑判断跳过执行，用户可以自定一些自己的选择器
     private String skipCmdSelectorClazz;
@@ -37,7 +38,7 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
     //的时候就总是跳过当前cmd的执行
     private String skipCmdCondition;
 
-    private CommandEntity commandEntity;
+    private CommandEntity commandEntity = new CommandEntity();
 
     private Date createTime;
 
@@ -53,7 +54,12 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
         entity.setId(this.getId());
         entity.setCommand(commandEntity);
         entity.setCommandInstanceName(this.commandInstanceName);
-        //   entity.setCommandInstanceParams(JSON.toJSONString(commandParams));
+
+        List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
+        commandParams.forEach(commandParam -> {
+            commandParamEntityList.add((CommandParamEntity) commandParam.to());
+        });
+        entity.setCmdInstanceParams(commandParamEntityList);
         entity.setCommandInputParams(JSON.toJSONString(commandInputParams));
         entity.setCommandOutputParams(JSON.toJSONString(commandOutputParams));
         entity.setCreateTime(this.createTime);

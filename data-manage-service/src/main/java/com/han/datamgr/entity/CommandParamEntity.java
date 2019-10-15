@@ -16,8 +16,25 @@ public class CommandParamEntity extends FiledEntity {
     private String cmdDisplayName;
 
     @ManyToOne
-    private  CommandInstanceEntity commandInstanceEntity;
+    private CommandInstanceEntity commandInstanceEntity = null;
 
     //private int paramIndex;//参数在命令初始化时候的数组位置，可以用反射的方法直接构建
 
+
+    @Override
+    public String toString() {
+        String commandInstanceEntityId = "";
+        if (null != commandInstanceEntity) {
+            commandInstanceEntityId = commandInstanceEntity.getId();
+        }
+        return "CommandParamEntity{" +
+                "cmdDisplayName='" + cmdDisplayName + '\'' +
+                ", id='" + id + '\'' +
+                ", fieldName='" + fieldName + '\'' +
+                ", fieldType='" + fieldType + '\'' +
+                ", filedValue='" + filedValue + '\'' +
+                ", format='" + format + '\'' +
+                ", commandInstanceEntity='" + commandInstanceEntityId + '\'' +
+                '}';
+    }
 }

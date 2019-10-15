@@ -25,20 +25,20 @@ public class FiledEntity implements Serializable {
     @Id
     @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
     @GeneratedValue(generator = "jpa-uuid")
-    private String id;
+    protected String id;
 
     @Basic
     @Column(name = "filed_name")
-    private String fieldName;
+    protected String fieldName;
 
     @Basic
     @Column(name = "filed_type")
-    private String fieldType;
+    protected String fieldType;
 
     @Column(name = "filed_value",columnDefinition = "varchar(255) COMMENT '字段赋值'")
-    private String filedValue;
+    protected String filedValue;
 
     @Column(name = "filed_format",columnDefinition = "varchar(32) COMMENT '数据格式化,yyyy-MM-dd'")
-    private String format;
+    protected String format;
 
 }
