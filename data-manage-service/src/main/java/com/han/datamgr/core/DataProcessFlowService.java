@@ -2,6 +2,7 @@ package com.han.datamgr.core;
 
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.DataProcessFlowVO;
+import com.stream.data.transform.model.CommandPipeline;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,21 +16,22 @@ import java.util.List;
 public interface DataProcessFlowService {
 
 
-    public List<DataProcessFlowVO> queryDataProcessFlows(DataProcessFlowVO queryParams)throws BusException;
+
+    public List<DataProcessFlowVO> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException;
 
     /**
      * 创建数据流程
      *
      * @param dataProcessFlowVO
      */
-    public void createDataProcessFlow(DataProcessFlowVO dataProcessFlowVO)throws BusException;
+    public void createDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException;
 
     /**
      * 修改数据流程命令详细配
      *
      * @param dataProcessFlowVO
      */
-    public void updateDataProcessFlowCommandDetail(DataProcessFlowVO dataProcessFlowVO)throws BusException;
+    public void updateDataProcessFlowCommandDetail(DataProcessFlowVO dataProcessFlowVO) throws BusException;
 
 
     /**
@@ -37,6 +39,6 @@ public interface DataProcessFlowService {
      *
      * @param dataProcessFlowVO
      */
-    public void removeDataProcessFlow(DataProcessFlowVO dataProcessFlowVO)throws BusException;
+    public void removeDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException;
 
 }

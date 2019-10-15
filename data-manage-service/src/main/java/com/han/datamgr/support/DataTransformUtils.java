@@ -39,4 +39,17 @@ public class DataTransformUtils<K, V> {
         }
         return result;
     }
+
+    public void sort(String filedName, List<V> list) throws IllegalAccessException {
+        Map<K, List<V>> result = new HashMap<>();
+        if (null != list && list.size() > 0) {
+            list.sort(new Comparator<V>() {
+                @Override
+                public int compare(V o1, V o2) {
+
+                    return 0;
+                }
+            });
+        }
+    }
 }

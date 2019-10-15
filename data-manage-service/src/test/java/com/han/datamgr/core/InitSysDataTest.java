@@ -56,6 +56,20 @@ public class InitSysDataTest {
     @Autowired
     private CommandRepository commandRepository;
 
+    @Autowired
+    private CommandPipeLineService commandPipeLineService;
+
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void buildCommandPipelineTest()throws Exception {
+
+      System.out.println(commandPipeLineService.createCommandPipeline("40288c816d82b6a3016d82b6bbc30000").toString());
+
+    }
+
+
     @Transactional(rollbackFor = {Exception.class})
     @Test
     @Rollback(false)
@@ -68,6 +82,17 @@ public class InitSysDataTest {
         commandParamRepository.save(commandParamEntity);
 
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Test
+    @Rollback(false)
+    public void queryDataProcessFlowTest() {
+
+        List<DataProcessFlowEntity> commandInstanceEntity = dataProcessFlowRepository.findAll();
+        System.out.println(commandInstanceEntity.toString());
+    }
+
+
 
 
     @Transactional(rollbackFor = {Exception.class})
@@ -125,7 +150,7 @@ public class InitSysDataTest {
     public void createCmdInstanceTest() throws BusException {
         CommandInstanceVO vo = new CommandInstanceVO();
         List<CommandEntity> commandVOS = commandService.queryAllCommands();
-        vo.setCommandEntity(commandVOS.get(0));
+        //vo.setCommandEntity(commandVOS.get(0));
         vo.setCommandInstanceName("SOC网关日志EL算子");
 
         Map<String, String> expressMap = new HashMap<>();
@@ -133,9 +158,7 @@ public class InitSysDataTest {
         Map<String, Object> cacheWarmingData = new HashMap<>();
         cacheWarmingData.put("trans_return_code", "999");
         Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
-        expressCommand.forEach((k, v) -> {
 
-        });
 
         //vo.setCommandParams(expressCommand);
         commandInstanceService.createCmdInstance(vo);
