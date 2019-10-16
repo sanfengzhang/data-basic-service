@@ -70,7 +70,6 @@ public class CommandServiceImpl implements CommandService {
 
 
     @Override
-//    @Transactional(rollbackFor = {Exception.class})
     public void createCommand(CommandVO... commandVO) throws BusException {
         List<CommandEntity> data = new ArrayList<>();
         for (CommandVO vo : commandVO) {

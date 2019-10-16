@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +76,7 @@ public class InitSysDataTest {
 
         CommandParamEntity outputFields = new CommandParamEntity();
         outputFields.setFieldName("outputFields");
-        outputFields.setFieldType("java.utils.List");
+        outputFields.setFieldType("java.util.List");
         outputFields.setFiledValue("[\"trans_date\",\"trans_code\",\"trans_channel_id\",\"trans_start_datetime\",\"trans_end_datetime\"," +
                 "\"trans_cust_time\",\"trans_org_id\",\"trans_clerk\",\"trans_return_code\",\"trans_err_msg\",\"trans_tuexdo_name\"]");
         outputFields.setCommandInstanceEntity(commandInstanceEntity);
@@ -112,6 +111,12 @@ public class InitSysDataTest {
         limit.setFiledValue("11");
         limit.setCommandInstanceEntity(commandInstanceEntity);
 
+        CommandParamEntity importCommands = new CommandParamEntity();
+        importCommands.setFieldName("importCommands");
+        importCommands.setFieldType("java.util.List");
+        importCommands.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
+        importCommands.setCommandInstanceEntity(commandInstanceEntity);
+
         List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
         commandParamEntityList.add(inputField);
         commandParamEntityList.add(outputFields);
@@ -120,6 +125,7 @@ public class InitSysDataTest {
         commandParamEntityList.add(addEmptyStrings);
         commandParamEntityList.add(trim);
         commandParamEntityList.add(limit);
+        commandParamEntityList.add(importCommands);
         commandInstanceEntity.setCmdInstanceParams(commandParamEntityList);
 
 
@@ -138,15 +144,23 @@ public class InitSysDataTest {
         expresses.setFieldType("java.util.Map");
         expresses.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
         expresses.setCommandInstanceEntity(commandInstanceEntity1);
+
+        CommandParamEntity importCommands1 = new CommandParamEntity();
+        importCommands1.setFieldName("importCommands");
+        importCommands1.setFieldType("java.util.List");
+        importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
+        importCommands1.setCommandInstanceEntity(commandInstanceEntity1);
+
+
         List<CommandParamEntity> commandParamEntityList1 = new ArrayList<>();
         commandParamEntityList1.add(cache_warming);
         commandParamEntityList1.add(expresses);
+        commandParamEntityList1.add(importCommands1);
         commandInstanceEntity1.setCmdInstanceParams(commandParamEntityList1);
 
         List<CommandInstanceEntity> data = new ArrayList<>();
         data.add(commandInstanceEntity);
         data.add(commandInstanceEntity1);
-
         commandInstanceRepository.saveAll(data);
 
     }

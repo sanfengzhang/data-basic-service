@@ -41,16 +41,16 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             //------------------------------创建命令流
             for (DataProcessFlowCmdInstanceRelation relation : dataProcessFlowCmdInstanceRelations) {
                 CommandInstanceEntity commandInstanceEntity = relation.getCommandInstanceEntity();
-                Map<String, Object> commandMap = buildCommandMapByConfig(commandInstanceEntity);
-                Map<String,Object> morphCommandMap=new HashMap<>();
-                morphCommandMap.put(commandInstanceEntity.getCommand().getCommandMorphName(),commandMap);
+                Map<String, Object> commandMap = buildCommandMapByConfig(commandInstanceEntity, commandPipeline);
+                Map<String, Object> morphCommandMap = new HashMap<>();
+                morphCommandMap.put(commandInstanceEntity.getCommand().getCommandMorphName(), commandMap);
                 commandPipeline.addCommand(morphCommandMap);
             }
         }
         return commandPipeline;
     }
 
-    public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity) throws BusException {
+    public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {
         List<CommandParamEntity> commandParamEntityList = commandInstanceEntity.getCmdInstanceParams();
         Map<String, Object> result = new HashMap<>();
         for (CommandParamEntity commandParamEntity : commandParamEntityList) {
@@ -58,8 +58,13 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             if (null == key || "".equals(key)) {
                 throw new BusException("Command初始化参数名称不能为空.");
             }
+
             String valueString = commandParamEntity.getFiledValue();
             Object value = TypeUtils.fastJsonCast(valueString, commandParamEntity.getFieldType(), new ParserConfig());
+            if ("importCommands".equals(key)) {
+                commandPipeline.addImports((List<String>) value);
+                continue;
+            }
             result.put(commandParamEntity.getFieldName(), value);
         }
         return result;
