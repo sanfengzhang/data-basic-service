@@ -27,15 +27,17 @@ public class CommandVO extends BaseVO<CommandEntity> {
 
     private Date updateTime;//数据流程更新时间
 
+    private String morphName;
+
     @Override
     public CommandEntity to() {
         CommandEntity entity = new CommandEntity();
-        entity.setId(id);
         entity.setCommandType(commandType);
         entity.setCommandClazz(commandClazz);
         entity.setCommandName(commandName);
         entity.setCreateTime(createTime);
         entity.setUpdateTime(updateTime);
+        entity.setCommandMorphName(morphName);
         return entity;
     }
 
@@ -45,6 +47,7 @@ public class CommandVO extends BaseVO<CommandEntity> {
         this.setCommandName(commandEntity.getCommandName());
         this.setCommandClazz(commandEntity.getCommandClazz());
         this.setCommandType(commandEntity.getCommandType());
+        this.setMorphName(commandEntity.getCommandMorphName());
         this.setCreateTime(commandEntity.getCreateTime());
         this.setUpdateTime(commandEntity.getUpdateTime());
     }

@@ -1,5 +1,8 @@
 package com.han.datamgr.entity;
 
+import lombok.Data;
+
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -11,11 +14,12 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 @DiscriminatorValue("cmd_init_param")
+@Data
 public class CommandParamEntity extends FiledEntity {
 
     private String cmdDisplayName;
 
-    @ManyToOne
+    @ManyToOne(cascade= {CascadeType.ALL})
     private CommandInstanceEntity commandInstanceEntity = null;
 
     //private int paramIndex;//参数在命令初始化时候的数组位置，可以用反射的方法直接构建

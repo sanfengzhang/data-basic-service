@@ -5,6 +5,7 @@ import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.CommandVO;
 import com.han.datamgr.vo.LeftMenuVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,7 +25,8 @@ public interface CommandService {
      *
      * @param commandVO
      */
-    public void createCommand(CommandVO commandVO) throws BusException;
+
+    public void createCommand(CommandVO... commandVO) throws BusException;
 
 
     /**

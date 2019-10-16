@@ -1,24 +1,26 @@
 package com.han.datamgr.core;
 
-import com.alibaba.fastjson.JSON;
 import com.han.datamgr.Application;
 import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
-import com.han.datamgr.repository.*;
-import com.han.datamgr.vo.CommandInstanceVO;
+import com.han.datamgr.repository.CommandInstanceRepository;
+import com.han.datamgr.repository.CommandRepository;
+import com.han.datamgr.repository.DataProcessFlowRepository;
+import com.han.datamgr.repository.JobRepository;
 import com.han.datamgr.vo.CommandVO;
-import com.stream.data.transform.api.CommandBuildService;
-import net.bytebuddy.asm.Advice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.util.collections.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: Hanl
@@ -27,7 +29,12 @@ import java.util.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
+@Transactional
+@Rollback(false)
 public class InitSysDataTest {
+
+    @Autowired
+    private CommandService commandService;
 
     @Autowired
     private JobRepository jobRepository;
@@ -36,138 +43,137 @@ public class InitSysDataTest {
     private DataProcessFlowRepository dataProcessFlowRepository;
 
     @Autowired
-    private CommandService commandService;
-
-    @Autowired
-    private CommandInstanceService commandInstanceService;
-
-    @Autowired
-    private FiledRepository filedRepository;
-
-    @Autowired
     private CommandInstanceRepository commandInstanceRepository;
-
-    @Autowired
-    private ParamRepository pa;
-
-    @Autowired
-    private CommandParamRepository commandParamRepository;
 
     @Autowired
     private CommandRepository commandRepository;
 
-    @Autowired
-    private CommandPipeLineService commandPipeLineService;
 
 
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void buildCommandPipelineTest()throws Exception {
-
-      System.out.println(commandPipeLineService.createCommandPipeline("40288c816d82b6a3016d82b6bbc30000").toString());
-
+    public void creatWithRollbackTest()throws Exception{
+        CommandInstanceEntity commandInstanceEntity = new CommandInstanceEntity();
+        commandInstanceEntity.setCommandInstanceName("SOC-逗号分隔符解析-,");
+        List<CommandEntity> list=commandRepository.findAll();
+        Optional<CommandEntity> commandEntity=commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000");
+        if(!commandEntity.isPresent()){
+            System.out.println("error");
+        }
+        commandInstanceEntity.setCommand(commandEntity.get());
+        commandInstanceRepository.save(commandInstanceEntity);
     }
 
 
-    @Transactional(rollbackFor = {Exception.class})
     @Test
-    @Rollback(false)
-    public void createCmdParamTest() {
+    public void createCmdInstanceTest() {
+        CommandInstanceEntity commandInstanceEntity = new CommandInstanceEntity();
+        commandInstanceEntity.setCommandInstanceName("SOC-分隔符解析-|");
+        commandInstanceEntity.setCommand(commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000").get());
 
-        CommandParamEntity commandParamEntity = new CommandParamEntity();
-        commandParamEntity.setFieldName("expresses");
-        commandParamEntity.setFieldType("java.util.HashMap");
-        commandParamEntity.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
-        commandParamRepository.save(commandParamEntity);
+        CommandParamEntity inputField = new CommandParamEntity();
+        inputField.setFieldName("inputField");
+        inputField.setFieldType("java.lang.String");
+        inputField.setFiledValue("message");
+        inputField.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity outputFields = new CommandParamEntity();
+        outputFields.setFieldName("outputFields");
+        outputFields.setFieldType("java.utils.List");
+        outputFields.setFiledValue("[\"trans_date\",\"trans_code\",\"trans_channel_id\",\"trans_start_datetime\",\"trans_end_datetime\"," +
+                "\"trans_cust_time\",\"trans_org_id\",\"trans_clerk\",\"trans_return_code\",\"trans_err_msg\",\"trans_tuexdo_name\"]");
+        outputFields.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity separator = new CommandParamEntity();
+        separator.setFieldName("separator");
+        separator.setFieldType("java.lang.String");
+        separator.setFiledValue("|");
+        separator.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity isRegex = new CommandParamEntity();
+        isRegex.setFieldName("isRegex");
+        isRegex.setFieldType("java.lang.Boolean");
+        isRegex.setFiledValue("false");
+        isRegex.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity addEmptyStrings = new CommandParamEntity();
+        addEmptyStrings.setFieldName("addEmptyStrings");
+        addEmptyStrings.setFieldType("java.lang.Boolean");
+        addEmptyStrings.setFiledValue("false");
+        addEmptyStrings.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity trim = new CommandParamEntity();
+        trim.setFieldName("trim");
+        trim.setFieldType("java.lang.Boolean");
+        trim.setFiledValue("false");
+        trim.setCommandInstanceEntity(commandInstanceEntity);
+
+        CommandParamEntity limit = new CommandParamEntity();
+        limit.setFieldName("limit");
+        limit.setFieldType("java.lang.Integer");
+        limit.setFiledValue("11");
+        limit.setCommandInstanceEntity(commandInstanceEntity);
+
+        List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
+        commandParamEntityList.add(inputField);
+        commandParamEntityList.add(outputFields);
+        commandParamEntityList.add(separator);
+        commandParamEntityList.add(isRegex);
+        commandParamEntityList.add(addEmptyStrings);
+        commandParamEntityList.add(trim);
+        commandParamEntityList.add(limit);
+        commandInstanceEntity.setCmdInstanceParams(commandParamEntityList);
+
+
+        CommandInstanceEntity commandInstanceEntity1 = new CommandInstanceEntity();
+        commandInstanceEntity1.setCommandInstanceName("SOC-EL计算");
+        commandInstanceEntity1.setCommand(commandRepository.findById("8adb929b6dcf3eb1016dcf3edb3f0001").get());
+
+        CommandParamEntity cache_warming = new CommandParamEntity();
+        cache_warming.setFieldName("cache_warming");
+        cache_warming.setFieldType("java.util.Map");
+        cache_warming.setFiledValue("{\"trans_return_code\":\"999\"}");
+        cache_warming.setCommandInstanceEntity(commandInstanceEntity1);
+
+        CommandParamEntity expresses = new CommandParamEntity();
+        expresses.setFieldName("expresses");
+        expresses.setFieldType("java.util.Map");
+        expresses.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
+        expresses.setCommandInstanceEntity(commandInstanceEntity1);
+        List<CommandParamEntity> commandParamEntityList1 = new ArrayList<>();
+        commandParamEntityList1.add(cache_warming);
+        commandParamEntityList1.add(expresses);
+        commandInstanceEntity1.setCmdInstanceParams(commandParamEntityList1);
+
+        List<CommandInstanceEntity> data = new ArrayList<>();
+        data.add(commandInstanceEntity);
+        data.add(commandInstanceEntity1);
+
+        commandInstanceRepository.saveAll(data);
 
     }
 
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void queryDataProcessFlowTest() {
-
-        List<DataProcessFlowEntity> commandInstanceEntity = dataProcessFlowRepository.findAll();
-        System.out.println(commandInstanceEntity.toString());
-    }
-
-
-
-
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void queryCmdTest() {
-
-        List<CommandEntity> commandInstanceEntity = commandRepository.findAll();
-        System.out.println(commandInstanceEntity.toString());
-    }
-
-
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void createQueryTest() {
-
-        CommandInstanceEntity commandInstanceEntity = commandInstanceRepository.findById("8adb929b6db489f7016db48a173a0000").get();
-        System.out.println(commandInstanceEntity.toString());
-    }
-
-
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void createFiledTest() {
-        FiledEntity filedEntity = filedRepository.findById("8adb929b6dbe052a016dbe0548270000").get();
-
-        FiledEntity filedEntity1 = new FiledEntity();
-        filedEntity1.setFieldName("struct");
-        filedEntity1.setFieldType("map");
-        List<FiledEntity> list = new ArrayList<>();
-        list.add(filedEntity);
-        filedRepository.save(filedEntity1);
-    }
-
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
+    @Transactional(rollbackFor = Exception.class)
     public void createCmdTest() {
         CommandVO commandVO = new CommandVO();
-        commandVO.setCommandName("SOC的EL表达式Command");
-        commandVO.setCommandClazz("com.stream.data.transform.command.ELExpressBuilder");
-        commandVO.setCommandType("计算");
+        commandVO.setCommandName("分隔符解析");
+        commandVO.setCommandClazz("org.kitesdk.morphline.stdlib.SplitBuilder");
+        commandVO.setCommandType("解析");
+        commandVO.setMorphName("split");
+
+        CommandVO commandVO1 = new CommandVO();
+        commandVO1.setCommandName("EL表达式");
+        commandVO1.setCommandClazz("com.stream.data.transform.command.ELExpressBuilder");
+        commandVO1.setCommandType("计算");
+        commandVO1.setMorphName("EL");
+
         try {
-            commandService.createCommand(commandVO);
+            commandService.createCommand(new CommandVO[]{commandVO, commandVO1});
         } catch (BusException e) {
             e.printStackTrace();
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    @Rollback(false)
-    public void createCmdInstanceTest() throws BusException {
-        CommandInstanceVO vo = new CommandInstanceVO();
-        List<CommandEntity> commandVOS = commandService.queryAllCommands();
-        //vo.setCommandEntity(commandVOS.get(0));
-        vo.setCommandInstanceName("SOC网关日志EL算子");
-
-        Map<String, String> expressMap = new HashMap<>();
-        expressMap.put("trans_return_code<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_return_code");
-        Map<String, Object> cacheWarmingData = new HashMap<>();
-        cacheWarmingData.put("trans_return_code", "999");
-        Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
-
-
-        //vo.setCommandParams(expressCommand);
-        commandInstanceService.createCmdInstance(vo);
-    }
-
-
-    @Transactional(rollbackFor = {Exception.class})
-    @Test
-    public void testAddDataProcessFlowData() {
+    @Transactional(rollbackFor = Exception.class)
+    public void createJobDataFlow() {
         DataProcessFlowEntity dataProcessFlowEntity = new DataProcessFlowEntity();
         dataProcessFlowEntity.setDataProcessFlowName("数据处理流程测试1");
         dataProcessFlowEntity.setCreateTime(new Date());
@@ -195,19 +201,5 @@ public class InitSysDataTest {
 
         jobRepository.saveAndFlush(jobEntity);
     }
-
-
-    @Test
-    @Transactional
-    public void testFindData() {
-        List<JobEntity> list = jobRepository.findAll();
-        list.forEach(jobEntity -> {
-            System.out.println(jobEntity);
-            jobEntity.getRelationEntities().forEach(r -> {
-                System.out.println(r.getDataProcessFlowEntity());
-            });
-        });
-    }
-
 
 }

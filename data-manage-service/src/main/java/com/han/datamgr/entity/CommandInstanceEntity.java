@@ -27,7 +27,7 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "cmd_instance_name")
     private String commandInstanceName;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = CascadeType.PERSIST)
     private List<CommandParamEntity> cmdInstanceParams = new ArrayList<>();
 
     @Column(name = "cmd_input")
@@ -63,7 +63,10 @@ public class CommandInstanceEntity implements Serializable {
         dataFlowCmdInstanceList.forEach(data -> {
             dataFlowCmdInstanceListIds.add(data.getId());
         });
-        String commandId = command.getId();
+        String commandId = "";
+        if (null != command) {
+            commandId = command.getId();
+        }
         return "CommandInstanceEntity{" +
                 "id='" + id + '\'' +
                 ", commandInstanceName='" + commandInstanceName + '\'' +

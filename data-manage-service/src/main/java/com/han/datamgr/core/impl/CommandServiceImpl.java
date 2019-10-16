@@ -2,20 +2,21 @@ package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.CommandService;
 import com.han.datamgr.entity.CommandEntity;
-import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.CommandRepository;
 import com.han.datamgr.support.DataTransformUtils;
 import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
 import com.han.datamgr.vo.LeftMenuVO;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -50,11 +51,11 @@ public class CommandServiceImpl implements CommandService {
                     leftMenuVO.setType("group");
                     leftMenuVO.setName(en.getKey());
                     leftMenuVO.setIco("'el-icon-video-play'");
-                    List<CommandEntity> commandEntities=en.getValue();
-                    List<CommandInstanceVO> res=new ArrayList<>();
+                    List<CommandEntity> commandEntities = en.getValue();
+                    List<CommandInstanceVO> res = new ArrayList<>();
                     commandEntities.forEach(commandEntity -> {
-                        commandEntity.getCommandInstanceEntityList().forEach(commandInstance->{
-                            CommandInstanceVO commandInstanceVO=new CommandInstanceVO();
+                        commandEntity.getCommandInstanceEntityList().forEach(commandInstance -> {
+                            CommandInstanceVO commandInstanceVO = new CommandInstanceVO();
                             commandInstanceVO.from(commandInstance);
                             res.add(commandInstanceVO);
                         });
@@ -69,9 +70,14 @@ public class CommandServiceImpl implements CommandService {
 
 
     @Override
-    public void createCommand(CommandVO commandVO) throws BusException {
-        CommandEntity commandEntity = commandVO.to();
-        commandRepository.save(commandEntity);
+//    @Transactional(rollbackFor = {Exception.class})
+    public void createCommand(CommandVO... commandVO) throws BusException {
+        List<CommandEntity> data = new ArrayList<>();
+        for (CommandVO vo : commandVO) {
+            CommandEntity commandEntity = vo.to();
+            data.add(commandEntity);
+        }
+        commandRepository.saveAll(data);
     }
 
     @Override
