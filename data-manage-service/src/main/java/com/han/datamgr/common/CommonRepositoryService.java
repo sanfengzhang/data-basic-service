@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,18 @@ public class CommonRepositoryService {
         String sql = "select count(0) from " + tableName + " where " + columnName + "=?";
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, parameters[0]);
+        int count = Integer.valueOf(query.getResultList().get(0).toString());
+        return count > 0 ? true : false;
+    }
+
+    public boolean existInDB(String sql, Object... parameters) {
+        Query query = entityManager.createNativeQuery(sql);
+        if (parameters != null && parameters.length > 0) {
+            int len = parameters.length;
+            for (int i = 0; i < len; i++) {
+                query.setParameter(i + 1, parameters[i]);
+            }
+        }
         int count = Integer.valueOf(query.getResultList().get(0).toString());
         return count > 0 ? true : false;
     }

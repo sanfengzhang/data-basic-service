@@ -22,7 +22,7 @@ public class BusDataTypeVO extends BaseVO<BusDataTypeEntity> {
 
     private String id;
 
-    @AlreadyInDB(table = "data_type", where = "data_type_name")
+    @AlreadyInDB(sql="select count(0) from data_type where data_type_name=?")
     @NotBlank(message = "数据类型名称不能为空")
     @Length(max = 255)
     private String dataTypeName;

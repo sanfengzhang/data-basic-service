@@ -17,9 +17,7 @@ import java.util.Map;
 @Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
 public class AlreadyInDBConstraintValidator implements ConstraintValidator<AlreadyInDB, String> {
 
-    String tableName;
-
-    String columnName;
+   String sql;
 
     @Autowired
     private CommonRepositoryService commonRepositoryService;
@@ -27,12 +25,12 @@ public class AlreadyInDBConstraintValidator implements ConstraintValidator<Alrea
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
-        return commonRepositoryService.existInDB(tableName, columnName, new Object[]{value});
+        return commonRepositoryService.existInDB(sql, new Object[]{value});
     }
 
     @Override
     public void initialize(AlreadyInDB constraintAnnotation) {
-        tableName = constraintAnnotation.table();
-        columnName = constraintAnnotation.where();
+
+        sql = constraintAnnotation.sql();
     }
 }

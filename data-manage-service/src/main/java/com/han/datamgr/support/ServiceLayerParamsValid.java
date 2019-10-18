@@ -27,13 +27,14 @@ import java.util.Set;
 //@Component
 @Slf4j
 public class ServiceLayerParamsValid {
-    private static Validator validator;
 
-    static {
-        validator = Validation.byDefaultProvider().configure()
-                .messageInterpolator(new ResourceBundleMessageInterpolator(
-                        new PlatformResourceBundleLocator("validationMessages"))) //手动指定校验提示资源（默认在resource目录下ValidationMessages.properties）
-                .buildValidatorFactory().getValidator();
+    private Validator validator;
+
+
+    public ServiceLayerParamsValid() {
+        //手动指定校验提示资源（默认在resource目录下ValidationMessages.properties）
+        validator = Validation.byDefaultProvider().configure().messageInterpolator(new ResourceBundleMessageInterpolator(
+                new PlatformResourceBundleLocator("validationMessages"))).buildValidatorFactory().getValidator();
     }
 
     // 定义接口参数校验切入点

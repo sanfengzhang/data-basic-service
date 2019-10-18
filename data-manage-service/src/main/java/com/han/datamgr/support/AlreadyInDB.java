@@ -17,14 +17,16 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = AlreadyInDBConstraintValidator.class)
 public @interface AlreadyInDB {
 
-    String table();
+    String table() default "";
 
-    String where();
+    String where() default "";
+
+    String sql();
 
     Class<?>[] groups() default {};
 
 
     Class<? extends Payload>[] payload() default {};
 
-    String message() default "{数据库记录已经存在}";
+    String message() default "数据库记录已经存在";
 }
