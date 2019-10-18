@@ -16,15 +16,17 @@ public class CommonResponse implements Serializable {
 
     private Object data;
 
+    private Object errResult;
+
     public static CommonResponse buildWithSuccess(Object data) {
         CommonResponse commonResponse = new CommonResponse();
         commonResponse.setData(data);
         return commonResponse;
     }
 
-    public static CommonResponse buildWithException(Object data) {
+    public static CommonResponse buildWithException(Object errResult) {
         CommonResponse commonResponse = new CommonResponse();
-        commonResponse.setData(data);
+        commonResponse.setErrResult(errResult);
         return commonResponse;
     }
 

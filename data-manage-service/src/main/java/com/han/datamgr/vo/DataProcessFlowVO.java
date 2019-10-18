@@ -1,12 +1,14 @@
 package com.han.datamgr.vo;
 
+import com.han.datamgr.entity.DataProcessFlowCmdInstanceRelation;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import lombok.Data;
 import lombok.ToString;
+import javax.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Hanl
@@ -19,9 +21,10 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     private String id;
 
+    @NotBlank(message = "流程名称不能为空")
     private String dataProcessFlowName;//数据处理流程名称
 
-    private List<CommandInstanceVO> processCommandDetail;//数据处理流程明细，命令配置集合。
+    private List<CommandInstanceVO> processCommandDetail=new ArrayList<>();//数据处理流程明细，命令配置集合。
 
     private String loadExternalLibsPath;//需要加载外部实现的命令插件,创建数据流程的时候会校验当前command是否都存在！
 
@@ -33,7 +36,27 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
 
     @Override
     public DataProcessFlowEntity to() {
-        return null;
+        DataProcessFlowEntity flowEntity = new DataProcessFlowEntity();
+        if (null != id) {
+            flowEntity.setId(id);
+        }
+        flowEntity.setDataProcessFlowName(dataProcessFlowName);
+        flowEntity.setLoadExternalLibsPath(loadExternalLibsPath);
+        if (null != createTime) {
+            flowEntity.setCreateTime(createTime);
+        }
+        flowEntity.setVersion(version);
+        List<DataProcessFlowCmdInstanceRelation> relations=new ArrayList<>();
+        for(CommandInstanceVO commandInstanceVO:processCommandDetail){
+            DataProcessFlowCmdInstanceRelation relation=new DataProcessFlowCmdInstanceRelation();
+            relation.setCommandInstanceEntity(commandInstanceVO.to());
+            relation.setDataProcessFlowEntity(flowEntity);
+            //FIXME
+           // relation.setOrder();
+            relations.add(relation);
+        }
+        flowEntity.setCmdInstanceEntityList(relations);
+        return flowEntity;
     }
 
     @Override

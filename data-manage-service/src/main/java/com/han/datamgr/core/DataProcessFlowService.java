@@ -12,7 +12,7 @@ import java.util.List;
  * @date :2019/9/27
  * @desc: 数据处理流程服务
  */
-@Service
+
 public interface DataProcessFlowService {
 
 

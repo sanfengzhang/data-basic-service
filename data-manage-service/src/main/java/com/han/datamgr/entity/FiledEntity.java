@@ -41,4 +41,7 @@ public class FiledEntity implements Serializable {
     @Column(name = "filed_format",columnDefinition = "varchar(32) COMMENT '数据格式化,yyyy-MM-dd'")
     protected String format;
 
+    @Column(name = "cmd_display_name")
+    protected String cmdDisplayName;
+
 }

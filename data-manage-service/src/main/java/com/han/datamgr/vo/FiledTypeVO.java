@@ -27,6 +27,8 @@ public class FiledTypeVO extends BaseVO<FiledEntity> {
 
     private String format;
 
+    private String displayName;
+
     @Override
     public FiledEntity to() {
         return null;
@@ -39,5 +41,6 @@ public class FiledTypeVO extends BaseVO<FiledEntity> {
         this.setId(entity.getId());
         this.setFieldType(entity.getFieldType());
         this.setFiledValue(entity.getFiledValue());
+        this.setDisplayName(entity.getCmdDisplayName());
     }
 }

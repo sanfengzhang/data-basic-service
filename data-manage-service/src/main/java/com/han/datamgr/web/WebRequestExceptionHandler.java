@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,6 +30,16 @@ public class WebRequestExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResponse handleBindException(BindException ex) {
+        log.error("Web Request Failed Valid Exception", ex);
+        List<String> defaultMsg = ex.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage)
+                .collect(Collectors.toList());
+        return CommonResponse.buildWithException(defaultMsg);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResponse handleBindException(MethodArgumentNotValidException ex) {
         log.error("Web Request Failed Valid Exception", ex);
         List<String> defaultMsg = ex.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());

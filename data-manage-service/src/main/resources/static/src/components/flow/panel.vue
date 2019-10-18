@@ -42,6 +42,7 @@
         <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data"></flow-info>
         <flow-node-form v-if="nodeFormVisible" ref="nodeForm"></flow-node-form>
 
+
     </div>
 
 </template>
@@ -53,6 +54,7 @@
     import flowTool from '@/components/flow/tool'
     import FlowInfo from '@/components/flow/info'
     import FlowNodeForm from './node_form'
+    import FlowAddForm from './data_flow_form'
     import lodash from 'lodash'
     import {getDataA} from './data_A'
     import {getDataB} from './data_B'
@@ -116,7 +118,7 @@
             }
         },
         components: {
-            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm
+            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddForm
         },
         mounted() {
             this.jsPlumb = jsPlumb.getInstance()
