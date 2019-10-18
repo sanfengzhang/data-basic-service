@@ -35,7 +35,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             throw new BusException("没有找到对应的数据流程,id=" + DataProcessFlowId);
         }
         DataProcessFlowEntity dataProcessFlowEntity = optional.get();
-        List<DataProcessFlowCmdInstanceRelation> dataProcessFlowCmdInstanceRelations = dataProcessFlowEntity.getCmdInstanceEntityList();
+        Set<DataProcessFlowCmdInstanceRelation> dataProcessFlowCmdInstanceRelations = dataProcessFlowEntity.getCmdInstanceEntityList();
         CommandPipeline commandPipeline = new CommandPipeline(dataProcessFlowEntity.getDataProcessFlowName());
         if (!CollectionUtils.isEmpty(dataProcessFlowCmdInstanceRelations)) {
             //------------------------------创建命令流

@@ -6,10 +6,7 @@ import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.DataProcessFlowVO;
 import com.han.datamgr.web.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -24,6 +21,12 @@ public class DataFlowController {
 
     @Autowired
     private DataProcessFlowService flowService;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public CommonResponse findDataFlow() throws BusException {
+
+        return CommonResponse.buildWithSuccess( flowService.queryDataProcessFlows(null));
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     public String createDataFlow(@RequestBody @Valid DataProcessFlowVO dataProcessFlowVO) throws BusException {

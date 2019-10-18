@@ -1,5 +1,6 @@
 package com.han.datamgr.core;
 
+import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.DataProcessFlowVO;
 import com.stream.data.transform.model.CommandPipeline;
@@ -17,7 +18,7 @@ public interface DataProcessFlowService {
 
 
 
-    public List<DataProcessFlowVO> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException;
+    public List<DataProcessFlowEntity> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException;
 
     /**
      * 创建数据流程

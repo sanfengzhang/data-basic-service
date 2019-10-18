@@ -1,13 +1,14 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -15,6 +16,8 @@ import java.util.List;
  * @desc:
  */
 @Data
+@ToString(exclude={"relationEntities","cmdInstanceEntityList"})
+@EqualsAndHashCode(exclude={"relationEntities","cmdInstanceEntityList"})
 @Entity
 @Table(name = "data_process_flow")
 public class DataProcessFlowEntity implements java.io.Serializable {
@@ -41,14 +44,14 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     private int version;
 
     @OneToMany(targetEntity = JobDataProcessFlowRelationEntity.class, mappedBy = "dataProcessFlowEntity",
-            cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JobDataProcessFlowRelationEntity> relationEntities = new ArrayList<>();
+            cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    private Set<JobDataProcessFlowRelationEntity> relationEntities = new HashSet<>();
 
 
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "dataProcessFlowEntity",
             cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    @OrderBy("order asc")
-    private List<DataProcessFlowCmdInstanceRelation> cmdInstanceEntityList = new ArrayList<>();
+    @OrderBy("cmdOrder ASC")
+    private Set<DataProcessFlowCmdInstanceRelation> cmdInstanceEntityList = new HashSet<>();
 
 
 }

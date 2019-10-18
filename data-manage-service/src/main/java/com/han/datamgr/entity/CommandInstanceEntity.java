@@ -1,14 +1,15 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -16,6 +17,8 @@ import java.util.List;
  * @desc:
  */
 @Data
+@ToString(exclude={"dataFlowCmdInstanceList"})
+@EqualsAndHashCode(exclude={"dataFlowCmdInstanceList"})
 @Entity
 @Table(name = "command_instance")
 public class CommandInstanceEntity implements Serializable {
@@ -28,6 +31,7 @@ public class CommandInstanceEntity implements Serializable {
     private String commandInstanceName;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties(value = {"commandInstanceEntity"})
     private List<CommandParamEntity> cmdInstanceParams = new ArrayList<>();
 
     @Column(name = "cmd_input")
@@ -44,7 +48,8 @@ public class CommandInstanceEntity implements Serializable {
     private String skipCmdCondition;
 
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity")
-    private List<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new ArrayList<>();//关联哪些数据流程
+    @JsonIgnoreProperties(value = {"commandInstanceEntity"})
+    private Set<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new HashSet<>();//关联哪些数据流程
 
     @ManyToOne
     @JoinColumn(name = "cmd_id")
@@ -57,28 +62,5 @@ public class CommandInstanceEntity implements Serializable {
     @CreationTimestamp
     private Date createTime;
 
-    @Override
-    public String toString() {
-        List<String> dataFlowCmdInstanceListIds = new ArrayList<>();
-        dataFlowCmdInstanceList.forEach(data -> {
-            dataFlowCmdInstanceListIds.add(data.getId());
-        });
-        String commandId = "";
-        if (null != command) {
-            commandId = command.getId();
-        }
-        return "CommandInstanceEntity{" +
-                "id='" + id + '\'' +
-                ", commandInstanceName='" + commandInstanceName + '\'' +
-                ", command=" + commandId +
-                ", cmdInstanceParams=" + cmdInstanceParams +
-                ", commandInputParams='" + commandInputParams + '\'' +
-                ", commandOutputParams='" + commandOutputParams + '\'' +
-                ", skipCmdSelectorClazz='" + skipCmdSelectorClazz + '\'' +
-                ", skipCmdCondition='" + skipCmdCondition + '\'' +
-                ", dataFlowCmdInstanceList=" + dataFlowCmdInstanceListIds +
-                ", version=" + version +
-                ", createTime=" + createTime +
-                '}';
-    }
+
 }

@@ -1,6 +1,9 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,6 +17,8 @@ import java.util.Date;
  * @desc:
  */
 @Data
+@ToString(exclude = {"dataProcessFlowEntity"})
+@EqualsAndHashCode(exclude = {"dataProcessFlowEntity"})
 @Entity
 @Table(name = "job_data_process_flow_relation")
 public class JobDataProcessFlowRelationEntity implements Serializable {
@@ -27,24 +32,18 @@ public class JobDataProcessFlowRelationEntity implements Serializable {
 
 
     @ManyToOne(targetEntity = JobEntity.class)
-    @JoinColumn(name="job_id")
+    @JoinColumn(name = "job_id")
+    @JsonIgnoreProperties(value = {"relationEntities"})
     private JobEntity jobEntity;
 
     @ManyToOne(targetEntity = DataProcessFlowEntity.class)
-    @JoinColumn(name="data_process_flow_id")
+    @JoinColumn(name = "data_process_flow_id")
+    @JsonIgnoreProperties(value = {"cmdInstanceEntityList","relationEntities"})
     private DataProcessFlowEntity dataProcessFlowEntity;
 
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
 
-    @Override
-    public String toString() {
-        return "JobDataProcessFlowRelationEntity{" +
-                "id='" + id + '\'' +
-                ", jobEntity=" + jobEntity.getId() +
-                ", dataProcessFlowEntity=" + dataProcessFlowEntity.getId() +
-                ", createTime=" + createTime +
-                '}';
-    }
+
 }

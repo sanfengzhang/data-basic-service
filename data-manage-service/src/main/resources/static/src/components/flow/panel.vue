@@ -2,18 +2,24 @@
     <div v-if="easyFlowVisible">
         <el-row>
             <el-col :span="3" ref="flowTool">
-                <flowTool @addNode="addNode"></flowTool>
+                <flowTool @addNode="addNode"></flowTool>				
             </el-col>
             <el-col :span="21">
                 <el-row>
                     <el-col :span="24">
                         <div style="margin-bottom: 5px; margin-left: 10px">
-                            <el-link type="primary">{{data.name}}</el-link>
+                           <!-- <el-link type="primary">{{data.name}}</el-link>-->
                             <el-button type="info" icon="el-icon-document" @click="dataInfo">流程信息</el-button>
-                            <el-button type="primary" @click="dataReloadA" icon="el-icon-refresh">切换流程A</el-button>
+                           <!--  <el-button type="primary" @click="dataReloadA" icon="el-icon-refresh">切换流程A</el-button>
                             <el-button type="success" @click="dataReloadB" icon="el-icon-refresh">切换流程B</el-button>
-                            <el-button type="warning" @click="dataReloadC" icon="el-icon-refresh">切换流程C</el-button>
+                            <el-button type="warning" @click="dataReloadC" icon="el-icon-refresh">切换流程C</el-button>-->
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
+                            <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
+                           <!-- <el-select  v-model="flowDataList[1].dataProcessFlowName">
+							    <option v-for="item in flowDataList" :value="item.id">
+                                    {{ item.dataProcessFlowName }}
+                                </option>
+							</el-select>-->							
                         </div>
                     </el-col>
                 </el-row>
@@ -29,7 +35,7 @@
                                         @deleteNode="deleteNode"
                                         @changeNodeSite="changeNodeSite"
                                         @nodeRightMenu="nodeRightMenu"
-                                        @editNode="editNode"
+                                        @editNode="editNode"									
                                 >
                                 </flow-node>
                             </template>
@@ -37,28 +43,31 @@
                     </el-col>
                 </el-row>
             </el-col>
+			
         </el-row>
+		
 
         <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data"></flow-info>
         <flow-node-form v-if="nodeFormVisible" ref="nodeForm"></flow-node-form>
-
+		<flow-add-flow-form v-if="flowAddFormVisible" ref="addFlowForm" @initFlowPanel="initFlowPanel"></flow-add-flow-form>
 
     </div>
 
 </template>
 
-<script>
+<script>   
     import draggable from 'vuedraggable'
     import {jsPlumb} from 'jsplumb'
     import flowNode from '@/components/flow/node'
     import flowTool from '@/components/flow/tool'
     import FlowInfo from '@/components/flow/info'
     import FlowNodeForm from './node_form'
-    import FlowAddForm from './data_flow_form'
+	import FlowAddFlowForm from './data_flow_form'
     import lodash from 'lodash'
     import {getDataA} from './data_A'
     import {getDataB} from './data_B'
     import {getDataC} from './data_C'
+	import {getDataInit} from './data_init'
 
     export default {
         name: "easyFlow",
@@ -68,6 +77,7 @@
                 easyFlowVisible: true,
                 flowInfoVisible: false,
                 nodeFormVisible: false,
+				flowAddFormVisible: false,
                 index: 1,
                 // 默认设置参数
                 jsplumbSetting: {
@@ -115,16 +125,22 @@
                 loadEasyFlowFinish: false,
                 // 数据
                 data: {},
+				firstFlow: 'A',
+				flowDataList: []
             }
         },
         components: {
-            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddForm
+            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm
         },
         mounted() {
             this.jsPlumb = jsPlumb.getInstance()
             this.$nextTick(() => {
                 this.dataReloadA()
             })
+		    this.get('/api/v1/flow',{}).then((data) => {
+               this.flowDataList=data.data			  
+			   console.info("flowDataList:"+JSON.stringify(this.flowDataList))
+        });
         },
         methods: {
             jsPlumbInit() {
@@ -136,6 +152,7 @@
                     // 会使整个jsPlumb立即重绘。
                     _this.jsPlumb.setSuspendDrawing(false, true);
                     // 初始化节点
+					
                     _this.loadEasyFlow()
 
                     // 单点击了连接线,
@@ -225,7 +242,7 @@
                 })
             },
             // 加载流程图
-            loadEasyFlow() {
+            loadEasyFlow() {			 
 
                 // 初始化节点
                 for (var i = 0; i < this.data.nodeList.length; i++) {
@@ -303,7 +320,8 @@
                 }
                 var node = {
                     id: 'node' + index,
-                    commandInstanceId:nodeMenu.id,
+					cmdName: nodeMenu.name,					
+					data:nodeMenu,
                     name: '节点' + index,
                     left: left + 'px',
                     top: top + 'px',
@@ -375,6 +393,7 @@
                     this.$refs.nodeForm.init(this.data, nodeId)
                 })
             },
+		
             // 流程数据信息
             dataInfo() {
                 this.flowInfoVisible = true
@@ -399,7 +418,17 @@
                     })
                 })
             },
-            // 数据重新载入
+            addNewDataFlow(){
+			      console.log("创建新流程")
+				   this.flowAddFormVisible = true
+				   this.$nextTick(function () {
+                    this.$refs.addFlowForm.init()
+                })
+			},
+            initFlowPanel(data){
+			    console.log("。。。。。")
+			    console.log("初始化新流程")
+			},			
             dataReloadA() {
                 this.dataReload(getDataA())
             },

@@ -44,50 +44,19 @@
                 },
                 defaultOpeneds: ['group0', 'group1'],
                 menuList: [
-                    // {
-                    //     type: 'group',
-                    //     name: '数据解析',
-                    //     ico: 'el-icon-video-play',
-                    //     children: [
-                    //         {
-                    //             type: 'timer',
-                    //             name: '定时器',
-                    //             ico: 'el-icon-time',
-                    //         }, {
-                    //             type: 'task',
-                    //             name: '定时任务',
-                    //             ico: 'el-icon-odometer',
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     type: 'group',
-                    //     name: '结束节点',
-                    //     ico: 'el-icon-video-pause',
-                    //     children: [
-                    //         {
-                    //             type: 'end',
-                    //             name: '结束',
-                    //             ico: 'el-icon-caret-right',
-                    //         }, {
-                    //             type: 'over',
-                    //             name: '清理',
-                    //             ico: 'el-icon-shopping-cart-full',
-                    //         }
-                    //     ]
-                    // }
+                    
                 ],
                 nodeMenu: {}
             }
         },
       mounted() {
-        this.$http.get('localhost:8080/api/v1/main').then((response) => {
-          console.info(response.body)
-          this.menuList = response.body.data
-        }, (response) => {
-          console.error(response)
+	      this.get('/api/v1/main',{}).then((data) => {         
+          this.menuList = data.data
+		   console.info("menun:"+ this.menuList)		
         });
       },
+	  
+      
         components: {
             draggable
         },
@@ -125,6 +94,7 @@
             },
             // 添加节点
             addNode(evt, e) {
+			   console.info(JSON.stringify(this.nodeMenu)) 
                 this.$emit('addNode', evt, this.nodeMenu, mousePosition)
             },
             // 是否是火狐浏览器

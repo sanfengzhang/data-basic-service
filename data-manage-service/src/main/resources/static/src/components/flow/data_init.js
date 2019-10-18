@@ -1,5 +1,5 @@
 var data_init = {
-
+    name: '新建流程-1',
     nodeList: [
         
     ],

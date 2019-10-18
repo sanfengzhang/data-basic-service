@@ -26,8 +26,8 @@ public class MainPageController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getLeftMenu() throws BusException {
+    public CommonResponse getLeftMenu() throws BusException {
         List<LeftMenuVO> leftMenuVOList = commandService.getLeftMenuCmdInstanceData();
-        return JSON.toJSONString(CommonResponse.buildWithSuccess(leftMenuVOList));
+        return CommonResponse.buildWithSuccess(leftMenuVOList);
     }
 }

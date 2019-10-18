@@ -17,8 +17,8 @@ import javax.persistence.ManyToOne;
 @Data
 public class CommandParamEntity extends FiledEntity {
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private CommandInstanceEntity commandInstanceEntity = null;
+    @ManyToOne
+    private CommandInstanceEntity commandInstanceEntity ;
 
 
     @Override

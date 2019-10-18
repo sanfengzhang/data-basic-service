@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.ToString;
 import javax.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -46,7 +44,7 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
             flowEntity.setCreateTime(createTime);
         }
         flowEntity.setVersion(version);
-        List<DataProcessFlowCmdInstanceRelation> relations=new ArrayList<>();
+        Set<DataProcessFlowCmdInstanceRelation> relations=new HashSet<>();
         for(CommandInstanceVO commandInstanceVO:processCommandDetail){
             DataProcessFlowCmdInstanceRelation relation=new DataProcessFlowCmdInstanceRelation();
             relation.setCommandInstanceEntity(commandInstanceVO.to());

@@ -10,6 +10,16 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI, { size: 'small'})
 
+import VueResource from 'vue-resource'
+
+/*使用VueResource插件*/
+Vue.use(VueResource)
+
+import {get,post} from './http'
+//将方法挂载到Vue原型上
+Vue.prototype.get = get;
+Vue.prototype.post = post;
+
 
 import {codemirror} from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'

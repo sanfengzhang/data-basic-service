@@ -24,10 +24,13 @@ import java.util.List;
 @Service
 public class DataProcessFlowServiceImpl implements DataProcessFlowService {
 
-    @Override
-    public List<DataProcessFlowVO> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException {
-        if (null == queryParams) {
+    @Autowired
+    private DataProcessFlowRepository flowRepository;
 
+    @Override
+    public List<DataProcessFlowEntity> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException {
+        if (null == queryParams) {
+            return flowRepository.findAll();
         }
         return null;
     }
