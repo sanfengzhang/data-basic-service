@@ -33,17 +33,15 @@ public class JobDataProcessFlowRelationEntity implements Serializable {
 
     @ManyToOne(targetEntity = JobEntity.class)
     @JoinColumn(name = "job_id")
-    @JsonIgnoreProperties(value = {"relationEntities"})
+    @JsonIgnoreProperties(value = {"jobFlowRelSet"})
     private JobEntity jobEntity;
 
     @ManyToOne(targetEntity = DataProcessFlowEntity.class)
     @JoinColumn(name = "data_process_flow_id")
-    @JsonIgnoreProperties(value = {"cmdInstanceEntityList","relationEntities"})
+    @JsonIgnoreProperties(value = {"jobFlowRelSet"})
     private DataProcessFlowEntity dataProcessFlowEntity;
 
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
-
-
 }

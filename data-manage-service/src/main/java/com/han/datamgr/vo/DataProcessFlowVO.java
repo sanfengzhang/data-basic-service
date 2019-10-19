@@ -53,7 +53,7 @@ public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
            // relation.setOrder();
             relations.add(relation);
         }
-        flowEntity.setCmdInstanceEntityList(relations);
+        //flowEntity.setCmdInstanceEntityList(relations);
         return flowEntity;
     }
 

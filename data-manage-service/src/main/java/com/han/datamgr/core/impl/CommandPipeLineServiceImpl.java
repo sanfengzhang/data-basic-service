@@ -5,7 +5,6 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.han.datamgr.core.CommandPipeLineService;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.CommandParamEntity;
-import com.han.datamgr.entity.DataProcessFlowCmdInstanceRelation;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.DataProcessFlowRepository;
@@ -13,9 +12,11 @@ import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.utils.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author: Hanl
@@ -35,19 +36,8 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             throw new BusException("没有找到对应的数据流程,id=" + DataProcessFlowId);
         }
         DataProcessFlowEntity dataProcessFlowEntity = optional.get();
-        Set<DataProcessFlowCmdInstanceRelation> dataProcessFlowCmdInstanceRelations = dataProcessFlowEntity.getCmdInstanceEntityList();
-        CommandPipeline commandPipeline = new CommandPipeline(dataProcessFlowEntity.getDataProcessFlowName());
-        if (!CollectionUtils.isEmpty(dataProcessFlowCmdInstanceRelations)) {
-            //------------------------------创建命令流
-            for (DataProcessFlowCmdInstanceRelation relation : dataProcessFlowCmdInstanceRelations) {
-                CommandInstanceEntity commandInstanceEntity = relation.getCommandInstanceEntity();
-                Map<String, Object> commandMap = buildCommandMapByConfig(commandInstanceEntity, commandPipeline);
-                Map<String, Object> morphCommandMap = new HashMap<>();
-                morphCommandMap.put(commandInstanceEntity.getCommand().getCommandMorphName(), commandMap);
-                commandPipeline.addCommand(morphCommandMap);
-            }
-        }
-        return commandPipeline;
+
+        return null;
     }
 
     public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {

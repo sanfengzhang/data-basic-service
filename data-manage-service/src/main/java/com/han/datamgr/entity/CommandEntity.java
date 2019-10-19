@@ -1,5 +1,6 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,8 +42,8 @@ public class CommandEntity implements Serializable {
     private String commandProvider;
 
     @OneToMany(mappedBy = "command", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"command"})
     private List<CommandInstanceEntity> commandInstanceEntityList = new ArrayList<>();
-
 
     @Column(name = "create_time")
     @CreationTimestamp

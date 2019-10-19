@@ -3,10 +3,7 @@ package com.han.datamgr.core;
 import com.han.datamgr.Application;
 import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
-import com.han.datamgr.repository.CommandInstanceRepository;
-import com.han.datamgr.repository.CommandRepository;
-import com.han.datamgr.repository.DataProcessFlowRepository;
-import com.han.datamgr.repository.JobRepository;
+import com.han.datamgr.repository.*;
 import com.han.datamgr.vo.CommandVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,18 +44,30 @@ public class InitSysDataTest {
     @Autowired
     private CommandRepository commandRepository;
 
+    @Autowired
+    private FlowLineRepository flowLineRepository;
 
 
-    public void creatWithRollbackTest()throws Exception{
+    public void creatWithRollbackTest() throws Exception {
         CommandInstanceEntity commandInstanceEntity = new CommandInstanceEntity();
         commandInstanceEntity.setCommandInstanceName("SOC-逗号分隔符解析-,");
-        List<CommandEntity> list=commandRepository.findAll();
-        Optional<CommandEntity> commandEntity=commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000");
-        if(!commandEntity.isPresent()){
+        List<CommandEntity> list = commandRepository.findAll();
+        Optional<CommandEntity> commandEntity = commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000");
+        if (!commandEntity.isPresent()) {
             System.out.println("error");
         }
         commandInstanceEntity.setCommand(commandEntity.get());
         commandInstanceRepository.save(commandInstanceEntity);
+    }
+
+
+    @Test
+    public void createFlowLineTest() {
+        FlowLineEntity flowLine = new FlowLineEntity();
+        flowLine.setStart(commandInstanceRepository.findById("8adb929b6dd3012b016dd301485b0000").get());
+        flowLine.setEnd(commandInstanceRepository.findById("8adb929b6dd3012b016dd30148800009").get());
+        flowLine.setFlowEntity(dataProcessFlowRepository.findById("8adb929b6dcf4089016dcf40b16c0000").get());
+        flowLineRepository.save(flowLine);
     }
 
 
@@ -206,7 +215,7 @@ public class InitSysDataTest {
         JobEntity jobEntity = new JobEntity();
         jobEntity.setJobName("测试Job");
         jobEntity.setCreateTime(new Date());
-        List<JobDataProcessFlowRelationEntity> jobEntities = jobEntity.getRelationEntities();
+        List<JobDataProcessFlowRelationEntity> jobEntities = jobEntity.getJobFlowRelSet();
 
         JobDataProcessFlowRelationEntity jobDataProcessFlowRelationEntity = new JobDataProcessFlowRelationEntity();
         jobDataProcessFlowRelationEntity.setJobEntity(jobEntity);

@@ -17,8 +17,6 @@ import java.util.*;
  * @desc:
  */
 @Data
-@ToString(exclude={"dataFlowCmdInstanceList"})
-@EqualsAndHashCode(exclude={"dataFlowCmdInstanceList"})
 @Entity
 @Table(name = "command_instance")
 public class CommandInstanceEntity implements Serializable {
@@ -47,12 +45,9 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "skip_cmd_condition")//选择器的逻辑表达式
     private String skipCmdCondition;
 
-    @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "commandInstanceEntity")
-    @JsonIgnoreProperties(value = {"commandInstanceEntity"})
-    private Set<DataProcessFlowCmdInstanceRelation> dataFlowCmdInstanceList = new HashSet<>();//关联哪些数据流程
-
     @ManyToOne
     @JoinColumn(name = "cmd_id")
+    @JsonIgnoreProperties(value = {"commandInstanceEntityList"})
     private CommandEntity command;//属于哪个Command的实例对象
 
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
