@@ -1,6 +1,6 @@
 package com.han.datamgr.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author: Hanl
@@ -51,6 +53,7 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     @OneToMany(targetEntity = DataProcessFlowCmdInstanceRelation.class, mappedBy = "dataProcessFlowEntity",
             cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     @OrderBy("cmdOrder ASC")
+    @JsonProperty("nodeList")
     private Set<DataProcessFlowCmdInstanceRelation> cmdInstanceEntityList = new HashSet<>();
 
 

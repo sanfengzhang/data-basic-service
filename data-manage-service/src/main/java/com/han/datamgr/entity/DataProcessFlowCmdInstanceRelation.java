@@ -26,7 +26,7 @@ public class DataProcessFlowCmdInstanceRelation implements Serializable {
 
     @ManyToOne(targetEntity = DataProcessFlowEntity.class)
     @JoinColumn(name = "data_process_flow_id")
-    @JsonIgnoreProperties(value = {"relationEntities","cmdInstanceEntityList"})
+    @JsonIgnoreProperties(value = {"relationEntities","nodeList"})
     private DataProcessFlowEntity dataProcessFlowEntity;
 
     @ManyToOne(targetEntity = CommandInstanceEntity.class)
