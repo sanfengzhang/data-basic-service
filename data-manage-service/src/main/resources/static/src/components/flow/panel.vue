@@ -1,5 +1,5 @@
 <template>
-    <div v-if="easyFlowVisible">
+    <div v-if="easyFlowVisible" >
         <el-row>
             <el-col :span="3" ref="flowTool">
                 <flowTool @addNode="addNode"></flowTool>				
@@ -9,17 +9,18 @@
                     <el-col :span="24">
                         <div style="margin-bottom: 5px; margin-left: 10px">
                            <!-- <el-link type="primary">{{data.name}}</el-link>-->
+						    <el-button type="success" @click="dataReloadB" icon="el-icon-refresh">切换流程B</el-button>
                             <el-button type="info" icon="el-icon-document" @click="dataInfo">流程信息</el-button>
                            <!--  <el-button type="primary" @click="dataReloadA" icon="el-icon-refresh">切换流程A</el-button>
-                            <el-button type="success" @click="dataReloadB" icon="el-icon-refresh">切换流程B</el-button>
+                           
                             <el-button type="warning" @click="dataReloadC" icon="el-icon-refresh">切换流程C</el-button>-->
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
                             <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
-                           <!-- <el-select  v-model="flowDataList[1].dataProcessFlowName">
-							    <option v-for="item in flowDataList" :value="item.id">
-                                    {{ item.dataProcessFlowName }}
-                                </option>
-							</el-select>-->							
+                            <el-select  @change="selectFlow" v-model="firstFlow">							   
+							    <el-option v-for="item in flowDataList" :key="item.flowEntity.id"       :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
+                                    {{item.flowEntity.dataProcessFlowName}}
+                                </el-option>
+							</el-select>				
                         </div>
                     </el-col>
                 </el-row>
@@ -125,22 +126,24 @@
                 loadEasyFlowFinish: false,
                 // 数据
                 data: {},
-				firstFlow: 'A',
-				flowDataList: []
+				firstFlow: '请选择',
+				flowDataList: [{"dataProcessFlowName":"a"}]
             }
         },
         components: {
             draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm
         },
+		
         mounted() {
+		    this.$nextTick(() => {
+                     this.get('/api/v1/flow',{}).then((data) => {
+                     this.flowDataList=data.data
+					 console.log("dataFlowList",this.flowDataList)
+                  });
+             })	
+		  
             this.jsPlumb = jsPlumb.getInstance()
-            this.$nextTick(() => {
-                this.dataReloadA()
-            })
-		    this.get('/api/v1/flow',{}).then((data) => {
-               this.flowDataList=data.data			  
-			   console.info("flowDataList:"+JSON.stringify(this.flowDataList))
-        });
+           	  
         },
         methods: {
             jsPlumbInit() {
@@ -242,8 +245,8 @@
                 })
             },
             // 加载流程图
-            loadEasyFlow() {			 
-
+            loadEasyFlow() {
+                console.log("loadEasyFlow:",this.data.nodeList.length)
                 // 初始化节点
                 for (var i = 0; i < this.data.nodeList.length; i++) {
                     let node = this.data.nodeList[i]
@@ -407,7 +410,9 @@
                 this.data.lineList = []
                 this.$nextTick(() => {
                     // 这里模拟后台获取数据、然后加载
-                    data = lodash.cloneDeep(data)
+					if(data instanceof Array){
+                    data = lodash.cloneDeep(data[0])}
+					else{data=lodash.cloneDeep(data)}
                     this.easyFlowVisible = true
                     this.data = data
                     this.$nextTick(() => {
@@ -428,6 +433,19 @@
             initFlowPanel(data){
 			    console.log("。。。。。")
 			    console.log("初始化新流程")
+			},	
+            selectFlow(vid){			     
+			    console.log("选择flow",vid)
+				if('undfined'===vid){
+				    return
+				}
+				this.$nextTick(() => {
+                     this.get('/api/v1/flow',{"id":vid}).then((data) => {
+                     this.dataReload(data.data)
+                     console.log("data===",data)					  
+                  });
+               })
+				
 			},			
             dataReloadA() {
                 this.dataReload(getDataA())

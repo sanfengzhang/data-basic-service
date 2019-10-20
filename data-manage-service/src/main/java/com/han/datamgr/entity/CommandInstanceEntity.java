@@ -1,6 +1,7 @@
 package com.han.datamgr.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -26,9 +27,10 @@ public class CommandInstanceEntity implements Serializable {
     private String id;
 
     @Column(name = "cmd_instance_name")
+    @JsonProperty("name")
     private String commandInstanceName;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity")
     @JsonIgnoreProperties(value = {"commandInstanceEntity"})
     private List<CommandParamEntity> cmdInstanceParams = new ArrayList<>();
 
@@ -53,9 +55,22 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
     private int version;
 
+    @Column(name = "left_px")
+    private String left;
+
+    @Column(name = "top")
+    private String top;
+
+    @Column(name = "ico")
+    private String ico;
+
+    @Column(name = "show_cmd", columnDefinition = "TINYINT(1)")
+    private boolean show;
+
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
+
 
 
 }

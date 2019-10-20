@@ -18,7 +18,7 @@ public interface DataProcessFlowService {
 
 
 
-    public List<DataProcessFlowEntity> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException;
+    public List<DataProcessFlowVO> queryDataProcessFlows(String id) throws BusException;
 
     /**
      * 创建数据流程

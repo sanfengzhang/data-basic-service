@@ -1,19 +1,15 @@
 package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.DataProcessFlowService;
-import com.han.datamgr.entity.CommandInstanceEntity;
-import com.han.datamgr.entity.DataProcessFlowCmdInstanceRelation;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.vo.DataProcessFlowVO;
-import com.stream.data.transform.model.CommandPipeline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,12 +24,29 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
     private DataProcessFlowRepository flowRepository;
 
     @Override
-    public List<DataProcessFlowEntity> queryDataProcessFlows(DataProcessFlowVO queryParams) throws BusException {
-        if (null == queryParams) {
-            return flowRepository.findAll();
+    public List<DataProcessFlowVO> queryDataProcessFlows(String id) throws BusException {
+        List<DataProcessFlowVO> result = new ArrayList<>();
+        List<DataProcessFlowEntity> data = null;
+        if (StringUtils.isEmpty(id)) {
+            data = flowRepository.findAll();
+        } else {
+            DataProcessFlowEntity entity = flowRepository.findById(id).get();
+            data = new ArrayList<>();
+            data.add(entity);
         }
-        return null;
+
+        if (null != data) {
+            for (DataProcessFlowEntity entity : data) {
+                DataProcessFlowVO vo = new DataProcessFlowVO();
+                vo.setFlowEntity(entity);
+                vo.formEntityToLineList();
+                vo.fromEntityToNodeList();
+                result.add(vo);
+            }
+        }
+        return result;
     }
+
 
     @Override
     public void createDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException {

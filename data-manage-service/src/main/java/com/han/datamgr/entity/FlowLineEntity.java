@@ -32,12 +32,12 @@ public class FlowLineEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "start_cmd_id")
-    @JsonIgnoreProperties(value = {"flowLineSet"})
+    @JsonIgnoreProperties(value = {"commandInstanceName","cmdInstanceParams","commandInputParams","commandOutputParams","skipCmdSelectorClazz","command","version","createTime"})
     private CommandInstanceEntity start;
 
     @ManyToOne
     @JoinColumn(name = "end_cmd_id")
-    @JsonIgnoreProperties(value = {"flowLineSet"})
+    @JsonIgnoreProperties(value = {"commandInstanceName","cmdInstanceParams","commandInputParams","commandOutputParams","skipCmdSelectorClazz","command","version","createTime"})
     private CommandInstanceEntity end;
 
     @Column(name = "create_time")
@@ -46,7 +46,7 @@ public class FlowLineEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "flow_id")
-    @JsonIgnoreProperties(value = {"flowLineSet","jobFlowRelSet"})
+    @JsonIgnoreProperties("flowLineSet")
     private DataProcessFlowEntity flowEntity;
 
     @Column(name = "update_time")

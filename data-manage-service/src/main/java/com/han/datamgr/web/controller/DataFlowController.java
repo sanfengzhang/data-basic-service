@@ -23,9 +23,9 @@ public class DataFlowController {
     private DataProcessFlowService flowService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public CommonResponse findDataFlow() throws BusException {
+    public CommonResponse findDataFlow(@RequestParam(required = false) String id) throws BusException {
 
-        return CommonResponse.buildWithSuccess( flowService.queryDataProcessFlows(null));
+        return CommonResponse.buildWithSuccess(flowService.queryDataProcessFlows(id));
     }
 
     @RequestMapping(method = RequestMethod.POST)

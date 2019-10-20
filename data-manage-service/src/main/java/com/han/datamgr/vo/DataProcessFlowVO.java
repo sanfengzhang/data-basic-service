@@ -1,11 +1,13 @@
 package com.han.datamgr.vo;
 
-import com.han.datamgr.entity.DataProcessFlowCmdInstanceRelation;
+import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.DataProcessFlowEntity;
+import com.han.datamgr.entity.FlowLineEntity;
 import lombok.Data;
 import lombok.ToString;
-import javax.validation.constraints.NotBlank;
+import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -15,50 +17,47 @@ import java.util.*;
  */
 @Data
 @ToString
-public class DataProcessFlowVO extends BaseVO<DataProcessFlowEntity> {
+public class DataProcessFlowVO implements Serializable {
 
-    private String id;
+    private String name;
 
-    @NotBlank(message = "流程名称不能为空")
-    private String dataProcessFlowName;//数据处理流程名称
+    private DataProcessFlowEntity flowEntity;
 
-    private List<CommandInstanceVO> processCommandDetail=new ArrayList<>();//数据处理流程明细，命令配置集合。
+    private List<Map<String, String>> lineList = new ArrayList<>();
 
-    private String loadExternalLibsPath;//需要加载外部实现的命令插件,创建数据流程的时候会校验当前command是否都存在！
+    private List<CommandInstanceEntity> nodeList = new ArrayList<>();
 
-    private String filterCmdCondition;
 
-    private Date createTime;//数据处理流程创建时间
-
-    private int version;
-
-    @Override
-    public DataProcessFlowEntity to() {
-        DataProcessFlowEntity flowEntity = new DataProcessFlowEntity();
-        if (null != id) {
-            flowEntity.setId(id);
+    public void formEntityToLineList() {
+        if (null == flowEntity) {
+            return;
         }
-        flowEntity.setDataProcessFlowName(dataProcessFlowName);
-        flowEntity.setLoadExternalLibsPath(loadExternalLibsPath);
-        if (null != createTime) {
-            flowEntity.setCreateTime(createTime);
+        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
+        for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
+            Map<String, String> lineMap = new HashMap<>();
+            String from = flowLineEntity.getStart().getId();
+            String to = flowLineEntity.getEnd().getId();
+            lineMap.put("from", from);
+            lineMap.put("to", to);
+            lineList.add(lineMap);
         }
-        flowEntity.setVersion(version);
-        Set<DataProcessFlowCmdInstanceRelation> relations=new HashSet<>();
-        for(CommandInstanceVO commandInstanceVO:processCommandDetail){
-            DataProcessFlowCmdInstanceRelation relation=new DataProcessFlowCmdInstanceRelation();
-            relation.setCommandInstanceEntity(commandInstanceVO.to());
-            relation.setDataProcessFlowEntity(flowEntity);
-            //FIXME
-           // relation.setOrder();
-            relations.add(relation);
-        }
-        //flowEntity.setCmdInstanceEntityList(relations);
-        return flowEntity;
     }
 
-    @Override
-    public void from(DataProcessFlowEntity dataProcessFlowEntity) {
-
+    public void fromEntityToNodeList() {
+        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
+        if (!CollectionUtils.isEmpty(flowLineEntitySet)) {
+            Map<String, CommandInstanceEntity> idInstance = new HashMap<>();
+            for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
+                String fromId = flowLineEntity.getStart().getId();
+                String toId = flowLineEntity.getEnd().getId();
+                if (!idInstance.containsKey(fromId)) {
+                    idInstance.put(fromId, flowLineEntity.getStart());
+                }
+                if (!idInstance.containsKey(toId)) {
+                    idInstance.put(toId, flowLineEntity.getEnd());
+                }
+            }
+            nodeList.addAll(idInstance.values());
+        }
     }
 }

@@ -31,12 +31,22 @@ var data_B = {
             top: '215px',
             ico: 'el-icon-present',
             show: true
+        },
+		 {
+            id: 'nodeE',
+            name: '流程B-节点E',
+            left: '773px',
+            top: '96px',
+            ico: 'el-icon-present',
+            show: true
         }
     ],
-    lineList: [{
-        from: 'nodeA',
-        to: 'nodeB'
-    }, {
+    lineList: [ 
+	{
+        from: 'nodeB',
+        to: 'nodeE'
+    },
+	{
         from: 'nodeA',
         to: 'nodeC'
     },{
@@ -45,6 +55,9 @@ var data_B = {
     },{
         from: 'nodeC',
         to: 'nodeD'
+    },{
+        from: 'nodeA',
+        to: 'nodeB'
     }
     ]
 }

@@ -1,5 +1,6 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -19,8 +20,8 @@ import java.util.Set;
  * @desc:
  */
 @Data
-@ToString(exclude = {"jobFlowRelSet","flowLineSet"})
-@EqualsAndHashCode(exclude = {"jobFlowRelSet","flowLineSet"})
+@ToString(exclude = {"jobFlowRelSet", "flowLineSet"})
+@EqualsAndHashCode(exclude = {"jobFlowRelSet", "flowLineSet"})
 @Entity
 @Table(name = "data_process_flow")
 public class DataProcessFlowEntity implements java.io.Serializable {
@@ -47,11 +48,11 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     private int version;
 
     @OneToMany(targetEntity = JobDataProcessFlowRelationEntity.class, mappedBy = "dataProcessFlowEntity",
-            cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+            cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<JobDataProcessFlowRelationEntity> jobFlowRelSet = new HashSet<>();
 
     @OneToMany(mappedBy = "flowEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonProperty("lineList")
     @JsonIgnoreProperties(value = {"flowEntity"})
     private Set<FlowLineEntity> flowLineSet = new HashSet<>();
 

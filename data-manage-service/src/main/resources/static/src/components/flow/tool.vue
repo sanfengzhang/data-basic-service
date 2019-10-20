@@ -27,11 +27,6 @@
 </template>
 <script>
     import draggable from 'vuedraggable'
-
-    /**
-     * 参考 https://blog.csdn.net/zjiang1994/article/details/79809687
-     *
-     */
     var mousePosition = {
         left: -1,
         top: -1
@@ -52,7 +47,7 @@
       mounted() {
 	      this.get('/api/v1/main',{}).then((data) => {         
           this.menuList = data.data
-		   console.info("menun:"+ this.menuList)		
+		   console.log("menun:", this.menuList)		
         });
       },
 	  
