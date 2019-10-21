@@ -17,7 +17,7 @@
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
                             <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
                             <el-select  @change="selectFlow" v-model="firstFlow">							   
-							    <el-option v-for="item in flowDataList" :key="item.flowEntity.id"       :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
+							    <el-option  v-for="item in flowDataList" :key="item.flowEntity.id"       :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                                     {{item.flowEntity.dataProcessFlowName}}
                                 </el-option>
 							</el-select>				
@@ -127,7 +127,7 @@
                 // 数据
                 data: {},
 				firstFlow: '请选择',
-				flowDataList: [{"dataProcessFlowName":"a"}]
+				flowDataList: []
             }
         },
         components: {
@@ -138,7 +138,8 @@
 		    this.$nextTick(() => {
                      this.get('/api/v1/flow',{}).then((data) => {
                      this.flowDataList=data.data
-					 console.log("dataFlowList",this.flowDataList)
+					 this.data=data.data	
+                     console.log("flowDataList",this.flowDataList)					 
                   });
              })	
 		  
@@ -309,7 +310,7 @@
             },
             // 添加新的节点
             addNode(evt, nodeMenu, mousePosition) {
-                console.log('添加节点', evt, nodeMenu)
+                console.log('添加节点', nodeMenu)
                 let width = this.$refs.flowTool.$el.clientWidth
                 const index = this.index++
                 let nodeId = 'node' + index
@@ -322,18 +323,21 @@
                     top = evt.originalEvent.clientY - 50
                 }
                 var node = {
-                    id: 'node' + index,
+                    id: nodeId,
 					cmdName: nodeMenu.name,					
 					data:nodeMenu,
+					cmdInstanceParams:nodeMenu.cmdInstanceParams,
+					command:nodeMenu.command,
                     name: '节点' + index,
                     left: left + 'px',
                     top: top + 'px',
                     ico: nodeMenu.ico,
                     show: true
                 }
-                this.data.nodeList.push(node)
+				
+                this.data.nodeList.push(node)				
                 this.$nextTick(function () {
-
+				console.log("--------", this.data.nodeList)
                     this.jsPlumb.makeSource(nodeId, this.jsplumbSourceOptions)
 
                     this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions)
@@ -391,8 +395,10 @@
             },
             editNode(nodeId) {
                 console.log('编辑节点', nodeId)
+				console.log('编辑节点---', this.data)
                 this.nodeFormVisible = true
                 this.$nextTick(function () {
+				    
                     this.$refs.nodeForm.init(this.data, nodeId)
                 })
             },
@@ -410,9 +416,12 @@
                 this.data.lineList = []
                 this.$nextTick(() => {
                     // 这里模拟后台获取数据、然后加载
-					if(data instanceof Array){
-                    data = lodash.cloneDeep(data[0])}
-					else{data=lodash.cloneDeep(data)}
+					if(data instanceof Array){					
+                    data = lodash.cloneDeep(data[0])
+					}
+					else{
+					data=lodash.cloneDeep(data)
+					}
                     this.easyFlowVisible = true
                     this.data = data
                     this.$nextTick(() => {

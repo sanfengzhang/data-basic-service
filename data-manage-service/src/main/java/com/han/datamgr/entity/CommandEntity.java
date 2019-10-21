@@ -41,7 +41,7 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_provider")
     private String commandProvider;
 
-    @OneToMany(mappedBy = "command", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "command", fetch = FetchType.EAGER,cascade={CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"command"})
     private List<CommandInstanceEntity> commandInstanceEntityList = new ArrayList<>();
 

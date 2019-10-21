@@ -9,13 +9,13 @@
                 <el-input v-model="node.name"></el-input>
             </el-form-item>
             <el-form-item label="类名称">
-                <el-input   v-model="node.commandVO.commandClazz"></el-input>
+                <el-input   v-model="node.command.commandClazz"></el-input>
             </el-form-item>
             <el-form-item label="转换名称">
-                <el-input v-model="node.commandVO.morphName"></el-input>
+                <el-input v-model="node.command.morphName"></el-input>
             </el-form-item>
-			<div v-for="item in node.commandParams">
-			 <el-form-item :label="item.displayName">
+			<div v-for="item in node.cmdInstanceParams">
+			 <el-form-item :label="item.cmdDisplayName">
                 <el-input v-model="item.filedValue"></el-input>	
               </el-form-item>				
 			</div>
@@ -36,16 +36,18 @@
             return {
                 visible: false,
                 node: {
-				   commandVO:{}
+				   command:{}
 				}
             }
         },
         methods: {
             init(data, id) {
+			
 			 data.nodeList.filter((node) => {
-                    if (node.id === id) {					   
-                        this.node = node.data
-						console.log("日志"+JSON.stringify(node.data))
+                    if (node.id === id) {
+                        console.log("日志",node)					
+                        this.node = node
+						
                     }
                 })
                 this.visible = true           

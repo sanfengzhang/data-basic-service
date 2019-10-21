@@ -4,6 +4,7 @@ import com.han.datamgr.Application;
 import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.*;
+import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,8 +65,8 @@ public class InitSysDataTest {
     @Test
     public void createFlowLineTest() {
         FlowLineEntity flowLine = new FlowLineEntity();
-        flowLine.setStart(commandInstanceRepository.findById("8adb929b6dd3012b016dd301485b0000").get());
-        flowLine.setEnd(commandInstanceRepository.findById("8adb929b6dd3012b016dd30148800009").get());
+        flowLine.setStart(commandInstanceRepository.findById("8adb929b6dd3012b016dd30148800009").get());
+        flowLine.setEnd(commandInstanceRepository.findById("8adb929b6dec0ef0016dec0f08e30001").get());
         flowLine.setFlowEntity(dataProcessFlowRepository.findById("8adb929b6dcf4089016dcf40b16c0000").get());
         flowLineRepository.save(flowLine);
     }
@@ -194,6 +195,75 @@ public class InitSysDataTest {
             e.printStackTrace();
         }
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Test
+    public void createCmdFuhuaTest() {
+        CommandEntity entity = new CommandEntity();
+        entity.setCommandName("JAVA类-富化");
+        entity.setCommandClazz("com.stream.data.transform.command.JavaMethodAddValueBuilder");
+        entity.setCommandType("富化");
+        entity.setCommandMorphName("javaMethodAddValue");
+        CommandInstanceEntity instanceEntity = new CommandInstanceEntity();
+        instanceEntity.setCommand(entity);
+        instanceEntity.setCommandInstanceName("IP富化");
+        instanceEntity.setTop("223px");
+        instanceEntity.setLeft("451px");
+        instanceEntity.setIco("el-icon-goods");
+        instanceEntity.setShow(true);
+        entity.getCommandInstanceEntityList().add(instanceEntity);
+
+        CommandParamEntity paramEntity=new CommandParamEntity();
+        paramEntity.setCommandInstanceEntity(instanceEntity);
+        paramEntity.setFieldName("class_name");
+        paramEntity.setFieldType("java.lang.String");
+        paramEntity.setFiledValue("com.stream.data.transform.utils.IpaddressUtil");
+        paramEntity.setCmdDisplayName("类名称");
+
+        CommandParamEntity paramEntity1=new CommandParamEntity();
+        paramEntity1.setCommandInstanceEntity(instanceEntity);
+        paramEntity1.setFieldName("method_name");
+        paramEntity1.setFieldType("java.lang.String");
+        paramEntity1.setFiledValue("getIplongValue");
+        paramEntity1.setCmdDisplayName("方法名称");
+
+
+        CommandParamEntity paramEntity3=new CommandParamEntity();
+        paramEntity3.setCommandInstanceEntity(instanceEntity);
+        paramEntity3.setFieldName("original_key");
+        paramEntity3.setFieldType("java.lang.String");
+        paramEntity3.setFiledValue("ip");
+        paramEntity3.setCmdDisplayName("富化字段名称");
+
+        CommandParamEntity paramEntity4=new CommandParamEntity();
+        paramEntity4.setCommandInstanceEntity(instanceEntity);
+        paramEntity4.setFieldName("derive_key");
+        paramEntity4.setFieldType("java.lang.String");
+        paramEntity4.setFiledValue("IPValue");
+        paramEntity4.setCmdDisplayName("富化后字段名称");
+
+        CommandParamEntity paramEntity5=new CommandParamEntity();
+        paramEntity5.setCommandInstanceEntity(instanceEntity);
+        paramEntity5.setFieldName("argument_class");
+        paramEntity5.setFieldType("java.lang.String");
+        paramEntity5.setFiledValue("java.lang.String");
+        paramEntity5.setCmdDisplayName("富化后字段类型");
+
+        CommandParamEntity importCommands1 = new CommandParamEntity();
+        importCommands1.setFieldName("importCommands");
+        importCommands1.setFieldType("java.util.List");
+        importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
+
+        instanceEntity.getCmdInstanceParams().add(paramEntity);
+        instanceEntity.getCmdInstanceParams().add(paramEntity1);
+        instanceEntity.getCmdInstanceParams().add(paramEntity3);
+        instanceEntity.getCmdInstanceParams().add(paramEntity4);
+        instanceEntity.getCmdInstanceParams().add(paramEntity5);
+        instanceEntity.getCmdInstanceParams().add(importCommands1);
+
+        commandRepository.save(entity);
+    }
+
 
     @Transactional(rollbackFor = Exception.class)
     public void createJobDataFlow() {

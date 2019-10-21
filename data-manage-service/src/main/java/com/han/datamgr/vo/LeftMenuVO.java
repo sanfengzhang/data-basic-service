@@ -1,5 +1,6 @@
 package com.han.datamgr.vo;
 
+import com.han.datamgr.entity.CommandInstanceEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,6 +20,6 @@ public class LeftMenuVO implements Serializable {
 
     private String ico;
 
-    private List<CommandInstanceVO> children;
+    private List<CommandInstanceEntity> children;
 
 }

@@ -2,6 +2,7 @@ package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.CommandService;
 import com.han.datamgr.entity.CommandEntity;
+import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.CommandRepository;
 import com.han.datamgr.support.DataTransformUtils;
@@ -45,19 +46,19 @@ public class CommandServiceImpl implements CommandService {
             }
             if (null != map) {
                 Iterator<Map.Entry<String, List<CommandEntity>>> it = map.entrySet().iterator();
+                int i=0;
                 while (it.hasNext()) {
                     Map.Entry<String, List<CommandEntity>> en = it.next();
                     LeftMenuVO leftMenuVO = new LeftMenuVO();
-                    leftMenuVO.setType("group");
+                    leftMenuVO.setType("group"+i);
+                    i++;
                     leftMenuVO.setName(en.getKey());
                     leftMenuVO.setIco("'el-icon-video-play'");
                     List<CommandEntity> commandEntities = en.getValue();
-                    List<CommandInstanceVO> res = new ArrayList<>();
+                    List<CommandInstanceEntity> res = new ArrayList<>();
                     commandEntities.forEach(commandEntity -> {
                         commandEntity.getCommandInstanceEntityList().forEach(commandInstance -> {
-                            CommandInstanceVO commandInstanceVO = new CommandInstanceVO();
-                            commandInstanceVO.from(commandInstance);
-                            res.add(commandInstanceVO);
+                            res.add(commandInstance);
                         });
                     });
                     leftMenuVO.setChildren(res);

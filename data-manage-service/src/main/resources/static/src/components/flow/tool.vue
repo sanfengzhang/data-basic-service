@@ -1,7 +1,7 @@
 <template>
     <div style="background-color: #66a6e0;" ref="tool">
         <el-menu :default-openeds="defaultOpeneds">
-            <el-submenu :index="menu.type+index" v-for="(menu,index)  in  menuList" :key="menu.type+index">
+            <el-submenu  v-if="menuList.length > 0" v-for="(menu,index) in  menuList" :index=String(menu.type+index)  :key="menu.type+index">
                 <!--一级菜单名称、不可拖拽 -->
                 <template slot="title">
                     <i :class="menu.ico"></i>
@@ -12,10 +12,11 @@
                     <draggable @end="addNode" @choose="move" v-model="menu.children" :options="draggableOptions">
                         <el-menu-item v-for="(son,i) in menu.children"
                                       :key="son.type+i"
-                                      :index="son.type+i"
-                                      :type="son.type"
+                                      :index=String(son.type+i)
+                                      :type=JSON.stringify(son)
                                       :aaa="son.type"
                                       :bbb="son.type"
+									 
                         >
                             <i :class="son.ico"></i>{{son.name}}
                         </el-menu-item>
@@ -45,10 +46,12 @@
             }
         },
       mounted() {
-	      this.get('/api/v1/main',{}).then((data) => {         
-          this.menuList = data.data
-		   console.log("menun:", this.menuList)		
-        });
+	      this.$nextTick(() => {
+	         this.get('/api/v1/main',{}).then((data) => {                    
+                   this.menuList = data.data
+				   console.log("menun:", this.menuList)		 
+                 })
+		 });
       },
 	  
       
@@ -85,11 +88,13 @@
             },
             move(evt) {
                 var attrs = evt.item.attributes
-                this.nodeMenu = this.getMenu(attrs.type.nodeValue)
+				//console.info("select",JSON.stringify(attrs.type.nodeValue))
+                this.nodeMenu = JSON.parse(attrs.type.nodeValue)
+				
+				
             },
             // 添加节点
-            addNode(evt, e) {
-			   console.info(JSON.stringify(this.nodeMenu)) 
+            addNode(evt) {			  
                 this.$emit('addNode', evt, this.nodeMenu, mousePosition)
             },
             // 是否是火狐浏览器
