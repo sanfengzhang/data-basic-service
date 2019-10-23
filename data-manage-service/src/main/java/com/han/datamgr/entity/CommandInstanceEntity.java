@@ -28,9 +28,14 @@ public class CommandInstanceEntity implements Serializable {
     @JsonProperty("name")
     private String commandInstanceName;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"commandInstanceEntity"})
     private Set<CommandParamEntity> cmdInstanceParams = new HashSet<>();
+
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JsonIgnoreProperties(value = {"commandInstanceEntity"})
+    private Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = new HashSet<>();
 
 
     @Column(name = "cmd_input")
@@ -49,6 +54,7 @@ public class CommandInstanceEntity implements Serializable {
     @JoinColumn(name = "cmd_id")
     @JsonIgnoreProperties(value = {"commandInstanceEntityList"})
     private CommandEntity command;//属于哪个Command的实例对象
+
 
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
     private int version;

@@ -7,30 +7,65 @@ import java.util.*;
  * @date :2019/10/23
  * @desc:
  */
+
 public class FlowUtils {
 
-    public static List<Map<String, String>> findMainFlow(List<Map<String, String>> flowLine, String start, String end) {
+    /**
+     * 从flow的连线集合变换主找到一个流程节点list
+     *
+     * @param flowLine
+     * @param start
+     * @param end
+     * @return
+     */
+    public static List<String> findFlow(List<Map<String, String>> flowLine, String start, String end) {
+        List<String> result = new ArrayList<>();
+        List<Map<String, String>> mainFlowLine = findMainFlowLine(flowLine, start, end);
+        TreeSet<String> treeSet = new TreeSet<>();
+        for (Map<String, String> map : mainFlowLine) {
+            Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> en = it.next();
+                treeSet.add(en.getKey());
+                if (null != en.getValue()) {
+                    treeSet.add(en.getValue());
+                }
+            }
 
+        }
+        String[] arr = new String[treeSet.size()];
+        treeSet.toArray(arr);
+        result = Arrays.asList(arr);
+        return result;
+    }
+
+    public static List<Map<String, String>> findMainFlowLine(List<Map<String, String>> flowLine, String start, String end) {
         List<Edge> flowLineEge = new ArrayList<>();
         for (Map<String, String> line : flowLine) {
-            Edge<String> edge = new Edge(new Node(line.get("from")), new Node(line.get("to")));
+            Edge<String> edge = new Edge(line.get("from"), line.get("to"));
             flowLineEge.add(edge);
         }
         List<Node> path = new ArrayList<>();
         List<List<Node>> allPaths = new LinkedList<>();
         DAG.findPath(flowLineEge, new Node(start), new Node(end), path, allPaths);
-        //-------找到存在于所有的额path中的节点
         List<Node> mainFlowNode = new ArrayList<>();
         List<Node> first = allPaths.get(0);
-        for (Node node : first) {
-            boolean flag = true;
-            for (int i = 1; i < allPaths.size(); i++) {
-                if (!allPaths.get(i).contains(node)) {
-                    flag = false;
-                    break;
+        if (allPaths.size() > 1) {
+            //-------找到存在于所有的额path中的节点
+            for (Node node : first) {
+                boolean flag = true;
+                for (int i = 1; i < allPaths.size(); i++) {
+                    if (!allPaths.get(i).contains(node)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    mainFlowNode.add(node);
                 }
             }
-            if (flag) {
+        } else {
+            for (Node node : first) {
                 mainFlowNode.add(node);
             }
         }
@@ -53,11 +88,11 @@ public class FlowUtils {
     public static Map<String, List<List<String>>> findAllSubFlow(List<Map<String, String>> flowLine, String start, String end) {
         List<Edge> flowLineEge = new ArrayList<>();
         for (Map<String, String> line : flowLine) {
-            Edge<String> edge = new Edge(new Node(line.get("from")), new Node(line.get("to")));
+            Edge<String> edge = new Edge(line.get("from"), line.get("to"));
             flowLineEge.add(edge);
         }
         Map<Node, List<List<Node>>> startAndEnd = findAllSubFlowByNode(flowLineEge, new Node(start), new Node(end));
-        if (null == startAndEnd) {
+        if (null == startAndEnd || startAndEnd.size() == 0) {
             return null;
         }
         Iterator<Map.Entry<Node, List<List<Node>>>> it = startAndEnd.entrySet().iterator();
@@ -81,7 +116,7 @@ public class FlowUtils {
 
     public static Map<Node, List<List<Node>>> findAllSubFlowByNode(List<Edge> flowLine, Node start, Node end) {
         Map<Node, Node> startAndEnd = findAllSubFlow(flowLine, start, end);
-        if (null == startAndEnd) {
+        if (null == startAndEnd || startAndEnd.size() == 0) {
             return null;
         }
         Iterator<Map.Entry<Node, Node>> it = startAndEnd.entrySet().iterator();
@@ -114,7 +149,7 @@ public class FlowUtils {
         List<Node> path = new ArrayList<>();
         List<List<Node>> allPaths = new LinkedList<>();
         DAG.findPath(flowLine, start, end, path, allPaths);
-        if (allPaths.size() == 1) {//只有一条数据的时候就是没有分支直接返回
+        if (allPaths.size() <= 1) {//只有一条数据的时候就是没有分支直接返回
             return null;
         }
         //-------找到存在于所有的额path中的节点
@@ -195,12 +230,12 @@ public class FlowUtils {
         edgeList.add(edge8);
         edgeList.add(edge9);
         edgeList.add(edge10);
-        //   System.out.println(findAllSubFlow(edgeList, edge.srcNode, edge7.dstNode));
+        System.out.println(findAllSubFlow(edgeList, edge.srcNode, edge7.dstNode));
 
         List<Node> path = new ArrayList<>();
         List<List<Node>> allPaths = new LinkedList<>();
-        //  DAG.findPath(edgeList, edge.srcNode, edge3.dstNode, path, allPaths);
-        //  System.out.println(allPaths);
+        DAG.findPath(edgeList, edge.srcNode, edge3.dstNode, path, allPaths);
+        System.out.println(allPaths);
 
         System.out.println(findAllSubFlowByNode(edgeList, edge.srcNode, edge7.dstNode));
     }

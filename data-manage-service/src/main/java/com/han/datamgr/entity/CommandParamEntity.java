@@ -1,6 +1,7 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -15,12 +16,11 @@ import javax.persistence.ManyToOne;
 @Entity
 @DiscriminatorValue("cmd_init_param")
 @Data
+@EqualsAndHashCode(exclude = {"commandInstanceEntity"}, callSuper = true)
 public class CommandParamEntity extends FiledEntity {
 
     @ManyToOne
-    private CommandInstanceEntity commandInstanceEntity ;
-
-
+    private CommandInstanceEntity commandInstanceEntity;
 
 
     @Override

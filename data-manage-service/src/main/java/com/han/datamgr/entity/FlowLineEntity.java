@@ -40,14 +40,14 @@ public class FlowLineEntity implements Serializable {
     @JsonIgnoreProperties(value = {"commandInstanceName","cmdInstanceParams","commandInputParams","commandOutputParams","skipCmdSelectorClazz","command","version","createTime"})
     private CommandInstanceEntity end;
 
-    @Column(name = "create_time")
-    @CreationTimestamp
-    private Date createTime;//任务创建时间
-
     @ManyToOne
     @JoinColumn(name = "flow_id")
     @JsonIgnoreProperties("flowLineSet")
     private DataProcessFlowEntity flowEntity;
+
+    @Column(name = "create_time")
+    @CreationTimestamp
+    private Date createTime;//任务创建时间
 
     @Column(name = "update_time")
     @LastModifiedDate

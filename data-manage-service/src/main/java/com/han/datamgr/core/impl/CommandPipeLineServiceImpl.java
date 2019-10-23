@@ -14,6 +14,7 @@ import com.han.datamgr.utils.FlowUtils;
 import com.han.datamgr.vo.DataProcessFlowVO;
 import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.utils.TypeUtils;
+import com.sun.tools.javac.comp.Flow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -42,37 +43,37 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         vo.setFlowEntity(flowEntity);
         vo.formEntityToLineList();
         vo.fromEntityToNodeList();
-
-
-        return null;
+        return buildCommandPipe(vo.getLineList(), "8adb929b6dd3012b016dd301485b0000", "8adb929b6dec0ef0016dec0f08e30001", vo.getNodeList(), vo.getFlowEntity().getDataProcessFlowName());
     }
 
     /**
      * @param flowLine
+     * @param start
+     * @param end
+     * @param nodeList
      */
-    private void buildCommandPipe(List<Map<String, String>> flowLine, String start, String end) {
+    private CommandPipeline buildCommandPipe(List<Map<String, String>> flowLine, String start, String end, List<CommandInstanceEntity> nodeList, String flowNme) throws BusException {
         Map<String, List<List<String>>> subFlowForNode = FlowUtils.findAllSubFlow(flowLine, start, end);
+        List<String> mainFlow = FlowUtils.findFlow(flowLine, start, end);
+        Map<String, CommandInstanceEntity> idInstance = new HashMap<>();
+        nodeList.forEach(node -> {
+            idInstance.put(node.getId(), node);
+        });
+
+        CommandPipeline commandPipeline = CommandPipeline.build(flowNme);
+        //先计算出子流程的commandPipe------------------
+        for (String id : mainFlow) {
+            Map<String, Object> cmdMap = buildCommandMapByConfig(idInstance.get(id), commandPipeline);
+            commandPipeline.addCommand(cmdMap);
+        }
+
+
         //------------------不存在子流程
         if (CollectionUtils.isEmpty(subFlowForNode)) {
 
         }
 
-
-    }
-
-
-    private List<CommandInstanceEntity> findStartAndEndCmd(DataProcessFlowVO vo) {
-        List<CommandInstanceEntity> cmdList = vo.getNodeList();
-        List<CommandInstanceEntity> result = new ArrayList<>();
-        for (CommandInstanceEntity cmd : cmdList) {
-            if ("".equals(cmd.getCommand().getCommandType())) {
-                cmdList.add(cmd);
-            }
-            if ("".equals(cmd.getCommand().getCommandType())) {
-                cmdList.add(cmd);
-            }
-        }
-        return cmdList;
+        return commandPipeline;
     }
 
     public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {
@@ -92,6 +93,10 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             }
             result.put(commandParamEntity.getFieldName(), value);
         }
-        return result;
+
+        Map<String, Object> resultCommand = new HashMap<>();
+        String morphName = commandInstanceEntity.getCommand().getCommandMorphName();
+        resultCommand.put(morphName, result);
+        return resultCommand;
     }
 }
