@@ -36,8 +36,8 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     @Column(name = "load_external_lib_path")
     private String loadExternalLibsPath;//需要加载外部实现的命令插件,创建数据流程的时候会校验当前command是否都存在！
 
-    @Column(name = "filter_cmd_condition")//, columnDefinition = "某些命令过滤条件"
-    private String filterCmdCondition;
+    @Column(name = "flow_status")
+    private String flowStatus;//流程的状态创建、调试、待运行、运行中
 
     @Column(name = "create_time")
     @CreationTimestamp

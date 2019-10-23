@@ -1,5 +1,7 @@
 package com.han.datamgr.utils;
 
+import com.han.datamgr.entity.FlowLineEntity;
+
 import java.util.*;
 
 /**
@@ -9,6 +11,21 @@ import java.util.*;
  */
 
 public class FlowUtils {
+
+
+    public static List<Map<String, String>> fromFlowLineEntityToId(Set<FlowLineEntity> flowLineEntitySet) {
+        List<Map<String, String>> subFlowLineMap = new ArrayList<>();
+        flowLineEntitySet.forEach(e -> {
+            Map<String, String> lineMap = new HashMap<>();
+            String from = e.getStart().getId();
+            String to = e.getEnd() == null ? null : e.getEnd().getId();
+            lineMap.put("from", from);
+            lineMap.put("to", to);
+            subFlowLineMap.add(lineMap);
+        });
+        return subFlowLineMap;
+    }
+
 
     /**
      * 从flow的连线集合变换主找到一个流程节点list

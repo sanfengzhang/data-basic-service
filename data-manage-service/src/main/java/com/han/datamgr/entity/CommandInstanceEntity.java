@@ -50,11 +50,13 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "skip_cmd_condition")//选择器的逻辑表达式
     private String skipCmdCondition;
 
+    @Column(name = "select_sub_flow_clazz")
+    private String selectSubFlowClazz;//某個节点下有一些子流程，可能存在多个子流程，该怎么选择子流程的运行
+
     @ManyToOne
     @JoinColumn(name = "cmd_id")
     @JsonIgnoreProperties(value = {"commandInstanceEntityList"})
     private CommandEntity command;//属于哪个Command的实例对象
-
 
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
     private int version;
