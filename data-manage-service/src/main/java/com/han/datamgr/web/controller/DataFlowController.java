@@ -30,7 +30,7 @@ public class DataFlowController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String createDataFlow(@RequestBody @Valid DataProcessFlowVO dataProcessFlowVO) throws BusException {
-
+        flowService.createDataProcessFlow(dataProcessFlowVO);
         return JSON.toJSONString(CommonResponse.buildWithSuccess("success"));
     }
 }

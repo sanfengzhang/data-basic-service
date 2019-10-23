@@ -3,8 +3,6 @@ package com.han.datamgr.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -32,7 +30,8 @@ public class CommandInstanceEntity implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"commandInstanceEntity"})
-    private List<CommandParamEntity> cmdInstanceParams = new ArrayList<>();
+    private Set<CommandParamEntity> cmdInstanceParams = new HashSet<>();
+
 
     @Column(name = "cmd_input")
     private String commandInputParams;//cmd的的输入参数，Record中的参数
@@ -42,7 +41,6 @@ public class CommandInstanceEntity implements Serializable {
 
     @Column(name = "skip_cmd_selector")//是否跳过当前算子的操作的选择器
     private String skipCmdSelectorClazz;
-    ;
 
     @Column(name = "skip_cmd_condition")//选择器的逻辑表达式
     private String skipCmdCondition;
@@ -70,7 +68,5 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
-
-
 
 }

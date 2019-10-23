@@ -49,9 +49,11 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
 
 
     @Override
-    public void createDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException {
-
-
+    public void createDataProcessFlow(DataProcessFlowVO vo) throws BusException {
+        DataProcessFlowEntity entity = new DataProcessFlowEntity();
+        entity.setDataProcessFlowName(vo.getDataProcessFlowName());
+        entity.setLoadExternalLibsPath(vo.getLoadExternalLibsPath());
+        flowRepository.save(entity);
     }
 
     @Override

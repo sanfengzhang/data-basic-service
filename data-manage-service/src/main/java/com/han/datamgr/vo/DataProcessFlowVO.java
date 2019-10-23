@@ -1,5 +1,6 @@
 package com.han.datamgr.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.entity.FlowLineEntity;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.*;
 
@@ -19,7 +21,10 @@ import java.util.*;
 @ToString
 public class DataProcessFlowVO implements Serializable {
 
-    private String name;
+    @NotBlank(message = "流程名字不能为空")
+    private String dataProcessFlowName;
+
+    private String loadExternalLibsPath;
 
     private DataProcessFlowEntity flowEntity;
 

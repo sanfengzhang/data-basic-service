@@ -7,10 +7,7 @@ import com.han.datamgr.entity.CommandParamEntity;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -55,7 +52,7 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
         entity.setCommand(commandVO.to());
         entity.setCommandInstanceName(this.commandInstanceName);
 
-        List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
+        Set<CommandParamEntity> commandParamEntityList = new HashSet<>();
         commandParams.forEach(commandParam -> {
             commandParamEntityList.add((CommandParamEntity) commandParam.to());
         });

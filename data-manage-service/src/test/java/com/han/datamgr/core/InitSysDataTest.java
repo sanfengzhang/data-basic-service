@@ -14,10 +14,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -127,7 +124,7 @@ public class InitSysDataTest {
         importCommands.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
         importCommands.setCommandInstanceEntity(commandInstanceEntity);
 
-        List<CommandParamEntity> commandParamEntityList = new ArrayList<>();
+        Set<CommandParamEntity> commandParamEntityList = new HashSet<>();
         commandParamEntityList.add(inputField);
         commandParamEntityList.add(outputFields);
         commandParamEntityList.add(separator);
@@ -162,7 +159,7 @@ public class InitSysDataTest {
         importCommands1.setCommandInstanceEntity(commandInstanceEntity1);
 
 
-        List<CommandParamEntity> commandParamEntityList1 = new ArrayList<>();
+        Set<CommandParamEntity> commandParamEntityList1 = new HashSet<>();
         commandParamEntityList1.add(cache_warming);
         commandParamEntityList1.add(expresses);
         commandParamEntityList1.add(importCommands1);
@@ -196,6 +193,50 @@ public class InitSysDataTest {
         }
     }
 
+    @Test
+    public void createSubFlow() {
+
+        CommandEntity entity = new CommandEntity();
+        entity.setCommandName("子流程节点");
+        entity.setCommandClazz("com.stream.data.transform.command.CallSubPipeBuilder");
+        entity.setCommandType("富化");
+        entity.setCommandMorphName("callSubPipe");
+        CommandInstanceEntity instanceEntity = new CommandInstanceEntity();
+        instanceEntity.setCommand(entity);
+        instanceEntity.setCommandInstanceName("子流程节点");
+        instanceEntity.setTop("223px");
+        instanceEntity.setLeft("851px");
+        instanceEntity.setIco("el-icon-goods");
+        instanceEntity.setShow(true);
+        entity.getCommandInstanceEntityList().add(instanceEntity);
+
+        CommandParamEntity paramEntity = new CommandParamEntity();
+        paramEntity.setCommandInstanceEntity(instanceEntity);
+        paramEntity.setFieldName("pipelineSelectorKey");
+        paramEntity.setFieldType("java.lang.String");
+        paramEntity.setFiledValue("keyValueSubPipeSelector");
+        paramEntity.setCmdDisplayName("选择器名称");
+
+        CommandParamEntity paramEntity1 = new CommandParamEntity();
+        paramEntity1.setCommandInstanceEntity(instanceEntity);
+        paramEntity1.setFieldName("continueParentPipe");
+        paramEntity1.setFieldType("java.lang.Boolean");
+        paramEntity1.setFiledValue("true");
+        paramEntity1.setCmdDisplayName("是否继续父流程");
+
+
+        CommandParamEntity importCommands1 = new CommandParamEntity();
+        importCommands1.setFieldName("importCommands");
+        importCommands1.setFieldType("java.util.List");
+        importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
+
+        instanceEntity.getCmdInstanceParams().add(paramEntity);
+        instanceEntity.getCmdInstanceParams().add(paramEntity1);
+        instanceEntity.getCmdInstanceParams().add(importCommands1);
+        commandRepository.save(entity);
+    }
+
+
     @Transactional(rollbackFor = Exception.class)
     @Test
     public void createCmdFuhuaTest() {
@@ -213,14 +254,14 @@ public class InitSysDataTest {
         instanceEntity.setShow(true);
         entity.getCommandInstanceEntityList().add(instanceEntity);
 
-        CommandParamEntity paramEntity=new CommandParamEntity();
+        CommandParamEntity paramEntity = new CommandParamEntity();
         paramEntity.setCommandInstanceEntity(instanceEntity);
         paramEntity.setFieldName("class_name");
         paramEntity.setFieldType("java.lang.String");
         paramEntity.setFiledValue("com.stream.data.transform.utils.IpaddressUtil");
         paramEntity.setCmdDisplayName("类名称");
 
-        CommandParamEntity paramEntity1=new CommandParamEntity();
+        CommandParamEntity paramEntity1 = new CommandParamEntity();
         paramEntity1.setCommandInstanceEntity(instanceEntity);
         paramEntity1.setFieldName("method_name");
         paramEntity1.setFieldType("java.lang.String");
@@ -228,21 +269,22 @@ public class InitSysDataTest {
         paramEntity1.setCmdDisplayName("方法名称");
 
 
-        CommandParamEntity paramEntity3=new CommandParamEntity();
+
+        CommandParamEntity paramEntity3 = new CommandParamEntity();
         paramEntity3.setCommandInstanceEntity(instanceEntity);
         paramEntity3.setFieldName("original_key");
         paramEntity3.setFieldType("java.lang.String");
         paramEntity3.setFiledValue("ip");
         paramEntity3.setCmdDisplayName("富化字段名称");
 
-        CommandParamEntity paramEntity4=new CommandParamEntity();
+        CommandParamEntity paramEntity4 = new CommandParamEntity();
         paramEntity4.setCommandInstanceEntity(instanceEntity);
         paramEntity4.setFieldName("derive_key");
         paramEntity4.setFieldType("java.lang.String");
         paramEntity4.setFiledValue("IPValue");
         paramEntity4.setCmdDisplayName("富化后字段名称");
 
-        CommandParamEntity paramEntity5=new CommandParamEntity();
+        CommandParamEntity paramEntity5 = new CommandParamEntity();
         paramEntity5.setCommandInstanceEntity(instanceEntity);
         paramEntity5.setFieldName("argument_class");
         paramEntity5.setFieldType("java.lang.String");
