@@ -109,7 +109,9 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             }
             result.put(commandParamEntity.getFieldName(), value);
         }
-
+        //-------------------构建节点的子流程
+        result.put("subFlow", subPipMapList);
+        result.put("commandInstanceId",commandInstanceEntity.getId());
         Map<String, Object> resultCommand = new HashMap<>();
         String morphName = commandInstanceEntity.getCommand().getCommandMorphName();
         resultCommand.put(morphName, result);

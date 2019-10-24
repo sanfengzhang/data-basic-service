@@ -15,12 +15,11 @@
  */
 package org.kitesdk.morphline.base;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
 import org.kitesdk.morphline.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import com.codahale.metrics.Timer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.typesafe.config.Config;
+import sun.nio.cs.CharsetMapping;
 
 /**
  * Base class for convenient implementation of {@link Command} classes.
@@ -40,21 +40,36 @@ import com.typesafe.config.Config;
 public abstract class AbstractCommand implements Command {
 
     private final Config config;
+
     private final Command parent;
+
     private final Command child;
+
+    protected Map<String, Command> subFlows;
+
+    public static final String SUB_FLOW_KEY = "subFlow";
+
+    public static final String SUB_FLOW_SELECTOR_KEY = "subFlowSelector";
+
+    private FindSubFlowSelector subFlowSelector;
+
     private final MorphlineContext context;
+
     private final String name;
+
     private final Configs configs;
+
     private final Meter numProcessCallsMeter;
+
     private final Meter numNotifyCallsMeter;
 
     public static final String SKIP_COMMAND_SELECTOR = "skip.command.selector";
 
     private SkipCommandSelector skipCommandSelector;
 
-    public static final String CMD_INPUT_PARAMS="cmd.input.params";
+    public static final String CMD_INPUT_PARAMS = "cmd.input.params";
 
-    public static final String CMD_OUTPUT_PARAMS="cmd.output.params";
+    public static final String CMD_OUTPUT_PARAMS = "cmd.output.params";
 
     private String commandInstanceId;
 
@@ -85,8 +100,37 @@ public abstract class AbstractCommand implements Command {
         this.name = "morphline." + builder.getNames().iterator().next();
         this.configs = new Configs();
         try {
-            commandInstanceId = configs.getString(config, "commandInstanceId");
-        } catch (ConfigException e) {
+            if (config.hasPath("commandInstanceId")) {
+                commandInstanceId = configs.getString(config, "commandInstanceId");
+            }
+            if (config.hasPath(SUB_FLOW_KEY)) {
+                List subCommandConfig = configs.getConfigList(config, SUB_FLOW_KEY);
+                if (null != subCommandConfig && subCommandConfig.size() > 0) {
+                    this.subFlows = new ConcurrentHashMap<>();
+                    for (int i = 0; i < subCommandConfig.size(); i++) {
+                        Config subConfig = (Config) subCommandConfig.get(i);
+                        String id = subConfig.getString("id");
+                        Command subCmd = new Compiler().compile(subConfig, context, child);
+                        subFlows.put(id, subCmd);
+                    }
+                    LOG.info("create subFlow success，flows={}", subFlows);
+                }
+                if (config.hasPath(SUB_FLOW_SELECTOR_KEY)) {
+                    String clazzName = configs.getString(config, SUB_FLOW_SELECTOR_KEY);
+                    Class clazz = Class.forName(clazzName);
+                    subFlowSelector = (FindSubFlowSelector) clazz.newInstance();
+                    subFlowSelector.setCommands(subFlows);
+                    subFlowSelector.setCommandInstanceId(commandInstanceId);
+                } else {
+                    if (null != subFlows && subFlows.size() > 0) {
+                        subFlowSelector = new AllSubFlowSelector();
+                        subFlowSelector.setCommands(subFlows);
+                        subFlowSelector.setCommandInstanceId(commandInstanceId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         this.numProcessCallsMeter = getMeter(Metrics.NUM_PROCESS_CALLS);
         this.numNotifyCallsMeter = getMeter(Metrics.NUM_NOTIFY_CALLS);
@@ -189,7 +233,21 @@ public abstract class AbstractCommand implements Command {
         if (!success) {
             LOG.debug("Command failed!");
         }
+        if (success) {
+            doSubFlow(record);
+        }
         return success;
+    }
+
+    public void doSubFlow(Record record) {
+        if (null != this.subFlows && this.subFlows.size() > 0) {
+            if (null != subFlowSelector) {
+                Collection<Command> commandSet = subFlowSelector.select(record);
+                for (Command subCmd : commandSet) {
+                    subCmd.process(record);
+                }
+            }
+        }
     }
 
     protected boolean skipCurrentCommand(Record record) {
