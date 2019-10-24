@@ -8,7 +8,6 @@ import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.utils.FlowUtils;
-import com.han.datamgr.vo.DataProcessFlowVO;
 import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.utils.TypeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -35,20 +34,21 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
     private FlowLineService flowLineService;
 
     @Override
-    public CommandPipeline createCommandPipeline(String DataProcessFlowId) throws BusException {
+    public CommandPipeline buildCommandPipeline(String DataProcessFlowId) throws BusException {
         Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findById(DataProcessFlowId);
         if (!optional.isPresent()) {
             throw new BusException("没有找到对应的数据流程,id=" + DataProcessFlowId);
         }
         DataProcessFlowEntity flowEntity = optional.get();
-        DataProcessFlowVO vo = new DataProcessFlowVO();
-        vo.setFlowEntity(flowEntity);
-        vo.formEntityToLineList();
-        vo.fromEntityToNodeList();
-        Map<String, CommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(DataProcessFlowId);
+        Map<String, CanvasCommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(DataProcessFlowId);
         String start = startAndEnd.get(FlowLineService.START_CMD).getId();
-        String end = startAndEnd.get(FlowLineService.END_CMD) == null ? null : startAndEnd.get(FlowLineService.END_CMD).getId();
-        return buildCommandPipe(vo.getLineList(), start, end, vo.getNodeList(), vo.getFlowEntity().getDataProcessFlowName());
+        String end = startAndEnd.get(FlowLineService.END_CMD).getId();
+        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
+
+        CommandPipeline commandPipeline = buildCommandPipe(FlowUtils.fromFlowLineEntity(flowLineEntitySet), start, end,
+                FlowUtils.fromFlowLineEntityToNodeList(flowLineEntitySet), flowEntity.getDataProcessFlowName());
+
+        return commandPipeline;
     }
 
     /**
@@ -57,10 +57,10 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
      * @param end
      * @param nodeList
      */
-    private CommandPipeline buildCommandPipe(List<Map<String, String>> flowLine, String start, String end, List<CommandInstanceEntity> nodeList, String flowNme) throws BusException {
+    private CommandPipeline buildCommandPipe(List<Map<String, String>> flowLine, String start, String end, List<CanvasCommandInstanceEntity> nodeList, String flowNme) throws BusException {
         //先计算主流程的命令构建------------------
         List<String> mainFlow = FlowUtils.findFlow(flowLine, start, end);
-        Map<String, CommandInstanceEntity> idInstance = new HashMap<>();
+        Map<String, CanvasCommandInstanceEntity> idInstance = new HashMap<>();
         nodeList.forEach(node -> {
             idInstance.put(node.getId(), node);
         });
@@ -68,25 +68,25 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         CommandPipeline commandPipeline = CommandPipeline.build(flowNme);
         for (String id : mainFlow) {
             //-------------需要计算每个节点子流程命令构建
-            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = idInstance.get(id).getCmdInstanceFowRelSet();
+            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = idInstance.get(id).getCommandInstanceEntity().getCmdInstanceFowRelSet();
             List<Map<String, Object>> subPipMapList = new ArrayList<>();
             if (!CollectionUtils.isEmpty(cmdInstanceFowRelSet)) {
                 for (CommandInstanceFlowRelation relation : cmdInstanceFowRelSet) {
                     Set<FlowLineEntity> flowLineEntitySet = relation.getFlowEntity().getFlowLineSet();
                     String subFlowId = relation.getFlowEntity().getId();
                     String subFlowName = relation.getFlowEntity().getDataProcessFlowName();
-                    Map<String, CommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(subFlowId);
+                    Map<String, CanvasCommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(subFlowId);
                     //---------------------获取子流程的执行顺序
                     List<Map<String, String>> subFlowLineMap = FlowUtils.fromFlowLineEntityToId(flowLineEntitySet);
                     String start0 = startAndEnd.get(FlowLineService.START_CMD).getId();
-                    String end0 = startAndEnd.get(FlowLineService.END_CMD) == null ? "" : startAndEnd.get(FlowLineService.END_CMD).getId();
+                    String end0 = startAndEnd.get(FlowLineService.END_CMD).getId();
                     //---------------------递归调用
                     CommandPipeline subPipe = buildCommandPipe(subFlowLineMap, start0, end0, nodeList, subFlowName);
                     log.info("create sub pipe={}", subPipe.get());
                     subPipMapList.add(subPipe.get());
                 }
             }
-            Map<String, Object> cmdMap = buildCommandMapByConfig(idInstance.get(id), commandPipeline, subPipMapList);
+            Map<String, Object> cmdMap = buildCommandMapByConfig(idInstance.get(id).getCommandInstanceEntity(), commandPipeline, subPipMapList);
             commandPipeline.addCommand(cmdMap);
         }
 
@@ -113,7 +113,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         //-------------------构建节点的子流程
         result.put(AbstractCommand.SUB_FLOW_KEY, subPipMapList);
         result.put(AbstractCommand.COMMAND_INSTANCE_ID, commandInstanceEntity.getId());
-        result.put(AbstractCommand.SUB_FLOW_SELECTOR_KEY, commandInstanceEntity.getCommand().getSubFlowSelectorClazz()==null?"":commandInstanceEntity.getCommand().getSubFlowSelectorClazz());
+        result.put(AbstractCommand.SUB_FLOW_SELECTOR_KEY, commandInstanceEntity.getCommand().getSubFlowSelectorClazz() == null ? "" : commandInstanceEntity.getCommand().getSubFlowSelectorClazz());
         Map<String, Object> resultCommand = new HashMap<>();
         String morphName = commandInstanceEntity.getCommand().getCommandMorphName();
         resultCommand.put(morphName, result);

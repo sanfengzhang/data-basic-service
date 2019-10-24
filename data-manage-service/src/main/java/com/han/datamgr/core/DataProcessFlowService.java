@@ -2,11 +2,10 @@ package com.han.datamgr.core;
 
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.exception.BusException;
-import com.han.datamgr.vo.DataProcessFlowVO;
-import com.stream.data.transform.model.CommandPipeline;
-import org.springframework.stereotype.Service;
+import com.han.datamgr.vo.FlowVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -17,29 +16,25 @@ import java.util.List;
 public interface DataProcessFlowService {
 
 
-
-    public List<DataProcessFlowVO> queryDataProcessFlows(String id) throws BusException;
-
-    /**
-     * 创建数据流程
-     *
-     * @param dataProcessFlowVO
-     */
-    public void createDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException;
-
-    /**
-     * 修改数据流程命令详细配
-     *
-     * @param dataProcessFlowVO
-     */
-    public void updateDataProcessFlowCommandDetail(DataProcessFlowVO dataProcessFlowVO) throws BusException;
+    public List<FlowVO> queryDataProcessFlows(String id) throws BusException;
 
 
     /**
-     * 移除数据流程
+     * 流程调试，也就是验证这个流程是否是配置期望的。
      *
-     * @param dataProcessFlowVO
+     * @param id
+     * @param data
+     * @throws BusException
      */
-    public void removeDataProcessFlow(DataProcessFlowVO dataProcessFlowVO) throws BusException;
+    public void debugFlow(String id, String data) throws BusException;
+
+    /**
+     * 保存数据流程信息记录,可以创建或者更新     *
+     * @param flowVO
+     */
+    public void saveDataProcessFlow(FlowVO flowVO) throws BusException;
+
+
+    public void saveFlowLineRelation(FlowVO flowVO) throws BusException;
 
 }

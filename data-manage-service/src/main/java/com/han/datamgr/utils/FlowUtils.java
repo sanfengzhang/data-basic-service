@@ -1,6 +1,9 @@
 package com.han.datamgr.utils;
 
+import com.han.datamgr.entity.CanvasCommandInstanceEntity;
+import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.FlowLineEntity;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -12,6 +15,52 @@ import java.util.*;
 
 public class FlowUtils {
 
+
+    public static Set<String> getCommandInstanceIds(List<Map<String, String>> lineList) {
+        Set<String> result = new HashSet<>();
+        for (Map<String, String> en : lineList) {
+            String startId = en.get("from");
+            String toId = en.get("to");
+            startId = startId.substring(0, startId.indexOf("_"));
+            toId = toId.substring(0, toId.indexOf("_"));
+            result.add(startId);
+            result.add(toId);
+        }
+        return result;
+    }
+
+    public static List<Map<String, String>> fromFlowLineEntity(Set<FlowLineEntity> flowLineEntitySet) {
+        List<Map<String, String>> lineList = new ArrayList<>();
+        for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
+            Map<String, String> lineMap = new HashMap<>();
+            //------TODO 这里是需要以CanvasCommandInstanceEntity的ID为计算目标
+            String from = flowLineEntity.getStart().getId();
+            String to = flowLineEntity.getEnd().getId();
+            lineMap.put("from", from);
+            lineMap.put("to", to);
+            lineList.add(lineMap);
+        }
+        return lineList;
+    }
+
+    public static List<CanvasCommandInstanceEntity> fromFlowLineEntityToNodeList(Set<FlowLineEntity> flowLineEntitySet) {
+        List<CanvasCommandInstanceEntity> nodeList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(flowLineEntitySet)) {
+            Map<String, CanvasCommandInstanceEntity> idInstance = new HashMap<>();
+            for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
+                String fromId = flowLineEntity.getStart().getId();
+                String toId = flowLineEntity.getEnd().getId();
+                if (!idInstance.containsKey(fromId)) {
+                    idInstance.put(fromId, flowLineEntity.getStart());
+                }
+                if (!idInstance.containsKey(toId)) {
+                    idInstance.put(toId, flowLineEntity.getEnd());
+                }
+            }
+            nodeList.addAll(idInstance.values());
+        }
+        return nodeList;
+    }
 
     public static List<Map<String, String>> fromFlowLineEntityToId(Set<FlowLineEntity> flowLineEntitySet) {
         List<Map<String, String>> subFlowLineMap = new ArrayList<>();

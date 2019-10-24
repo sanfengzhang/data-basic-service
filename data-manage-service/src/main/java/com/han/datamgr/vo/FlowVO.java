@@ -1,6 +1,6 @@
 package com.han.datamgr.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.han.datamgr.entity.CanvasCommandInstanceEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.entity.FlowLineEntity;
@@ -19,7 +19,9 @@ import java.util.*;
  */
 @Data
 @ToString
-public class DataProcessFlowVO implements Serializable {
+public class FlowVO implements Serializable {
+
+    private String id;
 
     @NotBlank(message = "流程名字不能为空")
     private String dataProcessFlowName;
@@ -30,7 +32,7 @@ public class DataProcessFlowVO implements Serializable {
 
     private List<Map<String, String>> lineList = new ArrayList<>();
 
-    private List<CommandInstanceEntity> nodeList = new ArrayList<>();
+    private List<CanvasCommandInstanceEntity> nodeList = new ArrayList<>();
 
 
     public void formEntityToLineList() {
@@ -51,7 +53,7 @@ public class DataProcessFlowVO implements Serializable {
     public void fromEntityToNodeList() {
         Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
         if (!CollectionUtils.isEmpty(flowLineEntitySet)) {
-            Map<String, CommandInstanceEntity> idInstance = new HashMap<>();
+            Map<String, CanvasCommandInstanceEntity> idInstance = new HashMap<>();
             for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
                 String fromId = flowLineEntity.getStart().getId();
                 String toId = flowLineEntity.getEnd().getId();

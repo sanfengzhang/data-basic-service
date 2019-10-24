@@ -20,6 +20,6 @@ public interface CommandPipeLineService {
      * @return
      * @throws BusException
      */
-    public CommandPipeline createCommandPipeline(String DataProcessFlowId) throws BusException;
+    public CommandPipeline buildCommandPipeline(String DataProcessFlowId) throws BusException;
 
 }

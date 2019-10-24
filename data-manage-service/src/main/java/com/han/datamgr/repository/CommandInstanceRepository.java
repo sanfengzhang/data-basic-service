@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: Hanl
@@ -14,5 +15,8 @@ import java.util.Map;
  */
 @Repository
 public interface CommandInstanceRepository extends BaseRepository<CommandInstanceEntity, String> {
+
+    public List<CommandInstanceEntity> findAllByIdIn(Set<String> ids);
+
 
 }

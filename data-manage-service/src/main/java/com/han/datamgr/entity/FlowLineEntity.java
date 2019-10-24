@@ -32,17 +32,11 @@ public class FlowLineEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "start_cmd_id")
-    @JsonIgnoreProperties(value = {"commandInstanceName","cmdInstanceParams","commandInputParams","commandOutputParams","skipCmdSelectorClazz","command","version","createTime"})
-    private CommandInstanceEntity start;
+    private CanvasCommandInstanceEntity start;
 
     @ManyToOne
     @JoinColumn(name = "end_cmd_id")
-    @JsonIgnoreProperties(value = {"commandInstanceName","cmdInstanceParams","commandInputParams","commandOutputParams","skipCmdSelectorClazz","command","version","createTime"})
-    private CommandInstanceEntity end;
-
-
-    @Column(name = "line_status")
-    private int lineStatus;//当前边的状态，标识是否是第一条边或者是最后一条边，在构建流程图的时候需要使用,可以没有最后一条边因为只有一条边
+    private CanvasCommandInstanceEntity end;
 
     @ManyToOne
     @JoinColumn(name = "flow_id")

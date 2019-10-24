@@ -1,5 +1,6 @@
 package com.han.datamgr.vo;
 
+import com.han.datamgr.core.listener.EventStatus;
 import com.han.datamgr.entity.EventEntity;
 import lombok.Data;
 import lombok.ToString;
@@ -13,13 +14,13 @@ import java.util.Date;
  */
 @Data
 @ToString
-public class EventVO extends BaseVO<EventEntity> {
+public class  EventVO extends BaseVO<EventEntity> {
 
     private String id;
 
     private String eventName;
 
-    private int eventType;
+    private EventStatus eventType;
 
     private Object input;
 

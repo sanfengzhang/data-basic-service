@@ -51,7 +51,7 @@ public class DataProcessFlowEntity implements java.io.Serializable {
     @JsonIgnore
     private Set<JobDataProcessFlowRelationEntity> jobFlowRelSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "flowEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "flowEntity", cascade = {CascadeType.PERSIST}, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"flowEntity"})
     private Set<FlowLineEntity> flowLineSet = new HashSet<>();
 

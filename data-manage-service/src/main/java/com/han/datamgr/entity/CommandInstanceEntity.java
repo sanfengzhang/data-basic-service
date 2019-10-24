@@ -35,8 +35,7 @@ public class CommandInstanceEntity implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"commandInstanceEntity"})
-    private Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = new HashSet<>();
-
+    private Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = new HashSet<>();//该command实例节点包含的子流程关系
 
     @Column(name = "cmd_input")
     private String commandInputParams;//cmd的的输入参数，Record中的参数
@@ -60,18 +59,6 @@ public class CommandInstanceEntity implements Serializable {
 
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
     private int version;
-
-    @Column(name = "left_px")
-    private String left;
-
-    @Column(name = "top")
-    private String top;
-
-    @Column(name = "ico")
-    private String ico;
-
-    @Column(name = "show_cmd", columnDefinition = "TINYINT(1)")
-    private boolean show;
 
     @Column(name = "create_time")
     @CreationTimestamp

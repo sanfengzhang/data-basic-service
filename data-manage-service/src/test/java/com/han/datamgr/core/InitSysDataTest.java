@@ -45,26 +45,40 @@ public class InitSysDataTest {
     @Autowired
     private FlowLineRepository flowLineRepository;
 
+    @Autowired
+    private CanvasCommandInstanceRepository canvasCommandInstanceRepository;
 
-    public void creatWithRollbackTest() throws Exception {
-        CommandInstanceEntity commandInstanceEntity = new CommandInstanceEntity();
-        commandInstanceEntity.setCommandInstanceName("SOC-逗号分隔符解析-,");
-        List<CommandEntity> list = commandRepository.findAll();
-        Optional<CommandEntity> commandEntity = commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000");
-        if (!commandEntity.isPresent()) {
-            System.out.println("error");
-        }
-        commandInstanceEntity.setCommand(commandEntity.get());
-        commandInstanceRepository.save(commandInstanceEntity);
+
+    @Test
+    public void createCanvasCommandTest() {
+        CanvasCommandInstanceEntity entity = new CanvasCommandInstanceEntity();
+        entity.setCommandInstanceEntity(commandInstanceRepository.findById("8adb929b6dd3012b016dd301485b0000").get());
+        entity.setTop("223px");
+        entity.setLeft("851px");
+        entity.setIco("el-icon-goods");
+        entity.setShow(true);
+        entity.setFirst(true);
+        entity.setLast(false);
+        canvasCommandInstanceRepository.save(entity);
+
+        CanvasCommandInstanceEntity entity1 = new CanvasCommandInstanceEntity();
+        entity1.setCommandInstanceEntity(commandInstanceRepository.findById("8adb929b6dec0ef0016dec0f08e30001").get());
+        entity1.setTop("223px");
+        entity1.setLeft("851px");
+        entity1.setIco("el-icon-goods");
+        entity1.setShow(true);
+        entity1.setFirst(false);
+        entity1.setLast(true);
+        canvasCommandInstanceRepository.save(entity1);
     }
 
 
     @Test
     public void createFlowLineTest() {
         FlowLineEntity flowLine = new FlowLineEntity();
-        flowLine.setStart(commandInstanceRepository.findById("8adb929b6dd3012b016dd30148800009").get());
-        flowLine.setEnd(commandInstanceRepository.findById("8adb929b6dec0ef0016dec0f08e30001").get());
-        flowLine.setFlowEntity(dataProcessFlowRepository.findById("8adb929b6dcf4089016dcf40b16c0000").get());
+        // flowLine.setStart(commandInstanceRepository.findById("8adb929b6dd3012b016dd30148800009").get());
+        // flowLine.setEnd(commandInstanceRepository.findById("8adb929b6dec0ef0016dec0f08e30001").get());
+        //flowLine.setFlowEntity(dataProcessFlowRepository.findById("8adb929b6dcf4089016dcf40b16c0000").get());
         flowLineRepository.save(flowLine);
     }
 
@@ -204,10 +218,10 @@ public class InitSysDataTest {
         CommandInstanceEntity instanceEntity = new CommandInstanceEntity();
         instanceEntity.setCommand(entity);
         instanceEntity.setCommandInstanceName("子流程节点");
-        instanceEntity.setTop("223px");
-        instanceEntity.setLeft("851px");
-        instanceEntity.setIco("el-icon-goods");
-        instanceEntity.setShow(true);
+        //instanceEntity.setTop("223px");
+        // instanceEntity.setLeft("851px");
+        //instanceEntity.setIco("el-icon-goods");
+        //instanceEntity.setShow(true);
         entity.getCommandInstanceEntityList().add(instanceEntity);
 
         CommandParamEntity paramEntity = new CommandParamEntity();
@@ -248,10 +262,10 @@ public class InitSysDataTest {
         CommandInstanceEntity instanceEntity = new CommandInstanceEntity();
         instanceEntity.setCommand(entity);
         instanceEntity.setCommandInstanceName("IP富化");
-        instanceEntity.setTop("223px");
-        instanceEntity.setLeft("451px");
-        instanceEntity.setIco("el-icon-goods");
-        instanceEntity.setShow(true);
+        //  instanceEntity.setTop("223px");
+        // instanceEntity.setLeft("451px");
+        // instanceEntity.setIco("el-icon-goods");
+        //  instanceEntity.setShow(true);
         entity.getCommandInstanceEntityList().add(instanceEntity);
 
         CommandParamEntity paramEntity = new CommandParamEntity();
@@ -267,7 +281,6 @@ public class InitSysDataTest {
         paramEntity1.setFieldType("java.lang.String");
         paramEntity1.setFiledValue("getIplongValue");
         paramEntity1.setCmdDisplayName("方法名称");
-
 
 
         CommandParamEntity paramEntity3 = new CommandParamEntity();

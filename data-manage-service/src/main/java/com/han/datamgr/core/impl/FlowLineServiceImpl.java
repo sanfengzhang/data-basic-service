@@ -1,11 +1,13 @@
 package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.FlowLineService;
+import com.han.datamgr.entity.CanvasCommandInstanceEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.FlowLineEntity;
 import com.han.datamgr.repository.FlowLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,23 +25,22 @@ public class FlowLineServiceImpl implements FlowLineService {
     private FlowLineRepository flowLineRepository;
 
     @Override
-    public Map<String, CommandInstanceEntity> findStartAndEndCmd(String flowId) {
-        List<FlowLineEntity> flowLineEntities = flowLineRepository.queryFlowLineByLineStatus(flowId);
-        Map<String, CommandInstanceEntity> result = new HashMap<>();
-        result.put(START_CMD, flowLineEntities.get(0).getStart());
-        if (null == flowLineEntities || flowLineEntities.size() == 0) {
+    public Map<String, CanvasCommandInstanceEntity> findStartAndEndCmd(String flowId) {
+        List<FlowLineEntity> flowLineEntities = flowLineRepository.findAllByFlowEntity_Id(flowId);
+        Map<String, CanvasCommandInstanceEntity> result = new HashMap<>();
+        if (!CollectionUtils.isEmpty(flowLineEntities)) {
+            for (FlowLineEntity flowLineEntity : flowLineEntities) {
+                CanvasCommandInstanceEntity start = flowLineEntity.getStart();
+                CanvasCommandInstanceEntity end = flowLineEntity.getEnd();
+                if (start.isFirst()) {
+                    result.put(START_CMD, start);
+                }
+                if (end.isLast()) {
+                    result.put(END_CMD, end);
+                }
+            }
 
-            return result;
         }
-
-        if (flowLineEntities.size() == 1) {
-            result.put(END_CMD, flowLineEntities.get(0).getEnd());
-        }
-
-        if (flowLineEntities.size() == 2) {
-            result.put(END_CMD, flowLineEntities.get(1).getEnd());
-        }
-
         return result;
     }
 }

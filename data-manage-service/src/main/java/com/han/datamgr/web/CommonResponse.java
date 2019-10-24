@@ -24,6 +24,11 @@ public class CommonResponse implements Serializable {
         return commonResponse;
     }
 
+    public static CommonResponse buildWithSuccess() {
+        CommonResponse commonResponse = new CommonResponse();
+        return commonResponse;
+    }
+
     public static CommonResponse buildWithException(Object errResult) {
         CommonResponse commonResponse = new CommonResponse();
         commonResponse.setErrResult(errResult);
