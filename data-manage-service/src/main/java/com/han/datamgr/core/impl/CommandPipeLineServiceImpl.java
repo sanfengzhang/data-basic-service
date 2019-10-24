@@ -12,6 +12,7 @@ import com.han.datamgr.vo.DataProcessFlowVO;
 import com.stream.data.transform.model.CommandPipeline;
 import com.stream.data.transform.utils.TypeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.kitesdk.morphline.base.AbstractCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -110,8 +111,9 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
             result.put(commandParamEntity.getFieldName(), value);
         }
         //-------------------构建节点的子流程
-        result.put("subFlow", subPipMapList);
-        result.put("commandInstanceId",commandInstanceEntity.getId());
+        result.put(AbstractCommand.SUB_FLOW_KEY, subPipMapList);
+        result.put(AbstractCommand.COMMAND_INSTANCE_ID, commandInstanceEntity.getId());
+        result.put(AbstractCommand.SUB_FLOW_SELECTOR_KEY, commandInstanceEntity.getCommand().getSubFlowSelectorClazz()==null?"":commandInstanceEntity.getCommand().getSubFlowSelectorClazz());
         Map<String, Object> resultCommand = new HashMap<>();
         String morphName = commandInstanceEntity.getCommand().getCommandMorphName();
         resultCommand.put(morphName, result);

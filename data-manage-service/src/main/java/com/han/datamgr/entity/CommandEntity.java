@@ -35,13 +35,16 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_clazz")
     private String commandClazz;
 
+    @Column(name = "sub_flow_selector_clazz")
+    private String subFlowSelectorClazz;
+
     @Column(name = "cmd_type")
     private String commandType;
 
     @Column(name = "cmd_provider")
     private String commandProvider;
 
-    @OneToMany(mappedBy = "command", fetch = FetchType.EAGER,cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToMany(mappedBy = "command", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"command"})
     private List<CommandInstanceEntity> commandInstanceEntityList = new ArrayList<>();
 

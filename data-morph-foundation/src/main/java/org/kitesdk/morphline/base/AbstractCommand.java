@@ -15,24 +15,17 @@
  */
 package org.kitesdk.morphline.base;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.typesafe.config.ConfigException;
-import com.typesafe.config.ConfigFactory;
+import com.codahale.metrics.Timer;
+import com.codahale.metrics.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.typesafe.config.Config;
 import org.kitesdk.morphline.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.Histogram;
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.typesafe.config.Config;
-import sun.nio.cs.CharsetMapping;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for convenient implementation of {@link Command} classes.
@@ -73,6 +66,8 @@ public abstract class AbstractCommand implements Command {
 
     private String commandInstanceId;
 
+    public static final String COMMAND_INSTANCE_ID = "commandInstanceId";
+
     private static final boolean IS_MEASURING_METRICS =
             "true".equals(System.getProperty("isMeasuringMetrics", "true"));
 
@@ -100,8 +95,8 @@ public abstract class AbstractCommand implements Command {
         this.name = "morphline." + builder.getNames().iterator().next();
         this.configs = new Configs();
         try {
-            if (config.hasPath("commandInstanceId")) {
-                commandInstanceId = configs.getString(config, "commandInstanceId");
+            if (config.hasPath(COMMAND_INSTANCE_ID)) {
+                commandInstanceId = configs.getString(config, COMMAND_INSTANCE_ID);
             }
             if (config.hasPath(SUB_FLOW_KEY)) {
                 List subCommandConfig = configs.getConfigList(config, SUB_FLOW_KEY);
@@ -117,10 +112,14 @@ public abstract class AbstractCommand implements Command {
                 }
                 if (config.hasPath(SUB_FLOW_SELECTOR_KEY)) {
                     String clazzName = configs.getString(config, SUB_FLOW_SELECTOR_KEY);
+                    if (null == clazzName || "".equals(clazzName)) {
+                        clazzName = AllSubFlowSelector.class.getName();
+                    }
                     Class clazz = Class.forName(clazzName);
                     subFlowSelector = (FindSubFlowSelector) clazz.newInstance();
                     subFlowSelector.setCommands(subFlows);
                     subFlowSelector.setCommandInstanceId(commandInstanceId);
+
                 } else {
                     if (null != subFlows && subFlows.size() > 0) {
                         subFlowSelector = new AllSubFlowSelector();
