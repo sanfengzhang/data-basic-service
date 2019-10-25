@@ -1,9 +1,8 @@
 package com.han.datamgr.vo;
 
 import com.alibaba.fastjson.JSON;
-import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
-import com.han.datamgr.entity.CommandParamEntity;
+import com.han.datamgr.entity.CommandInstanceParamEntity;
 import lombok.Data;
 import lombok.ToString;
 
@@ -52,11 +51,11 @@ public class CommandInstanceVO extends BaseVO<CommandInstanceEntity> {
         entity.setCommand(commandVO.to());
         entity.setCommandInstanceName(this.commandInstanceName);
 
-        Set<CommandParamEntity> commandParamEntityList = new HashSet<>();
+        Set<CommandInstanceParamEntity> commandInstanceParamEntityList = new HashSet<>();
         commandParams.forEach(commandParam -> {
-            commandParamEntityList.add((CommandParamEntity) commandParam.to());
+            commandInstanceParamEntityList.add((CommandInstanceParamEntity) commandParam.to());
         });
-        entity.setCmdInstanceParams(commandParamEntityList);
+        entity.setCmdInstanceParams(commandInstanceParamEntityList);
         entity.setCommandInputParams(JSON.toJSONString(commandInputParams));
         entity.setCommandOutputParams(JSON.toJSONString(commandOutputParams));
         entity.setCreateTime(this.createTime);

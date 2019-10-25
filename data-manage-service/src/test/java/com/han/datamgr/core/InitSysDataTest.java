@@ -1,10 +1,11 @@
 package com.han.datamgr.core;
 
+import com.alibaba.fastjson.JSON;
 import com.han.datamgr.Application;
+import com.han.datamgr.common.MenuService;
 import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.*;
-import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,14 @@ public class InitSysDataTest {
     @Autowired
     private CanvasCommandInstanceRepository canvasCommandInstanceRepository;
 
+    @Autowired
+    private MenuService menuService;
+
+
+    @Test
+    public void testGetMenu() {
+        System.out.println(JSON.toJSONString(menuService.getMainMenuData()));
+    }
 
     @Test
     public void createCanvasCommandTest() {
@@ -89,95 +98,95 @@ public class InitSysDataTest {
         commandInstanceEntity.setCommandInstanceName("SOC-分隔符解析-|");
         commandInstanceEntity.setCommand(commandRepository.findById("8adb929b6dcf3eb1016dcf3edb0e0000").get());
 
-        CommandParamEntity inputField = new CommandParamEntity();
+        CommandInstanceParamEntity inputField = new CommandInstanceParamEntity();
         inputField.setFieldName("inputField");
         inputField.setFieldType("java.lang.String");
         inputField.setFiledValue("message");
         inputField.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity outputFields = new CommandParamEntity();
+        CommandInstanceParamEntity outputFields = new CommandInstanceParamEntity();
         outputFields.setFieldName("outputFields");
         outputFields.setFieldType("java.util.List");
         outputFields.setFiledValue("[\"trans_date\",\"trans_code\",\"trans_channel_id\",\"trans_start_datetime\",\"trans_end_datetime\"," +
                 "\"trans_cust_time\",\"trans_org_id\",\"trans_clerk\",\"trans_return_code\",\"trans_err_msg\",\"trans_tuexdo_name\"]");
         outputFields.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity separator = new CommandParamEntity();
+        CommandInstanceParamEntity separator = new CommandInstanceParamEntity();
         separator.setFieldName("separator");
         separator.setFieldType("java.lang.String");
         separator.setFiledValue("|");
         separator.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity isRegex = new CommandParamEntity();
+        CommandInstanceParamEntity isRegex = new CommandInstanceParamEntity();
         isRegex.setFieldName("isRegex");
         isRegex.setFieldType("java.lang.Boolean");
         isRegex.setFiledValue("false");
         isRegex.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity addEmptyStrings = new CommandParamEntity();
+        CommandInstanceParamEntity addEmptyStrings = new CommandInstanceParamEntity();
         addEmptyStrings.setFieldName("addEmptyStrings");
         addEmptyStrings.setFieldType("java.lang.Boolean");
         addEmptyStrings.setFiledValue("false");
         addEmptyStrings.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity trim = new CommandParamEntity();
+        CommandInstanceParamEntity trim = new CommandInstanceParamEntity();
         trim.setFieldName("trim");
         trim.setFieldType("java.lang.Boolean");
         trim.setFiledValue("false");
         trim.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity limit = new CommandParamEntity();
+        CommandInstanceParamEntity limit = new CommandInstanceParamEntity();
         limit.setFieldName("limit");
         limit.setFieldType("java.lang.Integer");
         limit.setFiledValue("11");
         limit.setCommandInstanceEntity(commandInstanceEntity);
 
-        CommandParamEntity importCommands = new CommandParamEntity();
+        CommandInstanceParamEntity importCommands = new CommandInstanceParamEntity();
         importCommands.setFieldName("importCommands");
         importCommands.setFieldType("java.util.List");
         importCommands.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
         importCommands.setCommandInstanceEntity(commandInstanceEntity);
 
-        Set<CommandParamEntity> commandParamEntityList = new HashSet<>();
-        commandParamEntityList.add(inputField);
-        commandParamEntityList.add(outputFields);
-        commandParamEntityList.add(separator);
-        commandParamEntityList.add(isRegex);
-        commandParamEntityList.add(addEmptyStrings);
-        commandParamEntityList.add(trim);
-        commandParamEntityList.add(limit);
-        commandParamEntityList.add(importCommands);
-        commandInstanceEntity.setCmdInstanceParams(commandParamEntityList);
+        Set<CommandInstanceParamEntity> commandInstanceParamEntityList = new HashSet<>();
+        commandInstanceParamEntityList.add(inputField);
+        commandInstanceParamEntityList.add(outputFields);
+        commandInstanceParamEntityList.add(separator);
+        commandInstanceParamEntityList.add(isRegex);
+        commandInstanceParamEntityList.add(addEmptyStrings);
+        commandInstanceParamEntityList.add(trim);
+        commandInstanceParamEntityList.add(limit);
+        commandInstanceParamEntityList.add(importCommands);
+        commandInstanceEntity.setCmdInstanceParams(commandInstanceParamEntityList);
 
 
         CommandInstanceEntity commandInstanceEntity1 = new CommandInstanceEntity();
         commandInstanceEntity1.setCommandInstanceName("SOC-EL计算");
         commandInstanceEntity1.setCommand(commandRepository.findById("8adb929b6dcf3eb1016dcf3edb3f0001").get());
 
-        CommandParamEntity cache_warming = new CommandParamEntity();
+        CommandInstanceParamEntity cache_warming = new CommandInstanceParamEntity();
         cache_warming.setFieldName("cache_warming");
         cache_warming.setFieldType("java.util.Map");
         cache_warming.setFiledValue("{\"trans_return_code\":\"999\"}");
         cache_warming.setCommandInstanceEntity(commandInstanceEntity1);
 
-        CommandParamEntity expresses = new CommandParamEntity();
+        CommandInstanceParamEntity expresses = new CommandInstanceParamEntity();
         expresses.setFieldName("expresses");
         expresses.setFieldType("java.util.Map");
         expresses.setFiledValue("{\"trans_return_code<0 \"?\" 99999 \":\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}");
         expresses.setCommandInstanceEntity(commandInstanceEntity1);
 
-        CommandParamEntity importCommands1 = new CommandParamEntity();
+        CommandInstanceParamEntity importCommands1 = new CommandInstanceParamEntity();
         importCommands1.setFieldName("importCommands");
         importCommands1.setFieldType("java.util.List");
         importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
         importCommands1.setCommandInstanceEntity(commandInstanceEntity1);
 
 
-        Set<CommandParamEntity> commandParamEntityList1 = new HashSet<>();
-        commandParamEntityList1.add(cache_warming);
-        commandParamEntityList1.add(expresses);
-        commandParamEntityList1.add(importCommands1);
-        commandInstanceEntity1.setCmdInstanceParams(commandParamEntityList1);
+        Set<CommandInstanceParamEntity> commandInstanceParamEntityList1 = new HashSet<>();
+        commandInstanceParamEntityList1.add(cache_warming);
+        commandInstanceParamEntityList1.add(expresses);
+        commandInstanceParamEntityList1.add(importCommands1);
+        commandInstanceEntity1.setCmdInstanceParams(commandInstanceParamEntityList1);
 
         List<CommandInstanceEntity> data = new ArrayList<>();
         data.add(commandInstanceEntity);
@@ -224,14 +233,14 @@ public class InitSysDataTest {
         //instanceEntity.setShow(true);
         entity.getCommandInstanceEntityList().add(instanceEntity);
 
-        CommandParamEntity paramEntity = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity = new CommandInstanceParamEntity();
         paramEntity.setCommandInstanceEntity(instanceEntity);
         paramEntity.setFieldName("pipelineSelectorKey");
         paramEntity.setFieldType("java.lang.String");
         paramEntity.setFiledValue("keyValueSubPipeSelector");
         paramEntity.setCmdDisplayName("选择器名称");
 
-        CommandParamEntity paramEntity1 = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity1 = new CommandInstanceParamEntity();
         paramEntity1.setCommandInstanceEntity(instanceEntity);
         paramEntity1.setFieldName("continueParentPipe");
         paramEntity1.setFieldType("java.lang.Boolean");
@@ -239,7 +248,7 @@ public class InitSysDataTest {
         paramEntity1.setCmdDisplayName("是否继续父流程");
 
 
-        CommandParamEntity importCommands1 = new CommandParamEntity();
+        CommandInstanceParamEntity importCommands1 = new CommandInstanceParamEntity();
         importCommands1.setFieldName("importCommands");
         importCommands1.setFieldType("java.util.List");
         importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");
@@ -268,14 +277,14 @@ public class InitSysDataTest {
         //  instanceEntity.setShow(true);
         entity.getCommandInstanceEntityList().add(instanceEntity);
 
-        CommandParamEntity paramEntity = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity = new CommandInstanceParamEntity();
         paramEntity.setCommandInstanceEntity(instanceEntity);
         paramEntity.setFieldName("class_name");
         paramEntity.setFieldType("java.lang.String");
         paramEntity.setFiledValue("com.stream.data.transform.utils.IpaddressUtil");
         paramEntity.setCmdDisplayName("类名称");
 
-        CommandParamEntity paramEntity1 = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity1 = new CommandInstanceParamEntity();
         paramEntity1.setCommandInstanceEntity(instanceEntity);
         paramEntity1.setFieldName("method_name");
         paramEntity1.setFieldType("java.lang.String");
@@ -283,28 +292,28 @@ public class InitSysDataTest {
         paramEntity1.setCmdDisplayName("方法名称");
 
 
-        CommandParamEntity paramEntity3 = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity3 = new CommandInstanceParamEntity();
         paramEntity3.setCommandInstanceEntity(instanceEntity);
         paramEntity3.setFieldName("original_key");
         paramEntity3.setFieldType("java.lang.String");
         paramEntity3.setFiledValue("ip");
         paramEntity3.setCmdDisplayName("富化字段名称");
 
-        CommandParamEntity paramEntity4 = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity4 = new CommandInstanceParamEntity();
         paramEntity4.setCommandInstanceEntity(instanceEntity);
         paramEntity4.setFieldName("derive_key");
         paramEntity4.setFieldType("java.lang.String");
         paramEntity4.setFiledValue("IPValue");
         paramEntity4.setCmdDisplayName("富化后字段名称");
 
-        CommandParamEntity paramEntity5 = new CommandParamEntity();
+        CommandInstanceParamEntity paramEntity5 = new CommandInstanceParamEntity();
         paramEntity5.setCommandInstanceEntity(instanceEntity);
         paramEntity5.setFieldName("argument_class");
         paramEntity5.setFieldType("java.lang.String");
         paramEntity5.setFiledValue("java.lang.String");
         paramEntity5.setCmdDisplayName("富化后字段类型");
 
-        CommandParamEntity importCommands1 = new CommandParamEntity();
+        CommandInstanceParamEntity importCommands1 = new CommandInstanceParamEntity();
         importCommands1.setFieldName("importCommands");
         importCommands1.setFieldType("java.util.List");
         importCommands1.setFiledValue("[\"org.kitesdk.**\",\"com.stream.data.transform.command.*\"]");

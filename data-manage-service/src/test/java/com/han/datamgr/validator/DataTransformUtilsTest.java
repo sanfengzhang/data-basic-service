@@ -1,9 +1,9 @@
 package com.han.datamgr.validator;
 
 import com.han.datamgr.Application;
-import com.han.datamgr.entity.CommandParamEntity;
+import com.han.datamgr.entity.CommandInstanceParamEntity;
 import com.han.datamgr.entity.FiledEntity;
-import com.han.datamgr.repository.CommandParamRepository;
+import com.han.datamgr.repository.CommandInstanceParamRepository;
 import com.han.datamgr.support.DataTransformUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,18 +24,18 @@ import java.util.List;
 public class DataTransformUtilsTest {
 
     @Autowired
-    private CommandParamRepository commandParamRepository;
+    private CommandInstanceParamRepository commandInstanceParamRepository;
 
     @Test
     public void testTransform() throws IllegalAccessException {
-        List<CommandParamEntity> list = commandParamRepository.findAll();
-        DataTransformUtils<String, CommandParamEntity> transformUtils = new DataTransformUtils<>();
+        List<CommandInstanceParamEntity> list = commandInstanceParamRepository.findAll();
+        DataTransformUtils<String, CommandInstanceParamEntity> transformUtils = new DataTransformUtils<>();
         System.out.println(transformUtils.convert("fieldType", list.iterator()).toString());
     }
 
     @Test
     public void testTrans() throws Exception {
-        FiledEntity commandParamEntity = new CommandParamEntity();
+        FiledEntity commandParamEntity = new CommandInstanceParamEntity();
         commandParamEntity.setFieldType("12sda");
         Class clazz = (Class) commandParamEntity.getClass();
        // Field f = clazz.getDeclaredField("fieldType");

@@ -3,40 +3,25 @@ package com.han.datamgr.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
  * @author: Hanl
- * @date :2019/10/12
+ * @date :2019/10/25
  * @desc:
  */
+
 @Entity
-@DiscriminatorValue("cmd_init_param")
+@DiscriminatorValue("cmd_param_config")
 @Data
-@EqualsAndHashCode(exclude = {"commandInstanceEntity"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"commandEntity"}, callSuper = true)
 public class CommandParamEntity extends FiledEntity {
 
     @ManyToOne
-    private CommandInstanceEntity commandInstanceEntity;
+    @JoinColumn(name = "cmd_id")
+    private CommandEntity commandEntity;
 
-
-    @Override
-    public String toString() {
-        String commandInstanceEntityId = "";
-        if (null != commandInstanceEntity) {
-            commandInstanceEntityId = commandInstanceEntity.getId();
-        }
-        return "CommandParamEntity{" +
-                "cmdDisplayName='" + cmdDisplayName + '\'' +
-                ", id='" + id + '\'' +
-                ", fieldName='" + fieldName + '\'' +
-                ", fieldType='" + fieldType + '\'' +
-                ", filedValue='" + filedValue + '\'' +
-                ", format='" + format + '\'' +
-                ", commandInstanceEntity='" + commandInstanceEntityId + '\'' +
-                '}';
-    }
 }

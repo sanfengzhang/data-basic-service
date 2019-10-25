@@ -7,9 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -43,6 +41,11 @@ public class CommandEntity implements Serializable {
 
     @Column(name = "cmd_provider")
     private String commandProvider;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JsonIgnoreProperties(value = {"commandEntity"})
+    private Set<CommandParamEntity> cmdParams = new HashSet<>();
+
 
     @OneToMany(mappedBy = "command", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"command"})

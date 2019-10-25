@@ -94,21 +94,21 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
     }
 
     public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline, List<Map<String, Object>> subPipMapList) throws BusException {
-        Set<CommandParamEntity> commandParamEntityList = commandInstanceEntity.getCmdInstanceParams();
+        Set<CommandInstanceParamEntity> commandInstanceParamEntityList = commandInstanceEntity.getCmdInstanceParams();
         Map<String, Object> result = new HashMap<>();
-        for (CommandParamEntity commandParamEntity : commandParamEntityList) {
-            String key = commandParamEntity.getFieldName();
+        for (CommandInstanceParamEntity commandInstanceParamEntity : commandInstanceParamEntityList) {
+            String key = commandInstanceParamEntity.getFieldName();
             if (null == key || "".equals(key)) {
                 throw new BusException("Command初始化参数名称不能为空.");
             }
 
-            String valueString = commandParamEntity.getFiledValue();
-            Object value = TypeUtils.fastJsonCast(valueString, commandParamEntity.getFieldType(), new ParserConfig());
+            String valueString = commandInstanceParamEntity.getFiledValue();
+            Object value = TypeUtils.fastJsonCast(valueString, commandInstanceParamEntity.getFieldType(), new ParserConfig());
             if ("importCommands".equals(key)) {
                 commandPipeline.addImports((List<String>) value);
                 continue;
             }
-            result.put(commandParamEntity.getFieldName(), value);
+            result.put(commandInstanceParamEntity.getFieldName(), value);
         }
         //-------------------构建节点的子流程
         result.put(AbstractCommand.SUB_FLOW_KEY, subPipMapList);

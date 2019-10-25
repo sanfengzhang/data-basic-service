@@ -38,6 +38,10 @@ public class BusDataTypeEntity implements java.io.Serializable {
     @CreationTimestamp
     private Date createTime;//数据类型创建时间
 
+    @ManyToOne
+    @JoinColumn(name = "type_id")
+    private BusDataTypeEntity sonEntity;
+
     @Column(name = "update_time")
     private Date updateTime;//数据类型更新时间
 
