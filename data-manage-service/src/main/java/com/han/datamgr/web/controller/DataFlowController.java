@@ -4,10 +4,12 @@ import com.han.datamgr.core.DataProcessFlowService;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.FlowVO;
 import com.han.datamgr.web.CommonResponse;
+import com.sun.tools.javac.comp.Flow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author: Hanl
@@ -23,8 +25,12 @@ public class DataFlowController {
 
     @GetMapping("/{id}")
     public CommonResponse findDataFlowById(@PathVariable String id) throws BusException {
-
-        return CommonResponse.buildWithSuccess(flowService.queryDataProcessFlows(id));
+        List<FlowVO> result = flowService.queryDataProcessFlows(id);
+        if (result.size() > 0) {
+            return CommonResponse.buildWithSuccess(result.get(0));
+        } else {
+            return CommonResponse.buildWithSuccess();
+        }
     }
 
     @GetMapping

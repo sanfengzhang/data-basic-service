@@ -1,14 +1,16 @@
 package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.DataProcessFlowService;
+import com.han.datamgr.core.FlowLineService;
+import com.han.datamgr.entity.CanvasCommandInstanceEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.DataProcessFlowEntity;
 import com.han.datamgr.entity.FlowLineEntity;
 import com.han.datamgr.exception.BusException;
+import com.han.datamgr.repository.CanvasCommandInstanceRepository;
 import com.han.datamgr.repository.CommandInstanceRepository;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.repository.FlowLineRepository;
-import com.han.datamgr.utils.FlowUtils;
 import com.han.datamgr.vo.FlowVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
 
     @Autowired
     private CommandInstanceRepository commandInstanceRepository;
+
+    @Autowired
+    private CanvasCommandInstanceRepository canvasCommandInstanceRepository;
 
     @Autowired
     private FlowLineRepository flowLineRepository;
@@ -105,38 +110,45 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
             throw new BusException("更新Flow失败,未找到id=" + id);
         }
         DataProcessFlowEntity flowEntity = optional.get();
-        saveFlowLineRelation(flowEntity, flowVO.getLineList());
+        saveFlowLineRelation(flowEntity, flowVO.getLineList(), flowVO.getNodeList());
     }
 
-    private void saveFlowLineRelation(DataProcessFlowEntity flowEntity, List<Map<String, String>> lineList) throws BusException {
-        Set<FlowLineEntity> flowLineEntitySet = new HashSet<>();
+    private void saveFlowLineRelation(DataProcessFlowEntity flowEntity, List<Map<String, String>> lineList, List<CanvasCommandInstanceEntity> nodeList) throws BusException {
         if (!CollectionUtils.isEmpty(lineList)) {
-            Set<String> cmdInstanceIds = FlowUtils.getCommandInstanceIds(lineList);
-            List<CommandInstanceEntity> instanceEntities = commandInstanceRepository.findAllByIdIn(cmdInstanceIds);
-            if (cmdInstanceIds.size() != instanceEntities.size()) {
-                throw new BusException("有对应的命令实例id未找到数据记录");
-            }
-            Map<String, CommandInstanceEntity> idInstanceMap = new HashMap<>();
-            for (CommandInstanceEntity instanceEntity : instanceEntities) {
-                idInstanceMap.put(instanceEntity.getId(), instanceEntity);
-            }
-            //-----------------------构建命令之间的连线
+            String flowId = flowEntity.getId();
+
+            Set<String> delCanvasIds = new HashSet<>();
+            List<FlowLineEntity> existFlowLines = flowLineRepository.findAllByFlowEntity_Id(flowEntity.getId());
+            existFlowLines.forEach(flowLineEntity -> {
+                delCanvasIds.add(flowLineEntity.getStart().getId());
+                delCanvasIds.add(flowLineEntity.getEnd().getId());
+            });
+            flowLineRepository.deleteByDataFlowId(flowId);
+            canvasCommandInstanceRepository.deleteAllByIdIn(delCanvasIds);
+
+            nodeList.forEach(node -> {
+                String id = node.getCommandInstanceEntity().getId();
+                CommandInstanceEntity entity = commandInstanceRepository.findById(id).get();
+                node.setCommandInstanceEntity(entity);
+            });
+            nodeList = canvasCommandInstanceRepository.saveAll(nodeList);
+            Map<String, CanvasCommandInstanceEntity> idCanvas = new HashMap<>();
+            nodeList.forEach(node -> {
+                idCanvas.put(node.getId(), node);
+            });
+            List<FlowLineEntity> data = new ArrayList<>();
             for (Map<String, String> en : lineList) {
+                String startId = en.get(FlowLineService.START_CMD);
+                String endId = en.get(FlowLineService.END_CMD);
                 FlowLineEntity flowLineEntity = new FlowLineEntity();
-                String startId = en.get("from");
-                String toId = en.get("to");
-                startId = startId.substring(0, startId.indexOf("_"));
-                toId = toId.substring(0, toId.indexOf("_"));
+                flowLineEntity.setStart(idCanvas.get(startId));
+                flowLineEntity.setEnd(idCanvas.get(endId));
                 flowLineEntity.setFlowEntity(flowEntity);
-               // flowLineEntity.setStart(idInstanceMap.get(startId));
-               // flowLineEntity.setEnd(idInstanceMap.get(toId));
-                flowLineEntity.setCreateTime(new Date());
-                flowLineEntitySet.add(flowLineEntity);
+                data.add(flowLineEntity);
             }
-            //------------删除旧的连线
-            flowLineRepository.deleteByDataFlowId(flowEntity.getId());
-            flowLineRepository.saveAll(flowLineEntitySet);
+            flowLineRepository.saveAll(data);
         }
+
     }
 
 

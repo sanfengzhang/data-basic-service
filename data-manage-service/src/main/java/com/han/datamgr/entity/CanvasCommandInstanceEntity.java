@@ -20,10 +20,11 @@ import java.util.Date;
 public class CanvasCommandInstanceEntity implements Serializable {
 
     @Id
-    @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-    @GeneratedValue(generator = "jpa-uuid")
     private String id;
 
+
+    @Column(name = "canvas_node_name")
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "cmd_instance_id")

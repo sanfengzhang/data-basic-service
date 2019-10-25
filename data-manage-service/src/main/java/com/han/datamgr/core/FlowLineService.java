@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public interface FlowLineService {
 
-    public static final String START_CMD="START_CMD";
+    public static final String START_CMD="from";
 
-    public static final String END_CMD="END_CMD";
+    public static final String END_CMD="to";
 
     public Map<String, CanvasCommandInstanceEntity> findStartAndEndCmd(String flowId);
 }

@@ -60,6 +60,9 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "version")//同一个业务下面的同一个算子，可能在不同的时候使用版本不一样
     private int version;
 
+    @Column(name = "ico")
+    private String ico;
+
     @Column(name = "create_time")
     @CreationTimestamp
     private Date createTime;
