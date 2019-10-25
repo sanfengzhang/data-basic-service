@@ -1,10 +1,10 @@
 <template>
     <div v-if="easyFlowVisible" >
         <el-row>
-            <el-col :span="3" ref="flowTool">
-                <flowTool @addNode="addNode"></flowTool>				
-            </el-col>
-            <el-col :span="21">
+            <el-col :span="4" ref="flowTool">
+                <flowTool @addNode="addNode"></flowTool>							
+            </el-col>          		 
+            <el-col :span="20">
                 <el-row>
                     <el-col :span="24">
                         <div style="margin-bottom: 5px; margin-left: 10px">
@@ -16,7 +16,8 @@
                             <el-button type="warning" @click="dataReloadC" icon="el-icon-refresh">切换流程C</el-button>-->
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
                             <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
-							  <el-button type="info" icon="el-icon-document" @click="saveDataFlow">保存当前流程</el-button>	
+							<el-button type="info" icon="el-icon-document" @click="saveDataFlow">保存当前流程</el-button>
+                            <el-button type="info" icon="el-icon-document" @click="createNewCommand">创建命令</el-button>							
                             <el-select  @change="selectFlow" v-model="firstFlow">							   
 							    <el-option  v-for="item in selectFlowData" :key="item.flowEntity.id"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                                     {{item.flowEntity.dataProcessFlowName}}
@@ -44,14 +45,14 @@
                         </div>
                     </el-col>
                 </el-row>
-            </el-col>
-			
+            </el-col>			
         </el-row>
 		
 
         <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data"></flow-info>
         <flow-node-form v-if="nodeFormVisible" ref="nodeForm"></flow-node-form>
 		<flow-add-flow-form v-if="flowAddFormVisible" ref="addFlowForm" @initFlowPanel="initFlowPanel"></flow-add-flow-form>
+		<flow-new-cmd-form v-if="newCmdFormVisible" ref="newCmdForm" @newCmdForm="newCmdForm"></flow-new-cmd-form>
 
     </div>
 
@@ -65,6 +66,8 @@
     import FlowInfo from '@/components/flow/info'
     import FlowNodeForm from './node_form'
 	import FlowAddFlowForm from './data_flow_form'
+	
+	import FlowNewCmdForm from './new_cmd_form'
     import lodash from 'lodash'
     import {getDataA} from './data_A'
     import {getDataB} from './data_B'
@@ -80,6 +83,7 @@
                 flowInfoVisible: false,
                 nodeFormVisible: false,
 				flowAddFormVisible: false,
+				newCmdFormVisible: false,
                 index: 1,
                 // 默认设置参数
                 jsplumbSetting: {
@@ -126,13 +130,13 @@
                 // 是否加载完毕
                 loadEasyFlowFinish: false,
                 // 数据
-                data: {},
+                data: {"nodeList":[]},
 				firstFlow: '请选择',
 				selectFlowData: {},
             }
         },
         components: {
-            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm
+            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm,FlowNewCmdForm
         },
 		
         mounted() {
@@ -400,12 +404,18 @@
                 return true
             },
             editNode(nodeId) {
-                console.log('编辑节点', nodeId)
-				console.log('编辑节点---', this.data)
+                console.log('编辑节点', nodeId)				
                 this.nodeFormVisible = true
-                this.$nextTick(function () {
-				    
-                    this.$refs.nodeForm.init(this.data, nodeId)
+				var nodeData=null
+				this.data.nodeList.forEach(v=>{  
+                      if(v.id==nodeId){
+					       nodeData=v
+						   return
+					  }   
+                })
+                 
+                this.$nextTick(function () {				   	
+                    this.$refs.nodeForm.init(nodeData, nodeId)
                 })
             },
 		
@@ -451,9 +461,9 @@
 			},
             saveDataFlow(){
 			   console.log("save flow:",this.data)
-			     this.post('/api/v1/flow/relation',this.data).then((response) => {                     
-                     console.log("save flow response",response)					  
-                  });
+			   this.post('/api/v1/flow/relation',this.data).then((response) => {                     
+                   console.log("save flow response",response)					  
+                });
 			
 			},			
             selectFlow(vid){    
@@ -467,7 +477,16 @@
                      this.dataReload(data.data)                    			  
                   });
                })				
-			},			
+			},
+            createNewCommand(){
+			    console.log("创建新命令")
+				this.newCmdFormVisible=true
+				 this.$nextTick(function () {
+                   this.$refs.newCmdForm.init()
+                })
+				
+			},
+            newCmdForm(){},			
             dataReloadA() {
                 this.dataReload(getDataA())
             },

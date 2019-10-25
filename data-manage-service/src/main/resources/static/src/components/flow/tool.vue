@@ -1,29 +1,30 @@
 <template>
     <div style="background-color: #66a6e0;" ref="tool">
-        <el-menu :default-openeds="defaultOpeneds">
-            <el-submenu  v-if="menuList.length > 0" v-for="(menu,index) in  menuList" :index=String(menu.type+index)  :key="menu.type+index">
-                <!--一级菜单名称、不可拖拽 -->
-                <template slot="title">
+	
+        <el-menu :default-openeds="defaultOpeneds" expand-on-click-node="false">
+		  <el-submenu v-if="menuList.length > 0" v-for="(menu,index) in  menuList"  :index=String(menu.type+index) :key="menu.type+index">
+		        <template slot="title">				    
+                  <i :class="menu.ico"></i>
+                  <span>{{menu.name}}</span>                 
+                </template>	
+               <el-submenu  v-if="menuList.length > 0" v-for="(menu,index) in  menu.children" :index=String(menu.type+index)  :key="menu.type+index" >               
+                  <template slot="title">
                     <i :class="menu.ico"></i>
                     <span>{{menu.name}}</span>
-                </template>
-                <!--一级菜单子菜单、可拖拽菜单-->
-                <el-menu-item-group>
-                    <draggable @end="addNode" @choose="move" v-model="menu.children" :options="draggableOptions">
-                        <el-menu-item v-for="(son,i) in menu.children"
-                                      :key="son.id"
-                                      :index="son.id"
-                                      :type=JSON.stringify(son)
-                                      :aaa="son.type"
-                                      :bbb="son.type"
-									 
-                        >
-                            <i :class="son.ico"></i>{{son.name}}
+					<!--<span> <el-button type="text" size="mini" @click="() => append(data)"> Append</el-button></span> -->
+                  </template>               
+                  <el-menu-item-group>
+                     <draggable @end="addNode" @choose="move" v-model="menu.children" :options="draggableOptions">
+                        <el-menu-item v-for="(son,i) in menu.children" :key="son.id" :index="son.id" :type=JSON.stringify(son) :aaa="son.type" :bbb="son.type">
+                           {{son.name}}
                         </el-menu-item>
-                    </draggable>
-                </el-menu-item-group>
-            </el-submenu>
+                      </draggable>
+                   </el-menu-item-group>
+              </el-submenu>
+		   </el-submenu>
         </el-menu>
+		
+		 
     </div>
 </template>
 <script>
@@ -47,7 +48,7 @@
         },
       mounted() {
 	      this.$nextTick(() => {
-	         this.get('/api/v1/main',{}).then((data) => {                    
+	         this.get('/api/v1/main/menu',{}).then((data) => {                    
                    this.menuList = data.data
 				   console.log("menun:", this.menuList)		 
                  })
@@ -88,7 +89,7 @@
             },
             move(evt) {
                 var attrs = evt.item.attributes
-				//console.info("select",JSON.stringify(attrs.type.nodeValue))
+				//console.info("select",attrs.type.nodeValue)
                 this.nodeMenu = JSON.parse(attrs.type.nodeValue)
 				
 				

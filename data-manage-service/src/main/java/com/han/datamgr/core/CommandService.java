@@ -18,15 +18,13 @@ import java.util.List;
 public interface CommandService {
 
 
-    public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException;
-
     /**
      * 创建命令
      *
-     * @param commandVO
+     * @param entity
      */
 
-    public void createCommand(CommandVO... commandVO) throws BusException;
+    public void createCommand(CommandEntity entity) throws BusException;
 
 
     /**
@@ -45,5 +43,5 @@ public interface CommandService {
     public void removeCommand(CommandVO commandVO) throws BusException;
 
 
-    public List<CommandEntity> queryAllCommands()throws BusException;
+    public List<CommandEntity> queryAllCommands() throws BusException;
 }

@@ -3,12 +3,10 @@ package com.han.datamgr.common;
 import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.repository.CommandRepository;
-import com.han.datamgr.support.DataTransformUtils;
 import com.han.datamgr.vo.MenuVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -44,10 +42,15 @@ public class MenuService {
 
             MenuVO<String> first = new MenuVO<>();//初始化一级菜单
             first.setData(en.getKey());
+            first.setType(en.getKey());
+            first.setName(en.getKey());
+            first.setIco("el-icon-menu");
             List<MenuVO<CommandEntity>> second = new ArrayList<>();
             for (CommandEntity entity : commandEntityList) {
                 MenuVO<CommandEntity> secondItem = new MenuVO<>();//一级菜单子菜单
                 secondItem.setName(entity.getCommandName());
+                secondItem.setType(entity.getCommandName());
+                secondItem.setIco("el-icon-menu");
                 //--------------------
                 CommandEntity tmp=new CommandEntity();
                 BeanUtils.copyProperties(entity,tmp);
@@ -59,6 +62,8 @@ public class MenuService {
                     MenuVO<CommandInstanceEntity> thirdItem = new MenuVO<>();//一级菜单子菜单
                     thirdItem.setName(instanceEntity.getCommandInstanceName());
                     thirdItem.setData(instanceEntity);
+                    thirdItem.setIco("el-icon-goods");
+                    thirdItem.setType(instanceEntity.getCommandInstanceName());
                     third.add(thirdItem);
                 }
                 secondItem.getChildren().addAll(third);

@@ -195,26 +195,7 @@ public class InitSysDataTest {
 
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void createCmdTest() {
-        CommandVO commandVO = new CommandVO();
-        commandVO.setCommandName("分隔符解析");
-        commandVO.setCommandClazz("org.kitesdk.morphline.stdlib.SplitBuilder");
-        commandVO.setCommandType("解析");
-        commandVO.setMorphName("split");
 
-        CommandVO commandVO1 = new CommandVO();
-        commandVO1.setCommandName("EL表达式");
-        commandVO1.setCommandClazz("com.stream.data.transform.command.ELExpressBuilder");
-        commandVO1.setCommandType("计算");
-        commandVO1.setMorphName("EL");
-
-        try {
-            commandService.createCommand(new CommandVO[]{commandVO, commandVO1});
-        } catch (BusException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     public void createSubFlow() {

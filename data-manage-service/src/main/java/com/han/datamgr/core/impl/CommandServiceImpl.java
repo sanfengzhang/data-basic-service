@@ -3,6 +3,7 @@ package com.han.datamgr.core.impl;
 import com.han.datamgr.core.CommandService;
 import com.han.datamgr.entity.CommandEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
+import com.han.datamgr.entity.CommandParamEntity;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.CommandRepository;
 import com.han.datamgr.support.DataTransformUtils;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -30,54 +28,14 @@ public class CommandServiceImpl implements CommandService {
     @Autowired
     private CommandRepository commandRepository;
 
-
     @Override
-    @Transactional
-    public List<LeftMenuVO> getLeftMenuCmdInstanceData() throws BusException {
-        List<LeftMenuVO> result = new ArrayList<>();
-        List<CommandEntity> allCmd = commandRepository.findAll();
-        Map<String, List<CommandEntity>> map = null;
-        if (!CollectionUtils.isEmpty(allCmd)) {
-            DataTransformUtils<String, List<CommandEntity>> dataTransformUtils = new DataTransformUtils<>();
-            try {
-                map = dataTransformUtils.convert("commandType", allCmd.iterator());
-            } catch (IllegalAccessException e) {
-                throw new BusException("", e);
-            }
-            if (null != map) {
-                Iterator<Map.Entry<String, List<CommandEntity>>> it = map.entrySet().iterator();
-                int i=0;
-                while (it.hasNext()) {
-                    Map.Entry<String, List<CommandEntity>> en = it.next();
-                    LeftMenuVO leftMenuVO = new LeftMenuVO();
-                    leftMenuVO.setType("group"+i);
-                    i++;
-                    leftMenuVO.setName(en.getKey());
-                    leftMenuVO.setIco("'el-icon-video-play'");
-                    List<CommandEntity> commandEntities = en.getValue();
-                    List<CommandInstanceEntity> res = new ArrayList<>();
-                    commandEntities.forEach(commandEntity -> {
-                        commandEntity.getCommandInstanceEntityList().forEach(commandInstance -> {
-                            res.add(commandInstance);
-                        });
-                    });
-                    leftMenuVO.setChildren(res);
-                    result.add(leftMenuVO);
-                }
-            }
-        }
-        return result;
-    }
+    public void createCommand(CommandEntity entity) throws BusException {
 
-
-    @Override
-    public void createCommand(CommandVO... commandVO) throws BusException {
-        List<CommandEntity> data = new ArrayList<>();
-        for (CommandVO vo : commandVO) {
-            CommandEntity commandEntity = vo.to();
-            data.add(commandEntity);
+        Set<CommandParamEntity> paramEntitySet = entity.getCmdParams();
+        for (CommandParamEntity paramEntity : paramEntitySet) {
+            paramEntity.setCommandEntity(entity);
         }
-        commandRepository.saveAll(data);
+        commandRepository.save(entity);
     }
 
     @Override

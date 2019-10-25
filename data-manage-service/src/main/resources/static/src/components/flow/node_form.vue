@@ -36,20 +36,16 @@
             return {
                 visible: false,
                 node: {
-				   commandInstanceEntity:{}
+				   commandInstanceEntity:{
+				      commandClazz:{}
+				   }
 				}
             }
         },
         methods: {
             init(data, id) {
-			
-			 data.nodeList.filter((node) => {
-                    if (node.id === id) {
-                        console.log("日志",node)					
-                        this.node = node
-						
-                    }
-                })
+			     console.log('编辑节点', data)			
+			    this.node=data
                 this.visible = true           
                
             }

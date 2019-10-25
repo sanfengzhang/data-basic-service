@@ -3,10 +3,7 @@ package com.han.datamgr.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * @author: Hanl
@@ -20,7 +17,7 @@ import javax.persistence.ManyToOne;
 @EqualsAndHashCode(exclude = {"commandEntity"}, callSuper = true)
 public class CommandParamEntity extends FiledEntity {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cmd_id")
     private CommandEntity commandEntity;
 
