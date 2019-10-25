@@ -16,8 +16,9 @@
                             <el-button type="warning" @click="dataReloadC" icon="el-icon-refresh">切换流程C</el-button>-->
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
                             <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
+							  <el-button type="info" icon="el-icon-document" @click="saveDataFlow">保存当前流程</el-button>	
                             <el-select  @change="selectFlow" v-model="firstFlow">							   
-							    <el-option  v-for="item in flowDataList" :key="item.flowEntity.id"       :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
+							    <el-option  v-for="item in selectFlowData" :key="item.flowEntity.id"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                                     {{item.flowEntity.dataProcessFlowName}}
                                 </el-option>
 							</el-select>				
@@ -127,7 +128,7 @@
                 // 数据
                 data: {},
 				firstFlow: '请选择',
-				flowDataList: []
+				selectFlowData: {},
             }
         },
         components: {
@@ -137,8 +138,7 @@
         mounted() {
 		    this.$nextTick(() => {
                      this.get('/api/v1/flow',{}).then((data) => {
-                     this.flowDataList=data.data
-					 this.data=data.data	
+					 this.selectFlowData=data.data	
                      console.log("flowDataList",this.flowDataList)					 
                   });
              })	
@@ -177,9 +177,9 @@
                     _this.jsPlumb.bind("connection", function (evt) {
                         console.log('connection', evt)
                         let from = evt.source.id
-                        let to = evt.target.id
+                        let to = evt.target.id						
                         if (_this.loadEasyFlowFinish) {
-                            _this.lineList.push({
+                            _this.data.lineList.push({
                                 from: from,
                                 to: to
                             })
@@ -313,7 +313,8 @@
                 console.log('添加节点', nodeMenu)
                 let width = this.$refs.flowTool.$el.clientWidth
                 const index = this.index++
-                let nodeId = 'node' + index
+                let nodeId = this.uuid()		  
+			   // let nodeId = nodeMenu.id
                 var left = mousePosition.left
                 var top = mousePosition.top
                 if (mousePosition.left < 0) {
@@ -322,13 +323,15 @@
                 if (mousePosition.top < 0) {
                     top = evt.originalEvent.clientY - 50
                 }
+				//console.log("nodeList==", this.data.nodeList)
                 var node = {
-                    id: nodeId,
-					cmdName: nodeMenu.name,					
+                    id: nodeId,						
 					data:nodeMenu,
+					cmdName:nodeMenu.name,
 					cmdInstanceParams:nodeMenu.cmdInstanceParams,
+					commandInstanceEntity: nodeMenu,
 					command:nodeMenu.command,
-                    name: '节点' + index,
+                    name: nodeMenu.name+'-'+ index,
                     left: left + 'px',
                     top: top + 'px',
                     ico: nodeMenu.ico,
@@ -376,15 +379,18 @@
                     type: 'warning',
                     closeOnClickModal: false
                 }).then(() => {
-
+                    var i=0;
                     this.data.nodeList = this.data.nodeList.filter(function (node) {
 
                         // return node.id !== nodeId
-                        if (node.id === nodeId) {
-                            node.show = false
+						i=i+1
+                        if (node.id === nodeId) {                          					
+                            node.show = false					   
+							
                         }
                         return true
                     })
+					this.data.nodeList.splice(i-1, 1);	
                     this.$nextTick(function () {
                         console.log('删除' + nodeId)
                         this.jsPlumb.removeAllEndpoints(nodeId);
@@ -442,19 +448,25 @@
             initFlowPanel(data){
 			    console.log("。。。。。")
 			    console.log("初始化新流程")
-			},	
-            selectFlow(vid){			     
-			    console.log("选择flow",vid)
+			},
+            saveDataFlow(){
+			   console.log("save flow:",this.data)
+			     this.post('/api/v1/flow/relation',this.data).then((response) => {                     
+                     console.log("save flow response",response)					  
+                  });
+			
+			},			
+            selectFlow(vid){    
+			   
 				if('undfined'===vid){
 				    return
 				}
 				this.$nextTick(() => {
-                     this.get('/api/v1/flow',{"id":vid}).then((data) => {
-                     this.dataReload(data.data)
-                     console.log("data===",data)					  
+                     this.get('/api/v1/flow/'+vid,{}).then((data) => {
+					 console.log("选择flow",data.data)
+                     this.dataReload(data.data)                    			  
                   });
-               })
-				
+               })				
 			},			
             dataReloadA() {
                 this.dataReload(getDataA())

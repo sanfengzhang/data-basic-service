@@ -9,10 +9,10 @@
                 <el-input v-model="node.name"></el-input>
             </el-form-item>
             <el-form-item label="类名称">
-                <el-input   v-model="node.command.commandClazz"></el-input>
+                <el-input   v-model="node.commandInstanceEntity.command.commandClazz"></el-input>
             </el-form-item>
             <el-form-item label="转换名称">
-                <el-input v-model="node.command.morphName"></el-input>
+                <el-input v-model="node.commandInstanceEntity.command.morphName"></el-input>
             </el-form-item>
 			<div v-for="item in node.cmdInstanceParams">
 			 <el-form-item :label="item.cmdDisplayName">
@@ -36,7 +36,7 @@
             return {
                 visible: false,
                 node: {
-				   command:{}
+				   commandInstanceEntity:{}
 				}
             }
         },

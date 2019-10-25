@@ -11,8 +11,8 @@
                 <el-menu-item-group>
                     <draggable @end="addNode" @choose="move" v-model="menu.children" :options="draggableOptions">
                         <el-menu-item v-for="(son,i) in menu.children"
-                                      :key="son.type+i"
-                                      :index=String(son.type+i)
+                                      :key="son.id"
+                                      :index="son.id"
                                       :type=JSON.stringify(son)
                                       :aaa="son.type"
                                       :bbb="son.type"
@@ -38,7 +38,7 @@
                 draggableOptions: {
                     preventOnFilter: false
                 },
-                defaultOpeneds: ['group0', 'group1'],
+                defaultOpeneds: ['group00', 'group11'],
                 menuList: [
                     
                 ],

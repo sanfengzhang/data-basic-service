@@ -15,10 +15,11 @@ import VueResource from 'vue-resource'
 /*使用VueResource插件*/
 Vue.use(VueResource)
 
-import {get,post} from './http'
+import {get,post,uuid} from './http'
 //将方法挂载到Vue原型上
 Vue.prototype.get = get;
 Vue.prototype.post = post;
+Vue.prototype.uuid = uuid;
 
 
 import {codemirror} from 'vue-codemirror'

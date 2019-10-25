@@ -5,7 +5,7 @@
             :visible.sync="visible"
     >
         <el-form :model="dataProcessFlow" ref="flowAddForm" label-width="120px">
-            <el-form-item label="名称" prop="dataProcessFlowName" >
+            <el-form-item label="名称" prop="flowName" >
                 <el-input type="text" v-model="dataProcessFlow.dataProcessFlowName" ></el-input>
             </el-form-item>
 			 <el-form-item  label="外部类加载路径" prop="classPath">
@@ -14,7 +14,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="visible = false" icon="el-icon-close">取消</el-button>
-            <el-button type=""  icon="el-icon-check" @click="addFlow">确定</el-button>
+            <el-button type="primary"  icon="el-icon-check" @click="submitForm()">确定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -25,17 +25,17 @@
             return {
                 visible: false,
                 dataProcessFlow: {
-                  dataProcessFlowName:'',
-				  loadExternalLibsPath:''
-                }
+				    dataProcessFlowName:'',
+				    loadExternalLibsPath:''
+				}
             }
         },
 		 methods: {
             init() {            
 			   this.visible=true
             },
-			addFlow(){				 
-			    console.log("flow="+this.dataProcessFlow);
+			submitForm(){				 
+			    console.log("add flow",this.dataProcessFlow);
 				this.post('/api/v1/flow',this.dataProcessFlow).then((result) => {
 				             this.$message('流程保存成功!');
 						     this.$emit('initFlowPanel', this.dataProcessFlow);	
