@@ -1,9 +1,9 @@
 package com.han.datamgr.core.impl;
 
 import com.han.datamgr.core.CommandInstanceService;
-import com.han.datamgr.entity.CommandInstanceEntity;
+import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
-import com.han.datamgr.repository.CommandInstanceRepository;
+import com.han.datamgr.repository.*;
 import com.han.datamgr.vo.CommandInstanceVO;
 import com.han.datamgr.vo.CommandVO;
 import com.han.datamgr.vo.LeftMenuVO;
@@ -27,12 +27,58 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
     @Autowired
     private CommandInstanceRepository commandInstanceRepository;
 
+    @Autowired
+    private CommandParamRepository commandParamRepository;
+
+    @Autowired
+    private CommandInstanceParamRepository commandInstanceParamRepository;
+
+    @Autowired
+    private DataProcessFlowRepository flowRepository;
+
+    @Autowired
+    private CommandInstanceFlowRelationRepository commandInstanceFlowRelationRepository;
+
     @Override
     @Transactional
-    public void createCmdInstance(CommandInstanceVO commandInstanceVO) throws BusException {
-        CommandInstanceEntity commandInstanceEntity = commandInstanceVO.to();
+    public void createCmdInstance(CommandInstanceVO vo) throws BusException {
+        CommandInstanceEntity entity = new CommandInstanceEntity();
+        entity.setCommandInstanceName(vo.getCommandInstanceName());
+        entity.setSelectSubFlowClazz(vo.getSelectSubFlowClazz());
 
-        commandInstanceRepository.save(commandInstanceEntity);
+        List<CommandParamEntity> commandParamEntityList = vo.getCmdParams();
+        List<DataProcessFlowEntity> flowEntities = flowRepository.findAllById(vo.getSubFlows());
+
+        entity = commandInstanceRepository.save(entity);
+        List<CommandInstanceFlowRelation> relations = new ArrayList<>();
+        for (DataProcessFlowEntity flowEntity : flowEntities) {
+            CommandInstanceFlowRelation relation = new CommandInstanceFlowRelation();
+            relation.setFlowEntity(flowEntity);
+            relation.setCommandInstanceEntity(entity);
+            relations.add(relation);
+        }
+        commandInstanceFlowRelationRepository.saveAll(relations);
+
+
+        List<CommandParamEntity> persistence=new ArrayList<>();
+        commandParamEntityList.forEach(commandParamEntity -> {
+            Optional<CommandParamEntity> optionalCommandParamEntity = commandParamRepository.findById(commandParamEntity.getId());
+            CommandParamEntity commandParamEntity1 = optionalCommandParamEntity.get();
+            commandParamEntity1.setFieldValue(commandParamEntity.getFieldValue());
+            persistence.add(commandParamEntity1);
+        });
+
+        List<CommandInstanceParamEntity> commandInstanceParamEntities = new ArrayList<>();
+        for (CommandParamEntity commandParamEntity : persistence) {
+            CommandInstanceParamEntity commandInstanceParamEntity = new CommandInstanceParamEntity();
+            commandInstanceParamEntity.setFieldName(commandParamEntity.getFieldName());
+            commandInstanceParamEntity.setFieldValue(commandParamEntity.getFieldValue());
+            commandInstanceParamEntity.setFieldType(commandParamEntity.getFieldType());
+            commandInstanceParamEntity.setCommandParamEntity(commandParamEntity);
+            commandInstanceParamEntity.setCommandInstanceEntity(entity);
+            commandInstanceParamEntities.add(commandInstanceParamEntity);
+        }
+        commandInstanceParamRepository.saveAll(commandInstanceParamEntities);
     }
 
     @Override

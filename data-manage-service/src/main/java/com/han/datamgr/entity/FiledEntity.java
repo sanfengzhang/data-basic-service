@@ -36,7 +36,7 @@ public class FiledEntity implements Serializable {
     protected String fieldType;
 
     @Column(name = "filed_value",columnDefinition = "varchar(255) COMMENT '字段赋值'")
-    protected String filedValue;
+    protected String fieldValue;
 
     @Column(name = "filed_format",columnDefinition = "varchar(32) COMMENT '数据格式化,yyyy-MM-dd'")
     protected String format;

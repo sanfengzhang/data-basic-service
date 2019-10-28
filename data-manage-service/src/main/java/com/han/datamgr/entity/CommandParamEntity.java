@@ -1,5 +1,6 @@
 package com.han.datamgr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,6 +20,7 @@ public class CommandParamEntity extends FiledEntity {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cmd_id")
+    @JsonIgnoreProperties({"cmdParams","commandInstanceEntityList"})
     private CommandEntity commandEntity;
 
 }

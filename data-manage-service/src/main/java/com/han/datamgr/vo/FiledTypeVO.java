@@ -40,7 +40,7 @@ public class FiledTypeVO extends BaseVO<FiledEntity> {
         this.setFieldName(entity.getFieldName());
         this.setId(entity.getId());
         this.setFieldType(entity.getFieldType());
-        this.setFiledValue(entity.getFiledValue());
+        this.setFiledValue(entity.getFieldValue());
         this.setDisplayName(entity.getCmdDisplayName());
     }
 }

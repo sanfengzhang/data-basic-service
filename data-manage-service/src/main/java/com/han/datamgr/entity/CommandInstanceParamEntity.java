@@ -35,7 +35,7 @@ public class CommandInstanceParamEntity extends FiledEntity {
                 ", id='" + id + '\'' +
                 ", fieldName='" + fieldName + '\'' +
                 ", fieldType='" + fieldType + '\'' +
-                ", filedValue='" + filedValue + '\'' +
+                ", filedValue='" + fieldValue + '\'' +
                 ", format='" + format + '\'' +
                 ", commandInstanceEntity='" + commandInstanceEntityId + '\'' +
                 '}';

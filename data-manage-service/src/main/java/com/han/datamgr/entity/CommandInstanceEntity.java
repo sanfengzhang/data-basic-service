@@ -35,7 +35,7 @@ public class CommandInstanceEntity implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "commandInstanceEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"commandInstanceEntity"})
-    private Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = new HashSet<>();//该command实例节点包含的子流程关系
+    private Set<CommandInstanceFlowRelation> cmdInstanceFlowRelSet = new HashSet<>();//该command实例节点包含的子流程关系
 
     @Column(name = "cmd_input")
     private String commandInputParams;//cmd的的输入参数，Record中的参数
@@ -43,7 +43,9 @@ public class CommandInstanceEntity implements Serializable {
     @Column(name = "cmd_output")//cmd的输出参数
     private String commandOutputParams;
 
-    @Column(name = "skip_cmd_selector")//是否跳过当前算子的操作的选择器
+    //是否跳过当前算子的操作的选择器，之所以不配在command上面是想更灵活的配置,因为同一个command只针对其实例去配置选择条件
+    //挂在command下会对该算子下所有的实例生效不太符合实际应用场景，下面selectSubFlowClazz同理
+    @Column(name = "skip_cmd_selector")
     private String skipCmdSelectorClazz;
 
     @Column(name = "skip_cmd_condition")//选择器的逻辑表达式

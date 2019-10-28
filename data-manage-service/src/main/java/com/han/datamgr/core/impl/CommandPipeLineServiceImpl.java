@@ -68,7 +68,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         CommandPipeline commandPipeline = CommandPipeline.build(flowNme);
         for (String id : mainFlow) {
             //-------------需要计算每个节点子流程命令构建
-            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = idInstance.get(id).getCommandInstanceEntity().getCmdInstanceFowRelSet();
+            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = idInstance.get(id).getCommandInstanceEntity().getCmdInstanceFlowRelSet();
             List<Map<String, Object>> subPipMapList = new ArrayList<>();
             if (!CollectionUtils.isEmpty(cmdInstanceFowRelSet)) {
                 for (CommandInstanceFlowRelation relation : cmdInstanceFowRelSet) {
@@ -102,7 +102,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
                 throw new BusException("Command初始化参数名称不能为空.");
             }
 
-            String valueString = commandInstanceParamEntity.getFiledValue();
+            String valueString = commandInstanceParamEntity.getFieldValue();
             Object value = TypeUtils.fastJsonCast(valueString, commandInstanceParamEntity.getFieldType(), new ParserConfig());
             if ("importCommands".equals(key)) {
                 commandPipeline.addImports((List<String>) value);
