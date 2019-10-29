@@ -18,7 +18,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(exclude = {"commandEntity"}, callSuper = true)
 public class CommandParamEntity extends FiledEntity {
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "cmd_id")
     @JsonIgnoreProperties({"cmdParams","commandInstanceEntityList"})
     private CommandEntity commandEntity;

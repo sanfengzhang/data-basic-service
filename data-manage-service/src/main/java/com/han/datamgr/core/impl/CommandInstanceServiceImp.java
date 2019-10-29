@@ -48,8 +48,8 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
         CommandInstanceEntity entity = new CommandInstanceEntity();
         entity.setCommandInstanceName(vo.getCommandInstanceName());
         entity.setSelectSubFlowClazz(vo.getSelectSubFlowClazz());
-        String commandId=vo.getCommand();
-        CommandEntity commandEntity=commandRepository.findById(commandId).get();
+        String commandId = vo.getCommand();
+        CommandEntity commandEntity = commandRepository.findById(commandId).get();
         entity.setCommand(commandEntity);
         List<CommandParamEntity> commandParamEntityList = vo.getCmdParams();
         List<DataProcessFlowEntity> flowEntities = flowRepository.findAllById(vo.getSubFlows());
@@ -64,22 +64,16 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
         }
         commandInstanceFlowRelationRepository.saveAll(relations);
 
-
-        List<CommandParamEntity> persistence=new ArrayList<>();
-        commandParamEntityList.forEach(commandParamEntity -> {
+        List<CommandInstanceParamEntity> commandInstanceParamEntities = new ArrayList<>();
+        for (CommandParamEntity commandParamEntity : commandParamEntityList) {
             Optional<CommandParamEntity> optionalCommandParamEntity = commandParamRepository.findById(commandParamEntity.getId());
             CommandParamEntity commandParamEntity1 = optionalCommandParamEntity.get();
-            commandParamEntity1.setFieldValue(commandParamEntity.getFieldValue());
-            persistence.add(commandParamEntity1);
-        });
 
-        List<CommandInstanceParamEntity> commandInstanceParamEntities = new ArrayList<>();
-        for (CommandParamEntity commandParamEntity : persistence) {
             CommandInstanceParamEntity commandInstanceParamEntity = new CommandInstanceParamEntity();
-            commandInstanceParamEntity.setFieldName(commandParamEntity.getFieldName());
+            commandInstanceParamEntity.setFieldName(commandParamEntity1.getFieldName());
+            commandInstanceParamEntity.setFieldType(commandParamEntity1.getFieldType());
             commandInstanceParamEntity.setFieldValue(commandParamEntity.getFieldValue());
-            commandInstanceParamEntity.setFieldType(commandParamEntity.getFieldType());
-            commandInstanceParamEntity.setCommandParamEntity(commandParamEntity);
+            commandInstanceParamEntity.setCommandParamEntity(commandParamEntity1);
             commandInstanceParamEntity.setCommandInstanceEntity(entity);
             commandInstanceParamEntities.add(commandInstanceParamEntity);
         }

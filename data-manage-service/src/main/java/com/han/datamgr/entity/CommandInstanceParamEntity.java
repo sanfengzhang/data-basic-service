@@ -19,7 +19,7 @@ public class CommandInstanceParamEntity extends FiledEntity {
     @ManyToOne
     private CommandInstanceEntity commandInstanceEntity;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "cmd_param_id")
     private CommandParamEntity commandParamEntity;
 
