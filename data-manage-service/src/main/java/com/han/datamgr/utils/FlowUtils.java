@@ -86,6 +86,10 @@ public class FlowUtils {
      */
     public static List<String> findFlow(List<Map<String, String>> flowLine, String start, String end) {
         List<String> result = new ArrayList<>();
+        if(null==end){
+            result.add(start);
+            return result;
+        }
         List<Map<String, String>> mainFlowLine = findMainFlowLine(flowLine, start, end);
         TreeSet<String> treeSet = new TreeSet<>();
         for (Map<String, String> map : mainFlowLine) {

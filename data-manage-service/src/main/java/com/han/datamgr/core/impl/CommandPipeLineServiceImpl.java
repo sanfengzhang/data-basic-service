@@ -68,7 +68,10 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         CommandPipeline commandPipeline = CommandPipeline.build(flowNme);
         for (String id : mainFlow) {
             //-------------需要计算每个节点子流程命令构建
-            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = idInstance.get(id).getCommandInstanceEntity().getCmdInstanceFlowRelSet();
+            Set<CommandInstanceFlowRelation> cmdInstanceFowRelSet = null;
+            if (null != idInstance.get(id)) {
+                cmdInstanceFowRelSet = idInstance.get(id).getCommandInstanceEntity().getCmdInstanceFlowRelSet();
+            }
             List<Map<String, Object>> subPipMapList = new ArrayList<>();
             if (!CollectionUtils.isEmpty(cmdInstanceFowRelSet)) {
                 for (CommandInstanceFlowRelation relation : cmdInstanceFowRelSet) {
@@ -79,15 +82,18 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
                     //---------------------获取子流程的执行顺序
                     List<Map<String, String>> subFlowLineMap = FlowUtils.fromFlowLineEntityToId(flowLineEntitySet);
                     String start0 = startAndEnd.get(FlowLineService.START_CMD).getId();
-                    String end0 = startAndEnd.get(FlowLineService.END_CMD).getId();
+
+                    String end0 = startAndEnd.get(FlowLineService.END_CMD) == null ? null : startAndEnd.get(FlowLineService.END_CMD).getId();
                     //---------------------递归调用
                     CommandPipeline subPipe = buildCommandPipe(subFlowLineMap, start0, end0, nodeList, subFlowName);
                     log.info("create sub pipe={}", subPipe.get());
                     subPipMapList.add(subPipe.get());
                 }
             }
-            Map<String, Object> cmdMap = buildCommandMapByConfig(idInstance.get(id).getCommandInstanceEntity(), commandPipeline, subPipMapList);
-            commandPipeline.addCommand(cmdMap);
+            if (null != idInstance.get(id)) {
+                Map<String, Object> cmdMap = buildCommandMapByConfig(idInstance.get(id).getCommandInstanceEntity(), commandPipeline, subPipMapList);
+                commandPipeline.addCommand(cmdMap);
+            }
         }
 
         return commandPipeline;

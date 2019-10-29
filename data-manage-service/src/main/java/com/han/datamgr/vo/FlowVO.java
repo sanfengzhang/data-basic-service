@@ -43,7 +43,10 @@ public class FlowVO implements Serializable {
         for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
             Map<String, String> lineMap = new HashMap<>();
             String from = flowLineEntity.getStart().getId();
-            String to = flowLineEntity.getEnd().getId();
+            String to = null;
+            if (null != flowLineEntity.getEnd()) {
+                to = flowLineEntity.getEnd().getId();
+            }
             lineMap.put("from", from);
             lineMap.put("to", to);
             lineList.add(lineMap);
@@ -56,11 +59,14 @@ public class FlowVO implements Serializable {
             Map<String, CanvasCommandInstanceEntity> idInstance = new HashMap<>();
             for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
                 String fromId = flowLineEntity.getStart().getId();
-                String toId = flowLineEntity.getEnd().getId();
+                String toId = null;
+                if (null != flowLineEntity.getEnd()) {
+                    toId = flowLineEntity.getEnd().getId();
+                }
                 if (!idInstance.containsKey(fromId)) {
                     idInstance.put(fromId, flowLineEntity.getStart());
                 }
-                if (!idInstance.containsKey(toId)) {
+                if (null != toId && !idInstance.containsKey(toId)) {
                     idInstance.put(toId, flowLineEntity.getEnd());
                 }
             }

@@ -35,9 +35,14 @@ public class FlowLineServiceImpl implements FlowLineService {
                 if (start.isFirst()) {
                     result.put(START_CMD, start);
                 }
-                if (end.isLast()) {
-                    result.put(END_CMD, end);
+                if (null != end) {
+                    if (end.isLast()) {
+                        result.put(END_CMD, end);
+                    }
+                } else {
+                    result.put(END_CMD, null);
                 }
+
             }
 
         }

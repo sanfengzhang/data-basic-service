@@ -114,7 +114,17 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
     }
 
     private void saveFlowLineRelation(DataProcessFlowEntity flowEntity, List<Map<String, String>> lineList, List<CanvasCommandInstanceEntity> nodeList) throws BusException {
-        if (!CollectionUtils.isEmpty(lineList)) {
+        if (!CollectionUtils.isEmpty(lineList) || !CollectionUtils.isEmpty(nodeList)) {
+            if (CollectionUtils.isEmpty(lineList)) {
+                if (nodeList.size() > 1) {
+                    throw new BusException("一条流程包含独立的节点只能有一个");
+                }
+                lineList = new ArrayList<>();
+                Map<String, String> line = new HashMap<>();
+                line.put(FlowLineService.START_CMD, nodeList.get(0).getId());
+                line.put(FlowLineService.END_CMD, null);
+                lineList.add(line);
+            }
             String flowId = flowEntity.getId();
 
             Set<String> delCanvasIds = new HashSet<>();
