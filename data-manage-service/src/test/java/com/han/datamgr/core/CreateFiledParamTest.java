@@ -38,7 +38,7 @@ public class CreateFiledParamTest {
 
         CommandInstanceParamEntity instanceParamEntity = new CommandInstanceParamEntity();
         instanceParamEntity.setCommandParamEntity(commandParamEntity);
-        instanceParamEntity.setFiledValue("zhangsan");
+        instanceParamEntity.setFieldValue("zhangsan");
 
         repository.save(instanceParamEntity);
 

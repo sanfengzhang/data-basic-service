@@ -37,6 +37,9 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
     private DataProcessFlowRepository flowRepository;
 
     @Autowired
+    private CommandRepository commandRepository;
+
+    @Autowired
     private CommandInstanceFlowRelationRepository commandInstanceFlowRelationRepository;
 
     @Override
@@ -45,7 +48,9 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
         CommandInstanceEntity entity = new CommandInstanceEntity();
         entity.setCommandInstanceName(vo.getCommandInstanceName());
         entity.setSelectSubFlowClazz(vo.getSelectSubFlowClazz());
-
+        String commandId=vo.getCommand();
+        CommandEntity commandEntity=commandRepository.findById(commandId).get();
+        entity.setCommand(commandEntity);
         List<CommandParamEntity> commandParamEntityList = vo.getCmdParams();
         List<DataProcessFlowEntity> flowEntities = flowRepository.findAllById(vo.getSubFlows());
 
