@@ -17,7 +17,8 @@
                             <el-button type="warning" @click="changeLabel" icon="el-icon-refresh">设置线</el-button>
                             <el-button type="info" icon="el-icon-document" @click="addNewDataFlow">创建流程</el-button>	
 							<el-button type="info" icon="el-icon-document" @click="saveDataFlow">保存当前流程</el-button>
-                            <el-button type="info" icon="el-icon-document" @click="createNewCommand">创建命令</el-button>							
+                            <el-button type="info" icon="el-icon-document" @click="createNewCommand">创建命令</el-button>	
+                            <el-button type="info" icon="el-icon-document" @click="createNewCommandInstance">创建命令实例</el-button>							
                             <el-select  @change="selectFlow" v-model="firstFlow">							   
 							    <el-option  v-for="item in selectFlowData" :key="item.flowEntity.id"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                                     {{item.flowEntity.dataProcessFlowName}}
@@ -53,6 +54,7 @@
         <flow-node-form v-if="nodeFormVisible" ref="nodeForm"></flow-node-form>
 		<flow-add-flow-form v-if="flowAddFormVisible" ref="addFlowForm" @initFlowPanel="initFlowPanel"></flow-add-flow-form>
 		<flow-new-cmd-form v-if="newCmdFormVisible" ref="newCmdForm" @newCmdForm="newCmdForm"></flow-new-cmd-form>
+		<flow-new-cmd-instance-form v-if="newCmdInstanceFormVisible" ref="newCmdInstanceForm" @newCmdInstanceForm="newCmdInstanceForm"></flow-new-cmd-instance-form>
 
     </div>
 
@@ -67,6 +69,7 @@
     import FlowNodeForm from './node_form'
 	import FlowAddFlowForm from './data_flow_form'
 	
+	import FlowNewCmdInstanceForm from './new_cmd_instance_form'
 	import FlowNewCmdForm from './new_cmd_form'
     import lodash from 'lodash'
     import {getDataA} from './data_A'
@@ -84,6 +87,7 @@
                 nodeFormVisible: false,
 				flowAddFormVisible: false,
 				newCmdFormVisible: false,
+				newCmdInstanceFormVisible: false,
                 index: 1,
                 // 默认设置参数
                 jsplumbSetting: {
@@ -136,7 +140,7 @@
             }
         },
         components: {
-            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm,FlowNewCmdForm
+            draggable, flowNode, flowTool, FlowInfo, FlowNodeForm,FlowAddFlowForm,FlowNewCmdForm,FlowNewCmdInstanceForm
         },
 		
         mounted() {
@@ -327,24 +331,20 @@
                 if (mousePosition.top < 0) {
                     top = evt.originalEvent.clientY - 50
                 }
-				//console.log("nodeList==", this.data.nodeList)
-                var node = {
+				console.log("从菜单添加新节点", nodeMenu)
+                
+				var node = {
                     id: nodeId,						
-					data:nodeMenu,
-					cmdName:nodeMenu.name,
-					cmdInstanceParams:nodeMenu.cmdInstanceParams,
-					commandInstanceEntity: nodeMenu,
-					command:nodeMenu.command,
+					commandInstanceEntity:nodeMenu.data,					
                     name: nodeMenu.name+'-'+ index,
                     left: left + 'px',
                     top: top + 'px',
                     ico: nodeMenu.ico,
                     show: true
                 }
-				
+				console.log("从菜单添加新节点-结果", node)
                 this.data.nodeList.push(node)				
-                this.$nextTick(function () {
-				console.log("--------", this.data.nodeList)
+                this.$nextTick(function () {				    
                     this.jsPlumb.makeSource(nodeId, this.jsplumbSourceOptions)
 
                     this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions)
@@ -413,7 +413,7 @@
 						   return
 					  }   
                 })
-                 
+                 console.log('编辑节点', nodeData)		 
                 this.$nextTick(function () {				   	
                     this.$refs.nodeForm.init(nodeData, nodeId)
                 })
@@ -486,7 +486,15 @@
                 })
 				
 			},
-            newCmdForm(){},			
+            createNewCommandInstance(){
+			 console.log("创建新命令实例")
+				this.newCmdInstanceFormVisible=true
+				 this.$nextTick(function () {
+                   this.$refs.newCmdInstanceForm.init()
+                })
+			
+			},
+            newCmdInstanceForm(){},			
             dataReloadA() {
                 this.dataReload(getDataA())
             },
