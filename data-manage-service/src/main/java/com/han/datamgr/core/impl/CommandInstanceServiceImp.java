@@ -5,15 +5,14 @@ import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.repository.*;
 import com.han.datamgr.vo.CommandInstanceVO;
-import com.han.datamgr.vo.CommandVO;
-import com.han.datamgr.vo.LeftMenuVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: Hanl
