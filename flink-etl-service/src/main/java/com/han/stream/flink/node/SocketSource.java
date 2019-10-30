@@ -25,14 +25,23 @@ public class SocketSource {
 
     private JobConfigContext jobConfigContext;
 
-    public SocketSource(JobConfigContext jobConfigContext, String prefix) throws Exception {
+    public SocketSource(JobConfigContext jobConfigContext) throws Exception {
         this.jobConfigContext = jobConfigContext;
-        this.host = jobConfigContext.getString("flink.source.socket.host." + prefix);
-        this.port = jobConfigContext.getInt("flink.source.socket.port." + prefix);
+        this.host = jobConfigContext.getString("flink.source.socket.host");
+        this.port = jobConfigContext.getInt("flink.source.socket.port");
+        this.dataType=jobConfigContext.getString("flink.source.socket.data_type");
     }
 
-    public DataStream<String> getSource(StreamExecutionEnvironment env) {
+    public DataStream<Message> getSource(StreamExecutionEnvironment env) {
         DataStream<String> dataStreamSourceString = env.socketTextStream(host, port).name("SOCKET-SOURCE");
-        return dataStreamSourceString;
+        DataStream<Message> dataStreamSourceMessage = dataStreamSourceString.map(new MapFunction<String, Message>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Message map(String value) throws Exception {
+                Message message = new Message(dataType, value);
+                return message;
+            }
+        });
+        return dataStreamSourceMessage;
     }
 }

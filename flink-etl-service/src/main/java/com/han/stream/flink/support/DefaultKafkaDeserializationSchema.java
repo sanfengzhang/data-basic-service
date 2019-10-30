@@ -9,7 +9,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import java.nio.charset.Charset;
 
 /**
- * 定义为CommonMessage,kafka的消息类继承{@ CommonMessage}
+ * 定义为CommonMessage,kafka的消息类继承
  *
  * @author hanlin01
  */

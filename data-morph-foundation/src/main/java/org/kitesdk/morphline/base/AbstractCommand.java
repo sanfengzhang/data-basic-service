@@ -105,7 +105,8 @@ public abstract class AbstractCommand implements Command {
                     for (int i = 0; i < subCommandConfig.size(); i++) {
                         Config subConfig = (Config) subCommandConfig.get(i);
                         String id = subConfig.getString("id");
-                        Command subCmd = new Compiler().compile(subConfig, context, child);
+                        //FIXME 这里不要把finalChild参数设置成child,设置成child会造成子流程也去调用主流一直到最后！！
+                        Command subCmd = new Compiler().compile(subConfig, context, null);
                         subFlows.put(id, subCmd);
                     }
                     LOG.info("create subFlow success，flows={}", subFlows);
@@ -224,6 +225,7 @@ public abstract class AbstractCommand implements Command {
         }
         beforeProcess(record);
         long start = System.currentTimeMillis();
+        LOG.info("执行流程{}", this);
         boolean success = doProcess(record);
         long end = System.currentTimeMillis();
         if (end - start > 10) {
@@ -232,21 +234,20 @@ public abstract class AbstractCommand implements Command {
         if (!success) {
             LOG.debug("Command failed!");
         }
-        if (success) {
-            doSubFlow(record);
-        }
         return success;
     }
 
-    public void doSubFlow(Record record) {
+    protected boolean doSubFlow(Record record) {
+        boolean success=true;
         if (null != this.subFlows && this.subFlows.size() > 0) {
             if (null != subFlowSelector) {
                 Collection<Command> commandSet = subFlowSelector.select(record);
                 for (Command subCmd : commandSet) {
-                    subCmd.process(record);
+                    success=subCmd.process(record);
                 }
             }
         }
+        return success;
     }
 
     protected boolean skipCurrentCommand(Record record) {
@@ -273,6 +274,7 @@ public abstract class AbstractCommand implements Command {
      * shall be done
      */
     protected boolean doProcess(Record record) {
+        doSubFlow(record);
         return getChild().process(record);
     }
 

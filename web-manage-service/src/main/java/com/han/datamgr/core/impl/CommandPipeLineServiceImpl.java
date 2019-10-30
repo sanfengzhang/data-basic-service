@@ -6,6 +6,7 @@ import com.han.datamgr.core.CommandPipeLineService;
 import com.han.datamgr.core.FlowLineService;
 import com.han.datamgr.entity.*;
 import com.han.datamgr.exception.BusException;
+import com.han.datamgr.repository.CanvasCommandInstanceRepository;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.utils.FlowUtils;
 import com.stream.data.transform.model.CommandPipeline;
@@ -32,6 +33,9 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
 
     @Autowired
     private FlowLineService flowLineService;
+
+    @Autowired
+    private CanvasCommandInstanceRepository canvasCommandInstanceRepository;
 
     @Override
     public CommandPipeline buildCommandPipeline(String DataProcessFlowId) throws BusException {
@@ -82,10 +86,9 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
                     //---------------------获取子流程的执行顺序
                     List<Map<String, String>> subFlowLineMap = FlowUtils.fromFlowLineEntityToId(flowLineEntitySet);
                     String start0 = startAndEnd.get(FlowLineService.START_CMD).getId();
-
                     String end0 = startAndEnd.get(FlowLineService.END_CMD) == null ? null : startAndEnd.get(FlowLineService.END_CMD).getId();
                     //---------------------递归调用
-                    CommandPipeline subPipe = buildCommandPipe(subFlowLineMap, start0, end0, nodeList, subFlowName);
+                    CommandPipeline subPipe = buildCommandPipe(subFlowLineMap, start0, end0, getNodeListList(subFlowLineMap), subFlowName);
                     log.info("create sub pipe={}", subPipe.get());
                     subPipMapList.add(subPipe.get());
                 }
@@ -97,6 +100,23 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         }
 
         return commandPipeline;
+    }
+
+    private List<CanvasCommandInstanceEntity> getNodeListList(List<Map<String, String>> flowLineList) {
+        List<CanvasCommandInstanceEntity> nodeList = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
+        for (Map<String, String> flowLine : flowLineList) {
+            String start = flowLine.get(FlowLineService.START_CMD);
+            String end = flowLine.get(FlowLineService.END_CMD);
+            if (null != start) {
+                ids.add(start);
+            }
+            if (null != end) {
+                ids.add(end);
+            }
+        }
+        nodeList = canvasCommandInstanceRepository.findAllByIdIn(ids);
+        return nodeList;
     }
 
     public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline, List<Map<String, Object>> subPipMapList) throws BusException {

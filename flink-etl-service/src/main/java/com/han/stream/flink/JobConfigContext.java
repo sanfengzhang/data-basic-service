@@ -1,7 +1,6 @@
 package com.han.stream.flink;
 
-import com.stream.data.transform.model.CommandPipeline;
-
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -9,16 +8,23 @@ import java.util.Map;
  * @date :2019/8/29
  * @desc:
  */
-public interface JobConfigContext {
+public class JobConfigContext {
 
-    public Map<String, Object> getJobConfigParams();
+    private Map<String, Object> jobConfigParams = new HashMap<>();
 
-    public Long getLong(String key) throws Exception;
+    public Map<String, Object> getJobConfigParams() {
+        return jobConfigParams;
+    }
 
-    public String getString(String key) throws Exception;
+    public Long getLong(String key) throws Exception {
+        return Long.parseLong(getString(key));
+    }
 
-    public int getInt(String key) throws Exception;
+    public String getString(String key) throws Exception {
+        return jobConfigParams.get(key).toString();
+    }
 
-    public Map<String, String> getCommandPipelineMap(String key) throws Exception;
-
+    public int getInt(String key) throws Exception {
+        return Integer.parseInt(getString(key));
+    }
 }

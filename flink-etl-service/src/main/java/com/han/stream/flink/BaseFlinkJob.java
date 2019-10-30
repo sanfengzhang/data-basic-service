@@ -24,7 +24,7 @@ public abstract class BaseFlinkJob implements BaseJob {
 
     public static final String DelayBetween_Attempts = "delayBetweenAttempts";
 
-    public static final String Time_Characteristic = "TimeCharacteristic";
+    public static final String Time_Characteristic = "timeCharacteristic";
 
     public static final String Checkpoint_Interval = "checkpointInterval";
 
@@ -32,7 +32,7 @@ public abstract class BaseFlinkJob implements BaseJob {
 
     public static final String Parallelism = "parallelism";
 
-    protected JobConfigContext jobConfigContext;
+    protected JobConfigContext jobConfigContext = new JobConfigContext();
 
 
     public void initJobConfigContextByHttp(String url) {
