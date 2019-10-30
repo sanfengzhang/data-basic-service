@@ -35,7 +35,7 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
 
     private String transformContextName;
 
-    private Map<String, CommandPipeline> commandPipelinesParams;
+    private Map<String, String> morphFlows;
 
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
@@ -43,16 +43,16 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
     private OutputTag<Map<String, Object>> updateConfigResponseTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public ConfigurableMorphlineTransformFunction(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
+    public ConfigurableMorphlineTransformFunction(String transformContextName, Map<String, String> morphFlows) {
         this.transformContextName = transformContextName;
-        this.commandPipelinesParams = commandPipelines;
+        this.morphFlows = morphFlows;
     }
 
 
     @Override
     public void open(Configuration parameters) throws Exception {
 
-        transform = new DefaultMorphlineTransform(transformContextName, commandPipelinesParams);
+        transform = new DefaultMorphlineTransform(transformContextName, morphFlows);
         this.successProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(DefaultTransformFunction.TRANSFORM_SUCCEEDED_METRICS_COUNTER);
         this.failedProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(DefaultTransformFunction.TRANSFORM_FAILED_METRICS_COUNTER);
     }

@@ -1,5 +1,7 @@
 package com.han.stream.flink.function.transform;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.exception.TransformException;
@@ -32,22 +34,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT> {
 
     //FIXME 在Flink流式处理中不存在这种并发操作的问题
-    private Map<String, Command> commands = new ConcurrentHashMap<>();
+    private Map<String, Command> morphFlows = new ConcurrentHashMap<>();
 
     private Map<String, Collector> collectors = new ConcurrentHashMap<>();
 
     private MorphlineContext morphlineContext;
 
-    protected MorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
+    protected MorphlineTransform(String transformContextName, Map<String, String> morphFlowsConfig) {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
-        Compiler compiler=new Compiler();
-        commandPipelines.forEach((dataType, commandPipeline) -> {
-            Map<String, Object> commandMap = commandPipeline.get();
+        Compiler compiler = new Compiler();
+        morphFlowsConfig.forEach((dataType, flow) -> {
+            Map<String, Object> commandMap = JSON.parseObject(flow, new TypeReference<Map<String, Object>>() {
+            });
             Config config = ConfigFactory.parseMap(commandMap);
             Collector finalChild = new Collector();
             Command cmd = compiler.compile(config, morphlineContext, finalChild);
-            commands.put(dataType, cmd);
+            morphFlows.put(dataType, cmd);
             collectors.put(dataType, finalChild);
         });
     }
@@ -55,7 +58,7 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
     @Override
     public Map<String, Collection<Object>> process(Message message) {
         String dataType = message.getType();
-        Command cmd = commands.get(dataType);
+        Command cmd = morphFlows.get(dataType);
         Collector finalChild = collectors.get(dataType);
         try {
             if (null == cmd) {
@@ -107,7 +110,7 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
             Config config = ConfigFactory.parseMap(commandMap);
             Collector finalChild = new Collector();
             Command cmd = new Compiler().compile(config, morphlineContext, finalChild);
-            commands.put(dataType, cmd);
+            morphFlows.put(dataType, cmd);
             collectors.put(dataType, finalChild);
         });
         log.info("Update morphline config success,config={}", configParameters);

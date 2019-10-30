@@ -34,32 +34,32 @@ public class FlinkTransformNode extends AbstractFlinkNode {
 
     private BroadcastStream<ConfigParameters> broadcastStream;
 
-    private  Map<String, CommandPipeline>  commandPipelines;
+    private Map<String, String> morphFlows;
 
-    public FlinkTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
-        this(transformContextName, commandPipelines, false);
+    public FlinkTransformNode(String transformContextName, Map<String, String> morphFlows) {
+        this(transformContextName, morphFlows, false);
     }
 
-    public FlinkTransformNode(String transformContextName,  Map<String, CommandPipeline>  commandPipelines, boolean configurable) {
+    public FlinkTransformNode(String transformContextName, Map<String, String> morphFlows, boolean configurable) {
         this.transformContextName = transformContextName;
-        this.commandPipelines = commandPipelines;
+        this.morphFlows = morphFlows;
         this.configurable = configurable;
     }
 
-    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, CommandPipeline> commandPipelines, boolean configurable) {
+    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, String> morphFlows, boolean configurable) {
         if (!configurable)
-            return new FlinkTransformNode(transformContextName, commandPipelines, false);
+            return new FlinkTransformNode(transformContextName, morphFlows, false);
         else
-            return new FlinkTransformNode(transformContextName, commandPipelines, true);
+            return new FlinkTransformNode(transformContextName, morphFlows, true);
     }
 
 
     public DataStream<Map<String, Object>> process(DataStream<Message> preDataStream) {
         if (!configurable)
-            return preDataStream.process(new DefaultTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
+            return preDataStream.process(new DefaultTransformFunction(transformContextName, morphFlows)).name(getDataProcessNodeName());
         else {
 
-            return preDataStream.connect(broadcastStream).process(new ConfigurableMorphlineTransformFunction(transformContextName, commandPipelines)).name(getDataProcessNodeName());
+            return preDataStream.connect(broadcastStream).process(new ConfigurableMorphlineTransformFunction(transformContextName, morphFlows)).name(getDataProcessNodeName());
         }
     }
 

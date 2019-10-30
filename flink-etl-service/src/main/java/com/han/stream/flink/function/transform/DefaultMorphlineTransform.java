@@ -1,7 +1,5 @@
 package com.han.stream.flink.function.transform;
 
-import com.stream.data.transform.model.CommandPipeline;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +12,7 @@ import java.util.Map;
  */
 public class DefaultMorphlineTransform extends MorphlineTransform<Map<String, Object>> {
 
-    public DefaultMorphlineTransform(String transformContextName, Map<String, CommandPipeline> commandPipelines) {
+    public DefaultMorphlineTransform(String transformContextName, Map<String, String> commandPipelines) {
 
         super(transformContextName, commandPipelines);
     }

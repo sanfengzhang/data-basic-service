@@ -1,6 +1,7 @@
 package com.han.stream.flink;
 
 
+import com.alibaba.fastjson.JSON;
 import com.han.dataflow.api.model.AbstractDataProcessNode;
 import com.han.stream.flink.node.FlinkSinkNode;
 import com.han.stream.flink.node.FlinkSourceNode;
@@ -22,7 +23,7 @@ import java.util.Map;
  */
 public class FlinkNodeTest {
 
-    Map<String, CommandPipeline> commandPipelineMap = new HashMap<>();
+    Map<String, String> morphFlows = new HashMap<>();
 
     @Before
     public void setup() {
@@ -46,7 +47,7 @@ public class FlinkNodeTest {
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
         CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(expressCommand);
-        commandPipelineMap.put("test-type", commands);
+        morphFlows.put("test-type", JSON.toJSONString(commands.get()));
     }
 
     @Test
@@ -55,7 +56,7 @@ public class FlinkNodeTest {
 
         FlinkSourceNode sourceNode = FlinkSourceNode.buildSocket("127.0.0.1", 8085, "test-type");
         sourceNode.setDataProcessNodeName("socket");
-        FlinkTransformNode flinkTransformNode = FlinkTransformNode.buildDefaultTransformNode("Default Morphline Context", commandPipelineMap, false);
+        FlinkTransformNode flinkTransformNode = FlinkTransformNode.buildDefaultTransformNode("Default Morphline Context", morphFlows, false);
         flinkTransformNode.setDataProcessNodeName("transform");
         FlinkSinkNode flinkSinkNode = FlinkSinkNode.buildPrintSink();
 

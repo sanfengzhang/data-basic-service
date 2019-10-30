@@ -1,5 +1,6 @@
 package com.han.stream.flink;
 
+import com.alibaba.fastjson.JSON;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.function.ConfigurableMorphlineTransformFunction;
 import com.han.stream.flink.function.DefaultTransformFunction;
@@ -29,13 +30,13 @@ import java.util.Map;
  */
 public class FlinkETLTest {
 
-    HashMap<String, CommandPipeline> commandPipelineMap = new HashMap<>();
+    HashMap<String, String> morphFlows = new HashMap<>();
 
-    CommandPipeline commands=null;
+    CommandPipeline commands = null;
 
     @Before
     public void setup() {
-        System.out.println(null instanceof  Map);
+        System.out.println(null instanceof Map);
         Map<String, Object> readLineMap = new HashMap<>();
         Map<String, Object> charsetMap = new HashMap<>();
         charsetMap.put("charset", "UTF-8");
@@ -56,9 +57,8 @@ public class FlinkETLTest {
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
         commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(expressCommand);
-        commandPipelineMap.put("test-type", commands);
+        morphFlows.put("test-type", JSON.toJSONString(commands.get()));
     }
-
 
 
     @Test
@@ -75,7 +75,7 @@ public class FlinkETLTest {
                 return message;
             }
         });
-        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.process(new DefaultTransformFunction("Flink_Transform_Context", commandPipelineMap));
+        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.process(new DefaultTransformFunction("Flink_Transform_Context", morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         mapDataStream.print();
@@ -89,6 +89,7 @@ public class FlinkETLTest {
         DataStream<String> dataStreamSourceTmp = env.socketTextStream("127.0.0.1", 8085).name("Socket Source");
         DataStream<Message> dataStreamSource = dataStreamSourceTmp.map(new MapFunction<String, Message>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public Message map(String value) throws Exception {
                 Message message = new Message("test-type", value);
@@ -99,7 +100,7 @@ public class FlinkETLTest {
         DataStream<ConfigParameters> configEventStream = env.socketTextStream("127.0.0.1", 8086).name("Socket Source Config").map(new ConfigFunction());
         BroadcastStream<ConfigParameters> configEventStream1 = configEventStream.broadcast(new MapStateDescriptor<>("config_descriptor", String.class, Map.class));
         SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.connect(configEventStream1).
-                process(new ConfigurableMorphlineTransformFunction("Flink_Transform_Context", commandPipelineMap));
+                process(new ConfigurableMorphlineTransformFunction("Flink_Transform_Context", morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.UPDATE_CONFIG_PARAMETERS) {

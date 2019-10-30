@@ -19,6 +19,6 @@ public interface JobConfigContext {
 
     public int getInt(String key) throws Exception;
 
-    public Map<String, CommandPipeline> getCommandPipelineMap(String key) throws Exception;
+    public Map<String, String> getCommandPipelineMap(String key) throws Exception;
 
 }
