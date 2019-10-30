@@ -225,7 +225,6 @@ public abstract class AbstractCommand implements Command {
         }
         beforeProcess(record);
         long start = System.currentTimeMillis();
-        LOG.info("执行流程{}", this);
         boolean success = doProcess(record);
         long end = System.currentTimeMillis();
         if (end - start > 10) {
@@ -238,12 +237,18 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected boolean doSubFlow(Record record) {
-        boolean success=true;
+        boolean success = true;
         if (null != this.subFlows && this.subFlows.size() > 0) {
             if (null != subFlowSelector) {
                 Collection<Command> commandSet = subFlowSelector.select(record);
                 for (Command subCmd : commandSet) {
-                    success=subCmd.process(record);
+                    success = subCmd.process(record);
+                    if (!success) {
+                        if (subCmd instanceof AbstractCommand) {
+                            AbstractCommand subCmdNew = (AbstractCommand) subCmd;
+                            LOG.info("execute subFlow failed,subCmd={},record={}", subCmdNew.getCommandInstanceId(), record);
+                        }
+                    }
                 }
             }
         }
