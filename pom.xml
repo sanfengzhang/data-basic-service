@@ -17,11 +17,13 @@
     </properties>
 	
 	<modules>
-	   <module>data-process-functional-service</module>
-	   <module>data-manage-service</module>
-        <module>data-process-flow-service</module>
-        <module>stream-process-functional-service</module>
+
         <module>data-morph-foundation</module>
+	    <module>data-morph-service</module>
+	    <module>web-manage-service</module>
+        <module>data-process-flow-service</module>
+        <module>flink-etl-service</module>
+
     </modules>
 	
 	<dependencies>
