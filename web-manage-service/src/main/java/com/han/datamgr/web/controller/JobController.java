@@ -7,7 +7,9 @@ import com.han.datamgr.web.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +41,7 @@ public class JobController {
 
 
     @GetMapping
-    public String getJobConfig() throws BusException {
+    public CommonResponse getJobConfig() throws BusException {
         Map<String, Object> jobParams = new HashMap<>();
         jobParams.put("restartAttempts", 3);
         jobParams.put("delayBetweenAttempts", 30000);
@@ -49,9 +51,11 @@ public class JobController {
         jobParams.put("parallelism", 2);
         jobParams.put("flink.source.socket.host", "127.0.0.1");
         jobParams.put("flink.source.socket.port", "8085");
-        jobParams.put("flink.source.socket.data_type", "test_socket_type");
+        jobParams.put("flink.source.socket.data_type", "数据处理流程测试1");
         Map<String, Object> cmdMap = commandPipeLineService.buildCommandPipeline("8adb929b6dcf4089016dcf40b16c0000").get();
-        jobParams.put("flink.etl.morph_flow", cmdMap);
-        return JSON.toJSONString(jobParams);
+        List<Map<String,Object>> list=new ArrayList<>();
+        list.add(cmdMap);
+        jobParams.put("flink.etl.morph_flow", list);
+        return CommonResponse.buildWithSuccess(jobParams);
     }
 }

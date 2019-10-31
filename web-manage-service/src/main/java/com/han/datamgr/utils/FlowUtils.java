@@ -11,6 +11,8 @@ import java.util.*;
  * @author: Hanl
  * @date :2019/10/23
  * @desc:
+ * TODO 流程处理的垃圾代码都放在这里,目前没想到比较好的处理方式，
+ *  就将整个处理逻辑放在这个类中。
  */
 
 public class FlowUtils {
