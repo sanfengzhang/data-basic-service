@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class FlinkETLTest {
 
-    HashMap<String, String> morphFlows = new HashMap<>();
+    List<Map<String, Object>> morphFlows = new ArrayList<>();
 
     CommandPipeline commands = null;
 
@@ -57,7 +57,7 @@ public class FlinkETLTest {
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
         commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(expressCommand);
-        morphFlows.put("test-type", JSON.toJSONString(commands.get()));
+        morphFlows.add(commands.get());
     }
 
 

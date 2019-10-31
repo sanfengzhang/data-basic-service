@@ -39,7 +39,7 @@ public abstract class BaseFlinkJob implements BaseJob {
         String config = HttpClientUtils.get(url);
         Map<String, Object> configMap = JSON.parseObject(config, new TypeReference<Map<String, Object>>() {
         });
-        getJobConfigContext().getJobConfigParams().putAll(configMap);
+        getJobConfigContext().getJobConfigParams().putAll( (Map<String, Object>)configMap.get("data"));
     }
 
 

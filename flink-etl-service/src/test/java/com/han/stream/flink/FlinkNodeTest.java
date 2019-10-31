@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class FlinkNodeTest {
 
-    Map<String, String> morphFlows = new HashMap<>();
+    List<Map<String,Object>> morphFlows = new ArrayList<>();
 
     @Before
     public void setup() {
@@ -47,7 +47,7 @@ public class FlinkNodeTest {
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
         CommandPipeline commands = CommandPipeline.build("trad_conf", imports).addCommand(splitCommand).addCommand(expressCommand);
-        morphFlows.put("test-type", JSON.toJSONString(commands.get()));
+        morphFlows.add(commands.get());
     }
 
     @Test

@@ -14,6 +14,7 @@ import org.apache.flink.util.OutputTag;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,12 +39,12 @@ public class DefaultTransformFunction extends ProcessFunction<Message, Map<Strin
 
     private String transformContextName;
 
-    private Map<String, String> morphFlows;
+    private List<Map<String, Object>> morphFlows;
 
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public DefaultTransformFunction(String transformContextName, Map<String, String> morphFlows) {
+    public DefaultTransformFunction(String transformContextName, List<Map<String, Object>> morphFlows) {
         this.morphFlows = morphFlows;
         this.transformContextName = transformContextName;
     }

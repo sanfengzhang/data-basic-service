@@ -1,5 +1,6 @@
 package com.han.stream.flink.node;
 
+import com.han.stream.flink.ETL.StringToMessage;
 import com.han.stream.flink.JobConfigContext;
 import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;
 import com.han.stream.flink.support.Message;
@@ -32,16 +33,9 @@ public class SocketSource {
         this.dataType=jobConfigContext.getString("flink.source.socket.data_type");
     }
 
-    public DataStream<Message> getSource(StreamExecutionEnvironment env) {
+    public DataStream<Message> getSource(StreamExecutionEnvironment env)throws Exception {
         DataStream<String> dataStreamSourceString = env.socketTextStream(host, port).name("SOCKET-SOURCE");
-        DataStream<Message> dataStreamSourceMessage = dataStreamSourceString.map(new MapFunction<String, Message>() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public Message map(String value) throws Exception {
-                Message message = new Message(dataType, value);
-                return message;
-            }
-        });
+        DataStream<Message> dataStreamSourceMessage = dataStreamSourceString.map(new StringToMessage(jobConfigContext));
         return dataStreamSourceMessage;
     }
 }

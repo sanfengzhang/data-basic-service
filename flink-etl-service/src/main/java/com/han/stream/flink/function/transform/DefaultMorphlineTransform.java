@@ -1,9 +1,6 @@
 package com.han.stream.flink.function.transform;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -12,9 +9,9 @@ import java.util.Map;
  */
 public class DefaultMorphlineTransform extends MorphlineTransform<Map<String, Object>> {
 
-    public DefaultMorphlineTransform(String transformContextName, Map<String, String> commandPipelines) {
+    public DefaultMorphlineTransform(String transformContextName, List<Map<String,Object>> morphFlowConfigs) {
 
-        super(transformContextName, commandPipelines);
+        super(transformContextName, morphFlowConfigs);
     }
 
 

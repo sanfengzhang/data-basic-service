@@ -1,7 +1,5 @@
 package com.han.stream.flink.function.transform;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.exception.TransformException;
@@ -21,6 +19,7 @@ import org.kitesdk.morphline.base.Fields;
 import org.kitesdk.morphline.base.Notifications;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,18 +39,17 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
 
     private MorphlineContext morphlineContext;
 
-    protected MorphlineTransform(String transformContextName, Map<String, String> morphFlowsConfig) {
+    protected MorphlineTransform(String transformContextName, List<Map<String,Object>> morphFlowsConfig) {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
         Compiler compiler = new Compiler();
-        morphFlowsConfig.forEach((dataType, flow) -> {
-            Map<String, Object> commandMap = JSON.parseObject(flow, new TypeReference<Map<String, Object>>() {
-            });
-            Config config = ConfigFactory.parseMap(commandMap);
+        morphFlowsConfig.forEach(flow -> {
+            Config config = ConfigFactory.parseMap(flow);
             Collector finalChild = new Collector();
             Command cmd = compiler.compile(config, morphlineContext, finalChild);
-            morphFlows.put(dataType, cmd);
-            collectors.put(dataType, finalChild);
+            String flowId = flow.get("id").toString();
+            morphFlows.put(flowId, cmd);
+            collectors.put(flowId, finalChild);
         });
     }
 

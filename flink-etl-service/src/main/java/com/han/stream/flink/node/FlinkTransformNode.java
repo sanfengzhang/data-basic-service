@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,19 +35,19 @@ public class FlinkTransformNode extends AbstractFlinkNode {
 
     private BroadcastStream<ConfigParameters> broadcastStream;
 
-    private Map<String, String> morphFlows;
+    private List<Map<String,Object>> morphFlows;
 
-    public FlinkTransformNode(String transformContextName, Map<String, String> morphFlows) {
+    public FlinkTransformNode(String transformContextName,List<Map<String,Object>> morphFlows) {
         this(transformContextName, morphFlows, false);
     }
 
-    public FlinkTransformNode(String transformContextName, Map<String, String> morphFlows, boolean configurable) {
+    public FlinkTransformNode(String transformContextName, List<Map<String,Object>> morphFlows, boolean configurable) {
         this.transformContextName = transformContextName;
         this.morphFlows = morphFlows;
         this.configurable = configurable;
     }
 
-    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, Map<String, String> morphFlows, boolean configurable) {
+    public static FlinkTransformNode buildDefaultTransformNode(String transformContextName, List<Map<String,Object>> morphFlows, boolean configurable) {
         if (!configurable)
             return new FlinkTransformNode(transformContextName, morphFlows, false);
         else

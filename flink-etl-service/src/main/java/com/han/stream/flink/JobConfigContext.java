@@ -1,5 +1,6 @@
 package com.han.stream.flink;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import java.util.Map;
  * @date :2019/8/29
  * @desc:
  */
-public class JobConfigContext {
+public class JobConfigContext implements Serializable {
 
     private Map<String, Object> jobConfigParams = new HashMap<>();
 

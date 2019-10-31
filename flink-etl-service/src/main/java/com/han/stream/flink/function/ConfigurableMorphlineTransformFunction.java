@@ -14,10 +14,7 @@ import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -35,7 +32,7 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
 
     private String transformContextName;
 
-    private Map<String, String> morphFlows;
+    private List<Map<String, Object>> morphFlows;
 
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
@@ -43,7 +40,7 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
     private OutputTag<Map<String, Object>> updateConfigResponseTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public ConfigurableMorphlineTransformFunction(String transformContextName, Map<String, String> morphFlows) {
+    public ConfigurableMorphlineTransformFunction(String transformContextName, List<Map<String, Object>> morphFlows) {
         this.transformContextName = transformContextName;
         this.morphFlows = morphFlows;
     }
