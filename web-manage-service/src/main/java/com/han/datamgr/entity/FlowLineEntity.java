@@ -30,11 +30,11 @@ public class FlowLineEntity implements Serializable {
     @GeneratedValue(generator = "jpa-uuid")
     private String id;
 
-    @ManyToOne(cascade={CascadeType.REMOVE})
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "start_cmd_id")
     private CanvasCommandInstanceEntity start;
 
-    @ManyToOne(cascade={CascadeType.REMOVE})
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "end_cmd_id")
     private CanvasCommandInstanceEntity end;
 

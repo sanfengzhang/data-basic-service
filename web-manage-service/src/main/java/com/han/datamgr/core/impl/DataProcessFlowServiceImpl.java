@@ -1,5 +1,6 @@
 package com.han.datamgr.core.impl;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.han.datamgr.core.DataProcessFlowService;
 import com.han.datamgr.core.FlowLineService;
 import com.han.datamgr.entity.CanvasCommandInstanceEntity;
@@ -12,6 +13,8 @@ import com.han.datamgr.repository.CommandInstanceRepository;
 import com.han.datamgr.repository.DataProcessFlowRepository;
 import com.han.datamgr.repository.FlowLineRepository;
 import com.han.datamgr.vo.FlowVO;
+import org.hibernate.id.UUIDGenerator;
+import org.kitesdk.morphline.stdlib.GenerateUUIDBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,34 +128,53 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
                 line.put(FlowLineService.END_CMD, null);
                 lineList.add(line);
             }
-            String flowId = flowEntity.getId();
 
             Set<String> delCanvasIds = new HashSet<>();
             List<FlowLineEntity> existFlowLines = flowLineRepository.findAllByFlowEntity_Id(flowEntity.getId());
-            existFlowLines.forEach(flowLineEntity -> {
-                delCanvasIds.add(flowLineEntity.getStart().getId());
-                delCanvasIds.add(flowLineEntity.getEnd().getId());
-            });
-            flowLineRepository.deleteByDataFlowId(flowId);
+
+            for (FlowLineEntity flowLineEntity : existFlowLines) {
+                CanvasCommandInstanceEntity start = flowLineEntity.getStart();
+                CanvasCommandInstanceEntity end = flowLineEntity.getEnd();
+                delCanvasIds.add(start.getId());
+                if (null != end) {
+                    delCanvasIds.add(end.getId());
+                }
+            }
+            flowLineRepository.deleteByDataFlowId(flowEntity.getId());
             canvasCommandInstanceRepository.deleteAllByIdIn(delCanvasIds);
 
-            nodeList.forEach(node -> {
-                String id = node.getCommandInstanceEntity().getId();
-                CommandInstanceEntity entity = commandInstanceRepository.findById(id).get();
-                node.setCommandInstanceEntity(entity);
-            });
-            nodeList = canvasCommandInstanceRepository.saveAll(nodeList);
+
             Map<String, CanvasCommandInstanceEntity> idCanvas = new HashMap<>();
-            nodeList.forEach(node -> {
-                idCanvas.put(node.getId(), node);
-            });
+            for (CanvasCommandInstanceEntity node : nodeList) {
+                String cmdInstanceId = node.getCommandInstanceEntity().getId();
+                String id = node.getId();
+                String uuid = UUID.randomUUID().toString().replaceAll("_", "");
+                for (Map<String, String> line : lineList) {
+                    String from = line.get(FlowLineService.START_CMD);
+                    String to = line.get(FlowLineService.END_CMD);
+                    if (id.equals(from)) {
+                        line.remove(FlowLineService.START_CMD);
+                        line.put(FlowLineService.START_CMD, uuid);
+                    }
+                    if (id.equals(to)) {
+                        line.remove(FlowLineService.END_CMD);
+                        line.put(FlowLineService.END_CMD, uuid);
+                    }
+                }
+                CommandInstanceEntity entity = commandInstanceRepository.findById(cmdInstanceId).get();
+                node.setCommandInstanceEntity(entity);
+                node.setId(uuid);
+                CanvasCommandInstanceEntity nodeSave = canvasCommandInstanceRepository.save(node);
+                idCanvas.put(node.getId(), nodeSave);
+            }
+
             List<FlowLineEntity> data = new ArrayList<>();
             for (Map<String, String> en : lineList) {
                 String startId = en.get(FlowLineService.START_CMD);
                 String endId = en.get(FlowLineService.END_CMD);
                 FlowLineEntity flowLineEntity = new FlowLineEntity();
-                flowLineEntity.setStart(idCanvas.get(startId));
-                flowLineEntity.setEnd(idCanvas.get(endId));
+                flowLineEntity.setStart(canvasCommandInstanceRepository.getOne(startId));
+                flowLineEntity.setEnd(canvasCommandInstanceRepository.getOne(endId));
                 flowLineEntity.setFlowEntity(flowEntity);
                 data.add(flowLineEntity);
             }

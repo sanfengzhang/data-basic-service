@@ -6,9 +6,7 @@ import org.kitesdk.morphline.base.AbstractCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author: Hanl
@@ -35,35 +33,28 @@ public class CallSubPipeBuilder implements CommandBuilder {
 
         private static final Logger logger = LoggerFactory.getLogger(CallSubPipe.class);
 
-        private SubPipeSelector subPipeSelector;
+        private String subPipeId;
 
-        private String pipelineSelectorKey;
-
-        private boolean continueParentPipe = true;
-
+        private Command subPipe;
 
         public CallSubPipe(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) throws Exception {
             super(builder, config, parent, child, context);
-            continueParentPipe = getConfigs().getBoolean(config, "continueParentPipe");
-            pipelineSelectorKey=getConfigs().getString(config, "pipelineSelectorKey");
-            this.subPipeSelector = (SubPipeSelector) context.getSettings().get(pipelineSelectorKey);
+            subPipeId = getConfigs().getString(config, "flowId");
+            Map<String, Command> allCommand = (Map<String, Command>) context.getSettings().get("allCommand");
+            subPipe = allCommand.get(subPipeId);//从context中获取子流程
+            if (null == subPipe) {
+                throw new MorphlineCompilationException("SubPipe null and subPipeId=[" + subPipeId + "]", config, new Throwable());
+            }
         }
 
         @Override
         protected boolean doProcess(Record record) {
-            Set<Command> commandPipelineSet = subPipeSelector.select(record);
-            for (Command cmd : commandPipelineSet) {
-                boolean subProcess = cmd.process(record);
-                if (!subProcess) {
-                    logger.warn("Subprocess execution failed,record={}", record);
-                }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Start executed subProcess.");
             }
-            if (!continueParentPipe) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Do not continue with the parent process");
-                }
-
-                return true;
+            boolean subProcess = subPipe.process(record);
+            if (!subProcess) {
+                logger.warn("SubProcess execution failed,subPipeId={},record={}", subPipeId, record);
             }
             return super.doProcess(record);
         }

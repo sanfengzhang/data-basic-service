@@ -14,5 +14,5 @@ import java.util.Optional;
 @Repository
 public interface DataProcessFlowRepository extends BaseRepository<DataProcessFlowEntity, String> {
 
-
+    public Optional<DataProcessFlowEntity> findByDataProcessFlowName(String flowName);
 }

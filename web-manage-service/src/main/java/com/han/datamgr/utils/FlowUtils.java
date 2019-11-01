@@ -1,7 +1,6 @@
 package com.han.datamgr.utils;
 
 import com.han.datamgr.entity.CanvasCommandInstanceEntity;
-import com.han.datamgr.entity.CommandInstanceEntity;
 import com.han.datamgr.entity.FlowLineEntity;
 import org.springframework.util.CollectionUtils;
 
@@ -10,9 +9,8 @@ import java.util.*;
 /**
  * @author: Hanl
  * @date :2019/10/23
- * @desc:
- * TODO 流程处理的垃圾代码都放在这里,目前没想到比较好的处理方式，
- *  就将整个处理逻辑放在这个类中。
+ * @desc: TODO 流程处理的垃圾代码都放在这里,目前没想到比较好的处理方式，
+ * 就将整个处理逻辑放在这个类中。
  */
 
 public class FlowUtils {
@@ -51,11 +49,14 @@ public class FlowUtils {
             Map<String, CanvasCommandInstanceEntity> idInstance = new HashMap<>();
             for (FlowLineEntity flowLineEntity : flowLineEntitySet) {
                 String fromId = flowLineEntity.getStart().getId();
-                String toId = flowLineEntity.getEnd().getId();
+                String toId = null;
+                if (null != flowLineEntity.getEnd()) {
+                    toId = flowLineEntity.getEnd().getId();
+                }
                 if (!idInstance.containsKey(fromId)) {
                     idInstance.put(fromId, flowLineEntity.getStart());
                 }
-                if (!idInstance.containsKey(toId)) {
+                if (null != toId && !idInstance.containsKey(toId)) {
                     idInstance.put(toId, flowLineEntity.getEnd());
                 }
             }
@@ -78,113 +79,28 @@ public class FlowUtils {
     }
 
 
-    /**
-     * 从flow的连线集合变换主找到一个流程节点list
-     *
-     * @param flowLine
-     * @param start
-     * @param end
-     * @return
-     */
-    public static List<String> findFlow(List<Map<String, String>> flowLine, String start, String end) {
-        List<String> result = new ArrayList<>();
-        if(null==end){
-            result.add(start);
-            return result;
-        }
-        List<Map<String, String>> mainFlowLine = findMainFlowLine(flowLine, start, end);
-        TreeSet<String> treeSet = new TreeSet<>();
-        for (Map<String, String> map : mainFlowLine) {
-            Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, String> en = it.next();
-                treeSet.add(en.getKey());
-                if (null != en.getValue()) {
-                    treeSet.add(en.getValue());
-                }
-            }
-
-        }
-        String[] arr = new String[treeSet.size()];
-        treeSet.toArray(arr);
-        result = Arrays.asList(arr);
-        return result;
-    }
-
-    public static List<Map<String, String>> findMainFlowLine(List<Map<String, String>> flowLine, String start, String end) {
+    public static List<String> findMainFlowLine(List<Map<String, String>> flowLine, String start, String end) {
         List<Edge> flowLineEge = new ArrayList<>();
         for (Map<String, String> line : flowLine) {
-            Edge<String> edge = new Edge(line.get("from"), line.get("to"));
+            Edge<String> edge = new Edge<String>(line.get("from"), line.get("to"));
             flowLineEge.add(edge);
         }
         List<Node> path = new ArrayList<>();
-        List<List<Node>> allPaths = new LinkedList<>();
+        List<List<Node>> allPaths = new ArrayList<>();
         DAG.findPath(flowLineEge, new Node(start), new Node(end), path, allPaths);
-        List<Node> mainFlowNode = new ArrayList<>();
-        List<Node> first = allPaths.get(0);
-        if (allPaths.size() > 1) {
-            //-------找到存在于所有的额path中的节点
-            for (Node node : first) {
-                boolean flag = true;
-                for (int i = 1; i < allPaths.size(); i++) {
-                    if (!allPaths.get(i).contains(node)) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    mainFlowNode.add(node);
-                }
+        List<Node> list = allPaths.get(0);
+        System.out.println(list);
+        List<String> result = new ArrayList<>();
+        for (Node node : list) {
+            if (null == node.getData()) {
+                continue;
             }
-        } else {
-            for (Node node : first) {
-                mainFlowNode.add(node);
-            }
+            result.add((String) node.getData());
         }
-        List<Map<String, String>> result = new ArrayList<>();
-        if (mainFlowNode.size() > 1) {
-            for (int i = 0; i < mainFlowNode.size() - 1; i++) {
-                Map<String, String> line = new HashMap<>();
-                line.put(mainFlowNode.get(i).getData().toString(), mainFlowNode.get(i + 1).getData().toString());
-                result.add(line);
-            }
-        } else {
-            Map<String, String> line = new HashMap<>();
-            line.put(mainFlowNode.get(0).getData().toString(), null);
-            result.add(line);
-        }
+
         return result;
     }
 
-
-    public static Map<String, List<List<String>>> findAllSubFlow(List<Map<String, String>> flowLine, String start, String end) {
-        List<Edge> flowLineEge = new ArrayList<>();
-        for (Map<String, String> line : flowLine) {
-            Edge<String> edge = new Edge(line.get("from"), line.get("to"));
-            flowLineEge.add(edge);
-        }
-        Map<Node, List<List<Node>>> startAndEnd = findAllSubFlowByNode(flowLineEge, new Node(start), new Node(end));
-        if (null == startAndEnd || startAndEnd.size() == 0) {
-            return null;
-        }
-        Iterator<Map.Entry<Node, List<List<Node>>>> it = startAndEnd.entrySet().iterator();
-        Map<String, List<List<String>>> result = new HashMap<>();
-        while (it.hasNext()) {
-            Map.Entry<Node, List<List<Node>>> en = it.next();
-            List<List<Node>> list = en.getValue();
-            List<List<String>> ls = new ArrayList<>();
-            list.forEach(data -> {
-                List<String> r = new ArrayList<>();
-                List<Node> tmp = data.subList(1, data.size());
-                tmp.forEach(l -> {
-                    r.add(l.getData().toString());
-                });
-                ls.add(r);
-            });
-            result.put(en.getKey().getData().toString(), ls);
-        }
-        return result;
-    }
 
     public static Map<Node, List<List<Node>>> findAllSubFlowByNode(List<Edge> flowLine, Node start, Node end) {
         Map<Node, Node> startAndEnd = findAllSubFlow(flowLine, start, end);

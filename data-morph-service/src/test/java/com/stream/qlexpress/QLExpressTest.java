@@ -1,6 +1,7 @@
 package com.stream.qlexpress;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.parser.deserializer.MapDeserializer;
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -141,9 +142,20 @@ public class QLExpressTest {
         ParserConfig jcParserConfig = new ParserConfig();
         jcParserConfig.putDeserializer(String.class, MapDeserializer.instance);
         // System.out.println(TypeUtils.convert1("{\"name\":\"zhangsan\"}", "java.util.Map", jcParserConfig,""));
-        Object s="{\"trans_return_code<0 \\\"?\\\" 99999 \\\":\\\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}";
+        Object s = "{\"trans_return_code<0 \\\"?\\\" 99999 \\\":\\\"trans_return_code\":\"java.lang.Integer,trans_return_code\"}";
         Object str = "{\"trans_return_code\":\"999\"}";
-       Map m= com.alibaba.fastjson.util.TypeUtils.cast(str, Map.class, jcParserConfig);
-       System.out.println(m);
+        Map m = com.alibaba.fastjson.util.TypeUtils.cast(str, Map.class, jcParserConfig);
+        System.out.println(m);
+    }
+
+    @Test
+    public void testClassString() {
+        Class classa="jjjj".getClass();
+        System.out.println(classa);
+        String json="{\"name\":\"class java.lang.String\"}";
+        Map<String,Class> map=new HashMap<>();
+        map.put("class",classa);
+        System.out.println(JSON.toJSONString(map));
+        System.out.println(JSON.parseObject(JSON.toJSONString(map),new TypeReference<Map<String,Class>>(){}));
     }
 }

@@ -2,6 +2,7 @@ package com.stream.data.transform;
 
 import com.stream.data.transform.command.SubPipeSelector;
 import org.kitesdk.morphline.api.Command;
+import org.kitesdk.morphline.api.MorphlineContext;
 import org.kitesdk.morphline.api.Record;
 
 import java.util.Collections;
@@ -28,7 +29,7 @@ public class KeyValueSubPipeSelector implements SubPipeSelector {
     }
 
     @Override
-    public Set<Command> select(Record record) {
+    public Set<Command> select(Record record, MorphlineContext context) {
         Object v = record.getFirstValue(key);
         if (valueSelector.contains(v)) {
             return Collections.singleton(subPipeMap.get(v));

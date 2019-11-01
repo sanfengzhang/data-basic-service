@@ -8,10 +8,10 @@ import java.util.Set;
 
 /**
  * @author: Hanl
- * @date :2019/9/12
- * @desc: 子流程选择器, 用户可以通过定义子流程选择器去执行对应的流程
+ * @date :2019/11/1
+ * @desc:
  */
-public interface SubPipeSelector {
+public interface BranchPipeSelector {
 
     public Set<Command> select(Record record, MorphlineContext context);
 }

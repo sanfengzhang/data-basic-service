@@ -3,6 +3,8 @@ package com.han.datamgr.core;
 import com.han.datamgr.exception.BusException;
 import com.stream.data.transform.model.CommandPipeline;
 
+import java.util.List;
+
 /**
  * @author: Hanl
  * @date :2019/10/15
@@ -17,6 +19,6 @@ public interface CommandPipeLineService {
      * @return
      * @throws BusException
      */
-    public CommandPipeline buildCommandPipeline(String DataProcessFlowId) throws BusException;
+    public List<CommandPipeline> buildCommandPipeline(String DataProcessFlowId) throws BusException;
 
 }

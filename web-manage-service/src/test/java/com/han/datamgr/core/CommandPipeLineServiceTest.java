@@ -11,6 +11,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author: Hanl
  * @date :2019/10/16
@@ -27,10 +29,9 @@ public class CommandPipeLineServiceTest {
 
     @Test
     public void testPipelineTest() throws Exception {
-        CommandPipeline commandPipeline = commandPipeLineService.buildCommandPipeline("8adb929b6dcf4089016dcf40b16c0000");
-        System.out.println(commandPipeline.get());
+        List<CommandPipeline> commandPipeline = commandPipeLineService.buildCommandPipeline("8adb929b6dcf4089016dcf40b16c0000");
         MorphTest morphTest=new MorphTest();
-        morphTest.testMorphlin(commandPipeline);
+        morphTest.testMorphlin(commandPipeline,"数据处理流程测试1");
     }
 
 }

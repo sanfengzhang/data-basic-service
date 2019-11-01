@@ -28,7 +28,7 @@ public class CommandPipeline implements Serializable {
 
     private Map<String, Object> commandsMap = new HashMap<>();
 
-    private Set<CommandPipeline> subCommandPipeLines=new HashSet<>();
+    private Set<CommandPipeline> subCommandPipeLines = new HashSet<>();
 
     public CommandPipeline(String id) {
 
@@ -37,6 +37,7 @@ public class CommandPipeline implements Serializable {
     }
 
     public CommandPipeline(String id, List<String> importCommands) {
+        this.id = id;
         commandsMap.put("id", id);
         List<String> importCommandsTmp = new ArrayList<>();
         importCommandsTmp.add("org.kitesdk.**");

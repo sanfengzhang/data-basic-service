@@ -49,10 +49,10 @@ public class JobController {
         jobParams.put("checkpointInterval", 15000);
         jobParams.put("checkpointTimeout", 30000);
         jobParams.put("parallelism", 2);
-        jobParams.put("flink.source.socket.host", "127.0.0.1");
+        jobParams.put("flink.source.socket.host", "10.91.18.27");
         jobParams.put("flink.source.socket.port", "8085");
         jobParams.put("flink.source.socket.data_type", "数据处理流程测试1");
-        Map<String, Object> cmdMap = commandPipeLineService.buildCommandPipeline("8adb929b6dcf4089016dcf40b16c0000").get();
+        Map<String, Object> cmdMap =null;
         List<Map<String,Object>> list=new ArrayList<>();
         list.add(cmdMap);
         jobParams.put("flink.etl.morph_flow", list);

@@ -13,6 +13,8 @@ import org.kitesdk.morphline.base.FaultTolerance;
 import org.kitesdk.morphline.base.Fields;
 import org.kitesdk.morphline.base.Notifications;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,21 +33,34 @@ public class MorphTest {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(faultTolerance)
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate("testId")).build();
         this.morphlineContext.getSettings().put("parserConfig", new ParserConfig());
+        this.morphlineContext.getSettings().put("allCommand", new HashMap<String,Command>());
         finalChid = new Collector();
 
     }
 
-    public void testMorphlin(CommandPipeline commandPipeline) throws Exception {
+    public void testMorphlin(List<CommandPipeline> commandPipelines, String mainFlowName) throws Exception {
 
-        Map<String, Object> configMap = commandPipeline.get();
-        Config config = ConfigFactory.parseMap(configMap);
-        System.out.println(config);
-        Command cmd = new Compiler().compile(config, morphlineContext, finalChid);
+        Map<String, Command> commandMap = new HashMap<>();
+        for (CommandPipeline commandPipeline : commandPipelines) {
+            Map<String, Object> configMap = commandPipeline.get();
+            Config config = ConfigFactory.parseMap(configMap);
+            System.out.println(config);
+            Command cmd = null;
+            if (mainFlowName.equals(commandPipeline.getId())) {
+                cmd = new Compiler().compile(config, morphlineContext, finalChid);
+            } else {
+                cmd = new Compiler().compile(config, morphlineContext, null);
+            }
+            commandMap.put(commandPipeline.getId(), cmd);
+            HashMap<String,Command> map=( HashMap<String,Command>) this.morphlineContext.getSettings().get("allCommand");
+            map.put(commandPipeline.getId(), cmd);
+        }
+        Command cmd = commandMap.get(mainFlowName);
         Notifications.notifyStartSession(cmd);
         String msg = "1.1.1.1|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1|ccccc";
         Record record = new Record();
         record.put(Fields.MESSAGE, msg);
-        boolean flag=cmd.process(record);
+        boolean flag = cmd.process(record);
         System.out.println(flag);
         record = finalChid.getRecords().get(0);
         System.out.println(record);

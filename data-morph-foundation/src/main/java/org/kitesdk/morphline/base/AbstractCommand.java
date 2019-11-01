@@ -15,7 +15,6 @@
  */
 package org.kitesdk.morphline.base;
 
-import com.codahale.metrics.Timer;
 import com.codahale.metrics.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -24,8 +23,10 @@ import org.kitesdk.morphline.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for convenient implementation of {@link Command} classes.
@@ -37,14 +38,6 @@ public abstract class AbstractCommand implements Command {
     private final Command parent;
 
     private final Command child;
-
-    protected Map<String, Command> subFlows;
-
-    public static final String SUB_FLOW_KEY = "subFlow";
-
-    public static final String SUB_FLOW_SELECTOR_KEY = "subFlowSelector";
-
-    private FindSubFlowSelector subFlowSelector;
 
     private final MorphlineContext context;
 
@@ -97,37 +90,6 @@ public abstract class AbstractCommand implements Command {
         try {
             if (config.hasPath(COMMAND_INSTANCE_ID)) {
                 commandInstanceId = configs.getString(config, COMMAND_INSTANCE_ID);
-            }
-            if (config.hasPath(SUB_FLOW_KEY)) {
-                List subCommandConfig = configs.getConfigList(config, SUB_FLOW_KEY);
-                if (null != subCommandConfig && subCommandConfig.size() > 0) {
-                    this.subFlows = new ConcurrentHashMap<>();
-                    for (int i = 0; i < subCommandConfig.size(); i++) {
-                        Config subConfig = (Config) subCommandConfig.get(i);
-                        String id = subConfig.getString("id");
-                        //FIXME 这里不要把finalChild参数设置成child,设置成child会造成子流程也去调用主流一直到最后！！
-                        Command subCmd = new Compiler().compile(subConfig, context, null);
-                        subFlows.put(id, subCmd);
-                    }
-                    LOG.info("create subFlow success，flows={}", subFlows);
-                }
-                if (config.hasPath(SUB_FLOW_SELECTOR_KEY)) {
-                    String clazzName = configs.getString(config, SUB_FLOW_SELECTOR_KEY);
-                    if (null == clazzName || "".equals(clazzName)) {
-                        clazzName = AllSubFlowSelector.class.getName();
-                    }
-                    Class clazz = Class.forName(clazzName);
-                    subFlowSelector = (FindSubFlowSelector) clazz.newInstance();
-                    subFlowSelector.setCommands(subFlows);
-                    subFlowSelector.setCommandInstanceId(commandInstanceId);
-
-                } else {
-                    if (null != subFlows && subFlows.size() > 0) {
-                        subFlowSelector = new AllSubFlowSelector();
-                        subFlowSelector.setCommands(subFlows);
-                        subFlowSelector.setCommandInstanceId(commandInstanceId);
-                    }
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -236,24 +198,6 @@ public abstract class AbstractCommand implements Command {
         return success;
     }
 
-    protected boolean doSubFlow(Record record) {
-        boolean success = true;
-        if (null != this.subFlows && this.subFlows.size() > 0) {
-            if (null != subFlowSelector) {
-                Collection<Command> commandSet = subFlowSelector.select(record);
-                for (Command subCmd : commandSet) {
-                    success = subCmd.process(record);
-                    if (!success) {
-                        if (subCmd instanceof AbstractCommand) {
-                            AbstractCommand subCmdNew = (AbstractCommand) subCmd;
-                            LOG.info("execute subFlow failed,subCmd={},record={}", subCmdNew.getCommandInstanceId(), record);
-                        }
-                    }
-                }
-            }
-        }
-        return success;
-    }
 
     protected boolean skipCurrentCommand(Record record) {
 
@@ -279,7 +223,6 @@ public abstract class AbstractCommand implements Command {
      * shall be done
      */
     protected boolean doProcess(Record record) {
-        doSubFlow(record);
         return getChild().process(record);
     }
 

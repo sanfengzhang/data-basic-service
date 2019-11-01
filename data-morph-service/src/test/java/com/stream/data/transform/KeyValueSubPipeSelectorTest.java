@@ -61,7 +61,7 @@ public class KeyValueSubPipeSelectorTest {
         Map<String, Command> commandMap = null;
         KeyValueSubPipeSelector keyValueSubPipeSelector = (KeyValueSubPipeSelector) clzz.getConstructor(new Class[]{String.class, Set.class, Map.class}).
                 newInstance("name", ageSet, commandMap);
-        System.out.println(keyValueSubPipeSelector.select(null));
+        System.out.println(keyValueSubPipeSelector.select(null,morphlineContext));
     }
 
     @Test
