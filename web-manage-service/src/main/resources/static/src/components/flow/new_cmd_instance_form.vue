@@ -21,17 +21,24 @@
 			<el-input placeholder="请输入参数的值"  v-model="d.fieldValue" >  
                   <template slot="prepend">{{d.fieldType}}</template>		
              </el-input>			
-        </el-form-item>	
+        </el-form-item>
 
-        <el-form-item label="子流程" prop="subFlows" > 	
+        <el-form-item v-if="selectCmd.commandMorphName==='branchPipe'" label="分支流程" prop="subFlows" > 	
             <el-select v-model="commandInstance.subFlows" multiple placeholder="请选择">
                 <el-option v-for="item in subFlows"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                 </el-option>
             </el-select>		
-	    </el-form-item>	
+	    </el-form-item>		
+
+        <el-form-item v-if="selectCmd.commandMorphName==='callSubPipe'" label="子流程" prop="subFlows" > 	
+            <el-select v-model="commandInstance.subFlows" multiple placeholder="请选择">
+                <el-option v-for="item in subFlows"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
+                </el-option>
+            </el-select>		
+	    </el-form-item>		
 		
 	
-        <el-form-item label="子流程选择器" prop="selectSubFlowClazz" >
+        <el-form-item v-if="selectCmd.commandMorphName==='callSubPipe'" label="子流程选择器" prop="selectSubFlowClazz" >
                 <el-input type="text" v-model="commandInstance.selectSubFlowClazz" ></el-input>
         </el-form-item>
 	   
@@ -50,6 +57,7 @@
                 visible: false,
 				commands: [],
 				cmdParams:[],
+				selectCmd:{},
 				subFlows: [],
                 commandInstance: {
 				    commandInstanceName:'',				   
@@ -79,8 +87,10 @@
                    var command=null
 				   this.commands.forEach(v=>{  
                       if(v.id==id){
-					       command=v						 
+					       command=v	
+						   
 						   this.cmdParams=command.cmdParams
+						   this.selectCmd=command
 						   return
 					  }   
                 })		   

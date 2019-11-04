@@ -22,9 +22,10 @@
 			<el-input placeholder="请输入参数名称" v-model="d.fieldName" class="input-with-select">			 
                 <el-select v-model="d.fieldType"  :label="index" :key="index" slot="prepend" placeholder="请选择参数类型" >
 				  <el-option label="字符串" value="java.lang.String"></el-option>
-                  <el-option label="整形" value="java.lang.Integer"></el-option>                
+                  <el-option label="整形" value="java.lang.Integer"></el-option>   
+                  <el-option label="布尔类型" value="java.lang.Boolean"></el-option> 				  
                   <el-option label="浮点型" value="java.lang.Float"></el-option>
-				  <el-option label="数组" value="java.lang.Array"></el-option>
+				  <el-option label="数组" value="java.util.ArrayList"></el-option>
 				  <el-option label="键值对" value="java.util.Map"></el-option>
                </el-select>
                <template slot="append"> <i @click="add" class="el-icon-circle-plus"></i></template>					   

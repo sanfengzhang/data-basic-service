@@ -13,11 +13,12 @@
             <div style="position: absolute;top: 0px;right: 0px;line-height: 25px" v-show="mouseEnter">
                 <a href="#" style="" @click="editNode"><img src="@/assets/edit.png"></a>&nbsp;
                 <a href="#" style="" @click="deleteNode"><img src="@/assets/delete.png"></a> &nbsp;
+				
             </div>
         </div>
         <!--节点的正文部分-->
         <div class="flow-node-body">
-            {{node.name}}
+            {{node.name}}			
         </div>
     </div>
 </template>
@@ -32,6 +33,7 @@
             return {
                 // 控制节点操作显示
                 mouseEnter: false
+
             }
         },
         computed: {
@@ -120,7 +122,7 @@
         background-color: white;
         text-align: center;
         cursor: pointer;
-        height: 25px;
+        height: 45px;
         line-height: 25px;
         border-bottom-left-radius: 6px;
         border-bottom-right-radius: 6px;
