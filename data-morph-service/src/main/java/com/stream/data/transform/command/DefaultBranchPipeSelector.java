@@ -3,6 +3,7 @@ package com.stream.data.transform.command;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;
 import org.kitesdk.morphline.api.Record;
+import org.kitesdk.morphline.base.Fields;
 
 import java.util.Collections;
 import java.util.Map;
@@ -17,13 +18,13 @@ public class DefaultBranchPipeSelector implements BranchPipeSelector {
 
     @Override
     public Set<Command> select(Record record, MorphlineContext context) {
-        Map<String, Command> allCommand=( Map<String, Command>)context.getSettings().get("allCommand");
-        String fieldValue = record.getFirstValue("data_type").toString();
-        Command pipe=null;
-        if ("SOC_FANGHUOQIANG".equals(fieldValue)) {
-             pipe = allCommand.get("数据流程测试1");
-        }else if("TRADE_CONF".equals(fieldValue)){
 
+        String fieldValue = record.getFirstValue(Fields.MESSAGE).toString();
+        Command pipe = null;
+        if (fieldValue.contains("1.1.1.1")) {
+            pipe = context.getCommandById("|解析流程");
+        } else  {
+            pipe = context.getCommandById("-解析流程");
         }
 
         if (null == pipe) {

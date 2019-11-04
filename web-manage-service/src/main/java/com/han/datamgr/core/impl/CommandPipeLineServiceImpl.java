@@ -49,6 +49,8 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         List<String> flowNameSet = new ArrayList<>();
         findAllSubFlowName(flowNme, flowNameSet);
         flowNameSet.add(flowNme);//将原始的流程加入到集合中去
+        findAllBranchFlowName(flowNme,flowNameSet);
+
 
         List<CommandPipeline> result = new ArrayList<>();
         for (String flowName : flowNameSet) {
@@ -78,6 +80,34 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
                         if (!flowNameSet.contains(flowName)) {//----在集合中不存在的就加入,否则已经存在了就不需要递归查询其包含的子流程
                             flowNameSet.add(flowName);
                             findAllSubFlowName(flowName, flowNameSet);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void findAllBranchFlowName(String DataProcessFlowName, List<String> flowNameSet) throws BusException {
+        Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findByDataProcessFlowName(DataProcessFlowName);
+        if (!optional.isPresent()) {
+            throw new BusException("没有找到对应的数据流程,flowName=" + DataProcessFlowName);
+        }
+        DataProcessFlowEntity flowEntity = optional.get();
+        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
+        List<CanvasCommandInstanceEntity> nodeList = FlowUtils.fromFlowLineEntityToNodeList(flowLineEntitySet);
+        for (CanvasCommandInstanceEntity node : nodeList) {
+            String morphName = node.getCommandInstanceEntity().getCommand().getCommandMorphName();
+            if ("branchPipe".equals(morphName)) {
+                Set<CommandInstanceParamEntity> instanceParamEntities = node.getCommandInstanceEntity().getCmdInstanceParams();
+                for (CommandInstanceParamEntity instanceParamEntity : instanceParamEntities) {
+                    if ("branchFlowIds".equals(instanceParamEntity.getFieldName())) {
+                        List<String> flowNames = (List<String>) TypeUtils.fastJsonCast(instanceParamEntity.getFieldValue(),
+                                instanceParamEntity.getFieldType(), new ParserConfig());
+                        for (String flowName : flowNames) {
+                            if (!flowNameSet.contains(flowName)) {//----在集合中不存在的就加入,否则已经存在了就不需要递归查询其包含的子流程
+                                flowNameSet.add(flowName);
+                                findAllSubFlowName(flowName, flowNameSet);
+                            }
                         }
                     }
                 }

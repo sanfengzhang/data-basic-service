@@ -174,7 +174,9 @@ public class DataProcessFlowServiceImpl implements DataProcessFlowService {
                 String endId = en.get(FlowLineService.END_CMD);
                 FlowLineEntity flowLineEntity = new FlowLineEntity();
                 flowLineEntity.setStart(canvasCommandInstanceRepository.getOne(startId));
-                flowLineEntity.setEnd(canvasCommandInstanceRepository.getOne(endId));
+                if(null!=endId){
+                    flowLineEntity.setEnd(canvasCommandInstanceRepository.getOne(endId));
+                }
                 flowLineEntity.setFlowEntity(flowEntity);
                 data.add(flowLineEntity);
             }

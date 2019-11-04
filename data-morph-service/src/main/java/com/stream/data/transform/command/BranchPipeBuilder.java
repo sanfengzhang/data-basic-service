@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,12 +41,16 @@ public class BranchPipeBuilder implements CommandBuilder {
 
         private boolean continueParentPipe;
 
+        //这个分支节点包含哪些分支流程，如果不配置则所有的流程都可以成为分支流程的选择
+        private List<String> branchFlowIds;
+
         private MorphlineContext context;
 
         public BranchPipe(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
             super(builder, config, parent, child, context);
             continueParentPipe = getConfigs().getBoolean(config, "continueParentPipe");
             branchPipelineSelectorClazz = getConfigs().getString(config, "branchPipeSelector");
+            branchFlowIds = getConfigs().getStringList(config, "branchFlowIds");
             branchPipeSelector = (BranchPipeSelector) Class.forName(branchPipelineSelectorClazz).newInstance();
             this.context = context;
         }

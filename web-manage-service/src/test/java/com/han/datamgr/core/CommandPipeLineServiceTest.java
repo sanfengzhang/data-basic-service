@@ -34,4 +34,11 @@ public class CommandPipeLineServiceTest {
         morphTest.testMorphlin(commandPipeline,"数据处理流程测试1");
     }
 
+    @Test
+    public void testBranchPipelineTest() throws Exception {
+        List<CommandPipeline> commandPipeline = commandPipeLineService.buildCommandPipeline("40288c816e2a5292016e31123c090008");
+        MorphTest morphTest=new MorphTest();
+        morphTest.testBranchMorphlin(commandPipeline,"分支流程测试流程5");
+    }
+
 }
