@@ -25,7 +25,7 @@ public class WebRequestEventInterceptor implements HandlerInterceptor {
         if (null == eventVO) {
             eventVO = new EventVO();
             eventVO.setId(id);
-          //  eventVO.setEventType(0);
+            //  eventVO.setEventType(0);
             eventVO.setEventStartTime(System.currentTimeMillis());
             String input = request.getRequestURL().toString() + "|" + request.getMethod();
             eventVO.setInput(input);
@@ -44,7 +44,9 @@ public class WebRequestEventInterceptor implements HandlerInterceptor {
                 eventVO.setTookTime(tookTime);
                 eventVO.setOutput(response.getStatus());
             }
-            log.info("end request event={}", eventVO);
+            if (eventVO.getTookTime() > 50) {
+                log.info("end request event={}", eventVO);
+            }
         } finally {
             userEventVOThreadLocal.remove();
         }

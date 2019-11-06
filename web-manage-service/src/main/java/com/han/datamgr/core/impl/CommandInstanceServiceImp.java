@@ -46,7 +46,7 @@ public class CommandInstanceServiceImp implements CommandInstanceService {
     public void createCmdInstance(CommandInstanceVO vo) throws BusException {
         CommandInstanceEntity entity = new CommandInstanceEntity();
         entity.setCommandInstanceName(vo.getCommandInstanceName());
-        entity.setSelectSubFlowClazz(vo.getSelectSubFlowClazz());
+       // entity.setSelectSubFlowClazz(vo.getSelectSubFlowClazz());
         String commandId = vo.getCommand();
         CommandEntity commandEntity = commandRepository.findById(commandId).get();
         entity.setCommand(commandEntity);

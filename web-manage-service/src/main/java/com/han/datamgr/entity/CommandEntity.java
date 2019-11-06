@@ -33,9 +33,6 @@ public class CommandEntity implements Serializable {
     @Column(name = "cmd_clazz")
     private String commandClazz;
 
-    @Column(name = "sub_flow_selector_clazz")
-    private String subFlowSelectorClazz;
-
     @Column(name = "cmd_type")
     private String commandType;
 
