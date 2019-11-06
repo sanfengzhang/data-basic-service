@@ -72,7 +72,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
     }
 
     //-----------------找出该流程包含的所有子流程----
-    public void findAllSubFlowName(String DataProcessFlowName, List<String> flowNameSet) throws BusException {
+    private void findAllSubFlowName(String DataProcessFlowName, List<String> flowNameSet) throws BusException {
         Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findByDataProcessFlowName(DataProcessFlowName);
         if (!optional.isPresent()) {
             throw new BusException("没有找到对应的数据流程,flowName=" + DataProcessFlowName);
@@ -97,7 +97,8 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         }
     }
 
-    public void findAllBranchFlowName(String DataProcessFlowName, List<String> flowNameSet) throws BusException {
+
+    private void findAllBranchFlowName(String DataProcessFlowName, List<String> flowNameSet) throws BusException {
         Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findByDataProcessFlowName(DataProcessFlowName);
         if (!optional.isPresent()) {
             throw new BusException("没有找到对应的数据流程,flowName=" + DataProcessFlowName);
@@ -151,7 +152,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
 
 
 
-    public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {
+    private Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {
         Set<CommandInstanceParamEntity> commandInstanceParamEntityList = commandInstanceEntity.getCmdInstanceParams();
         Map<String, Object> result = new HashMap<>();
         for (CommandInstanceParamEntity commandInstanceParamEntity : commandInstanceParamEntityList) {

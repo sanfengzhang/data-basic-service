@@ -28,7 +28,6 @@ public class CommandPipeline implements Serializable {
 
     private Map<String, Object> commandsMap = new HashMap<>();
 
-    private Set<CommandPipeline> subCommandPipeLines = new HashSet<>();
 
     public CommandPipeline(String id) {
 

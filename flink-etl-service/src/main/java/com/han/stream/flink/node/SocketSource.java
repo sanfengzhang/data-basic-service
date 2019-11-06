@@ -2,13 +2,12 @@ package com.han.stream.flink.node;
 
 import com.han.stream.flink.ETL.StringToMessage;
 import com.han.stream.flink.JobConfigContext;
-import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;
 import com.han.stream.flink.support.Message;
 import lombok.Data;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
+
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -24,16 +23,20 @@ public class SocketSource {
 
     private String dataType;
 
+    private Map<String, Object> socketSource;
+
     private JobConfigContext jobConfigContext;
 
     public SocketSource(JobConfigContext jobConfigContext) throws Exception {
         this.jobConfigContext = jobConfigContext;
-        this.host = jobConfigContext.getString("flink.source.socket.host");
-        this.port = jobConfigContext.getInt("flink.source.socket.port");
-        this.dataType=jobConfigContext.getString("flink.source.socket.data_type");
+        this.socketSource = jobConfigContext.getMap("flink.etl.job.source");
+        Map<String, Object> config = (Map<String, Object>) socketSource.get("socketSource");
+        this.host = config.get("host").toString();
+        this.port = Integer.parseInt(config.get("port").toString());
+        this.dataType = config.get("dataType").toString();
     }
 
-    public DataStream<Message> getSource(StreamExecutionEnvironment env)throws Exception {
+    public DataStream<Message> getSource(StreamExecutionEnvironment env) throws Exception {
         DataStream<String> dataStreamSourceString = env.socketTextStream(host, port).name("SOCKET-SOURCE");
         DataStream<Message> dataStreamSourceMessage = dataStreamSourceString.map(new StringToMessage(jobConfigContext));
         return dataStreamSourceMessage;

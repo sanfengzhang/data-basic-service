@@ -28,4 +28,9 @@ public class JobConfigContext implements Serializable {
     public int getInt(String key) throws Exception {
         return Integer.parseInt(getString(key));
     }
+
+    public Map<String, Object> getMap(String key) {
+
+        return (Map<String, Object>) jobConfigParams.get(key);
+    }
 }

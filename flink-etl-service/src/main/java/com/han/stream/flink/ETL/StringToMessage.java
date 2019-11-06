@@ -4,6 +4,8 @@ import com.han.stream.flink.JobConfigContext;
 import com.han.stream.flink.support.Message;
 import org.apache.flink.api.common.functions.MapFunction;
 
+import java.util.Map;
+
 /**
  * @author: Hanl
  * @date :2019/10/30
@@ -18,9 +20,11 @@ public class StringToMessage implements MapFunction<String, Message> {
     private JobConfigContext jobConfigContext;
 
 
-    public StringToMessage(JobConfigContext jobConfigContext)throws Exception {
+    public StringToMessage(JobConfigContext jobConfigContext) throws Exception {
         this.jobConfigContext = jobConfigContext;
-        this.dataType=jobConfigContext.getString("flink.source.socket.data_type");
+        Map<String, Object> socketSource = jobConfigContext.getMap("flink.etl.job.source");
+        Map<String, Object> config = (Map<String, Object>) socketSource.get("socketSource");
+        this.dataType = config.get("dataType").toString();
     }
 
     @Override

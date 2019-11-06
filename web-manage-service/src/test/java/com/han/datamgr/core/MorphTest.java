@@ -63,6 +63,30 @@ public class MorphTest {
 
     }
 
+    public void testMorphlinMap(List<Map<String, Object>> commandPipelines, String mainFlowName) throws Exception {
+        for (Map<String, Object> configMap : commandPipelines) {
+            Config config = ConfigFactory.parseMap(configMap);
+            System.out.println(config);
+            Command cmd = null;
+            if (mainFlowName.equals(configMap.get("id"))) {
+                cmd = new Compiler().compile(config, morphlineContext, finalChid);
+            } else {
+                cmd = new Compiler().compile(config, morphlineContext, null);
+            }
+        }
+        Command cmd = morphlineContext.getCommandById(mainFlowName);
+        Notifications.notifyStartSession(cmd);
+        String msg = "1.1.1.1|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1|ccccc";
+        Record record = new Record();
+        record.put(Fields.MESSAGE, msg);
+        boolean flag = cmd.process(record);
+        System.out.println(flag);
+        record = finalChid.getRecords().get(0);
+        System.out.println(record);
+        Notifications.notifyShutdown(cmd);
+
+    }
+
     public void testBranchMorphlin(List<CommandPipeline> commandPipelines, String mainFlowName) throws Exception {
         for (CommandPipeline commandPipeline : commandPipelines) {
             Map<String, Object> configMap = commandPipeline.get();

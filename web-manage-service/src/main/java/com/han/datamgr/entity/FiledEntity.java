@@ -1,11 +1,14 @@
 package com.han.datamgr.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,5 +46,13 @@ public class FiledEntity implements Serializable {
 
     @Column(name = "cmd_display_name")
     protected String cmdDisplayName;
+
+    @Column(name = "create_time")
+    @CreationTimestamp
+    protected Date createTime;//任务创建时间
+
+    @Column(name = "update_time")
+    @LastModifiedDate
+    protected Date updateTime;//任务更新时间
 
 }

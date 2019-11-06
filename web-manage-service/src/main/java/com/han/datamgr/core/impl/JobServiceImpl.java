@@ -12,6 +12,7 @@ import com.han.datamgr.repository.JobRepository;
 import com.han.datamgr.vo.JobVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ public class JobServiceImpl implements JobService {
     private JobRepository jobRepository;
 
     @Override
+    @Transactional
     public Map<String, Object> getJobConfig(String jobId) throws BusException {
         Map<String, Object> jobParams = new HashMap<>();
         Optional<JobEntity> optionalJobEntity = jobRepository.findById(jobId);
@@ -52,6 +54,19 @@ public class JobServiceImpl implements JobService {
         //FIXME 这里先只支持一个Job对应一条数据处理流程
         DataProcessFlowEntity flowEntity = relSet.get(0).getDataProcessFlowEntity();
         List<Map<String, Object>> list = commandPipeLineService.buildCommandMapConfig(flowEntity.getId());
+        for (Map<String, Object> command : list) {
+            //TODO 在这里只处理主流程上的source和sink节点,放在这里处理时不破换commandPipeLineService的业务完整性
+            if (flowEntity.getDataProcessFlowName().equals(command.get("id"))) {
+                List<Map<String, Object>> cmdList = (List<Map<String, Object>>) command.get("commands");
+                if (cmdList.size() < 2) {
+                    break;
+                }
+                Map<String, Object> source = cmdList.remove(0);
+                Map<String, Object> sink = cmdList.remove(cmdList.size() - 1);
+                jobParams.put("flink.etl.job.source", source);
+                jobParams.put("flink.etl.job.sink", sink);
+            }
+        }
         jobParams.put("flink.etl.morph_flow", list);
         return jobParams;
     }

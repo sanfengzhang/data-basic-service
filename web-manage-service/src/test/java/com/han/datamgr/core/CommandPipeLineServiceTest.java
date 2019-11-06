@@ -1,7 +1,6 @@
 package com.han.datamgr.core;
 
 import com.han.datamgr.Application;
-import com.han.datamgr.exception.BusException;
 import com.stream.data.transform.model.CommandPipeline;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -30,15 +30,23 @@ public class CommandPipeLineServiceTest {
     @Test
     public void testPipelineTest() throws Exception {
         List<CommandPipeline> commandPipeline = commandPipeLineService.buildCommandPipeline("8adb929b6dcf4089016dcf40b16c0000");
-        MorphTest morphTest=new MorphTest();
-        morphTest.testMorphlin(commandPipeline,"数据处理流程测试1");
+        MorphTest morphTest = new MorphTest();
+        morphTest.testMorphlin(commandPipeline, "数据处理流程测试1");
+    }
+
+    @Test
+    public void testCommandListMapTest() throws Exception {
+        List<Map<String, Object>> commandPipeline = commandPipeLineService.buildCommandMapConfig("8adb929b6dcf4089016dcf40b16c0000");
+        System.out.println(commandPipeline);
+        MorphTest morphTest = new MorphTest();
+        morphTest.testMorphlinMap(commandPipeline, "数据处理流程测试1");
     }
 
     @Test
     public void testBranchPipelineTest() throws Exception {
         List<CommandPipeline> commandPipeline = commandPipeLineService.buildCommandPipeline("40288c816e2a5292016e31123c090008");
-        MorphTest morphTest=new MorphTest();
-        morphTest.testBranchMorphlin(commandPipeline,"分支流程测试流程5");
+        MorphTest morphTest = new MorphTest();
+        morphTest.testBranchMorphlin(commandPipeline, "分支流程测试流程5");
     }
 
 }

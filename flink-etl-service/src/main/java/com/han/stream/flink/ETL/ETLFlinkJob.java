@@ -26,13 +26,13 @@ public class ETLFlinkJob extends BaseFlinkJob {
 
     public ETLFlinkJob() {
         log.info("*************Start ETL Job*******");
-        this.initJobConfigContextByHttp("http://localhost:8080/ETL/api/v1/job");
+        this.initJobConfigContextByHttp("http://127.0.0.1:8080/ETL/api/v1/job/8adb929b6dcf4089016dcf40b1b70002");
     }
 
     @Override
     public void run() throws Exception {
 
-        List<Map<String,Object>> morphFlows = JSON.parseObject(jobConfigContext.getString("flink.etl.morph_flow"), new TypeReference<List<Map<String, Object>>>() {
+        List<Map<String, Object>> morphFlows = JSON.parseObject(jobConfigContext.getString("flink.etl.morph_flow"), new TypeReference<List<Map<String, Object>>>() {
         });
         StreamExecutionEnvironment env = creatStreamExecutionEnvironment();
         DataStream<Message> dataStreamSourceMessage = new SocketSource(jobConfigContext).getSource(env);
@@ -44,8 +44,8 @@ public class ETLFlinkJob extends BaseFlinkJob {
         env.execute();
     }
 
-    public static void main(String[] args)throws Exception {
-        ETLFlinkJob job=new ETLFlinkJob();
+    public static void main(String[] args) throws Exception {
+        ETLFlinkJob job = new ETLFlinkJob();
         job.run();
     }
 }
