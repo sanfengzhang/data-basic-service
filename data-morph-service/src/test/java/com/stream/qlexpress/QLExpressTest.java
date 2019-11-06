@@ -156,13 +156,10 @@ public class QLExpressTest {
 
     @Test
     public void testClassString() {
-        Class classa = "jjjj".getClass();
-        System.out.println(classa);
-        String json = "{\"name\":\"class java.lang.String\"}";
-        Map<String, Class> map = new HashMap<>();
-        map.put("class", classa);
-        System.out.println(JSON.toJSONString(map));
-        System.out.println(JSON.parseObject(JSON.toJSONString(map), new TypeReference<Map<String, Class>>() {
-        }));
+        Map<String, String> recordFieldType = new HashMap<>();
+        recordFieldType.put("trans_channel_id", TypeUtils.INT);
+        recordFieldType.put("trans_end_datetime", TypeUtils.DATE);
+        recordFieldType.put("trans_return_code", TypeUtils.INT);
+        System.out.println(JSON.toJSONString(recordFieldType));
     }
 }

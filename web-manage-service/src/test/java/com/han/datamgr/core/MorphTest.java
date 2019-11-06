@@ -76,7 +76,7 @@ public class MorphTest {
         }
         Command cmd = morphlineContext.getCommandById(mainFlowName);
         Notifications.notifyStartSession(cmd);
-        String msg = "1.1.1.1|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1|ccccc";
+        String msg = "10|801507|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1";
         Record record = new Record();
         record.put(Fields.MESSAGE, msg);
         boolean flag = cmd.process(record);

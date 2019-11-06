@@ -11,6 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,8 +29,11 @@ public class JobServiceTest {
     private JobService jobService;
 
     @Test
-    public void testGetJob() throws BusException {
+    public void testGetJob() throws Exception {
         Map<String, Object> map = jobService.getJobConfig("8adb929b6dcf4089016dcf40b1b70002");
+        List<Map<String, Object>> cmd=(List<Map<String, Object>>)map.get("flink.etl.morph_flow");
+        MorphTest morphTest=new MorphTest();
+        morphTest.testMorphlinMap(cmd,"数据处理流程测试1");
         System.out.println(map);
     }
 
