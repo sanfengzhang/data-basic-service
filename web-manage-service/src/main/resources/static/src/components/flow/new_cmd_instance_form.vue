@@ -35,12 +35,9 @@
                 <el-option v-for="item in subFlows"  :label="item.flowEntity.dataProcessFlowName" :value="item.flowEntity.id">
                 </el-option>
             </el-select>		
-	    </el-form-item>		
-		
+	    </el-form-item>	
 	
-        <el-form-item v-if="selectCmd.commandMorphName==='callSubPipe'" label="子流程选择器" prop="selectSubFlowClazz" >
-                <el-input type="text" v-model="commandInstance.selectSubFlowClazz" ></el-input>
-        </el-form-item>
+      
 	   
       </el-form>
         <span slot="footer" class="dialog-footer">

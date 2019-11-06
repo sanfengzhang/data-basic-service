@@ -462,7 +462,7 @@
             saveDataFlow(){
 			   console.log("save flow:",this.data)
 			   this.post('/api/v1/flow/relation',this.data).then((response) => {                     
-                   console.log("save flow response",response)					  
+                  this.$message('保存成功!');					  
                 });
 			
 			},			
