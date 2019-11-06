@@ -12,18 +12,16 @@ import java.util.*;
 /**
  * @author: Hanl
  * @date :2019/8/8
- * @desc:
- * 字段类型转换，使用FastJson里面的类型转换功能，
+ * @desc: 字段类型转换，使用FastJson里面的类型转换功能，
  * 基本的数据类型功能,和JSON字符串转对象的功能
  * 或者将Map转换为JavaBean对象等功能
- *
  */
-public class RecordFieldTypeConvertBuilder implements CommandBuilder {
+public class FieldTypeConvertBuilder implements CommandBuilder {
 
     @Override
     public Collection<String> getNames() {
 
-        return Collections.singletonList("recordFieldType");
+        return Collections.singletonList("fieldTypeConvert");
     }
 
     @Override
@@ -31,26 +29,26 @@ public class RecordFieldTypeConvertBuilder implements CommandBuilder {
         try {
             return new RecordFieldTypeConvert(this, config, parent, child, context);
         } catch (Exception e) {
-            throw new MorphlineCompilationException("RecordFieldType init failed", config, e);
+            throw new MorphlineCompilationException("FieldTypeConvertBuilder init failed", config, e);
         }
     }
 
     private static final class RecordFieldTypeConvert extends AbstractCommand {
 
-        private Map<String, String[]> fieldTypeMap = new HashMap<>();
+        private Map<String, String> fieldTypeMap = new HashMap<>();
 
-        private ParserConfig parserConfig = null;
+        private ParserConfig parserConfig;
 
         public RecordFieldTypeConvert(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) {
             super(builder, config, parent, child, context);
             Config fieldTypeConfig = getConfigs().getConfig(config, "fieldTypeMap");
             for (Map.Entry<String, Object> entry : new Configs().getEntrySet(fieldTypeConfig)) {
-                String valueArr[] = entry.getValue().toString().split(",");
-                fieldTypeMap.put(entry.getKey(), valueArr);
+                String type = entry.getValue().toString();
+                fieldTypeMap.put(entry.getKey(), type);
             }
             this.parserConfig = (ParserConfig) context.getSettings().get("parserConfig");
             if (null == parserConfig) {
-                throw new MorphlineCompilationException("RecordFieldType init failed because of parserConfig is null", config);
+                throw new MorphlineCompilationException("FieldTypeConvertBuilder init failed because of parserConfig is null", config);
             }
             validateArguments();
         }
@@ -59,7 +57,7 @@ public class RecordFieldTypeConvertBuilder implements CommandBuilder {
         protected boolean doProcess(Record record) {
 
             fieldTypeMap.forEach((k, v) -> {
-                Object target = TypeUtils.fastJsonCast(record.getFirstValue(k), v[0], parserConfig);
+                Object target = TypeUtils.fastJsonCast(record.getFirstValue(k), v, parserConfig);
                 record.replaceValues(k, target);
             });
             return super.doProcess(record);

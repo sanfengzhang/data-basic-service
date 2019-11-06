@@ -61,6 +61,12 @@ public class QLExpressTest {
         Object result2 = runner.execute("age<0||age>200?60:age", context2, null, false, false);
         System.out.println(result2);
 
+        DefaultContext<String, Object> context3 = new DefaultContext<String, Object>();
+        context3.put("age", -1);
+        context3.put("name", "zhangsan");
+        Object result3 = runner.execute("age<0?'年龄非法':'年龄合法'", context2, null, false, false);
+        System.out.println(result3);
+
     }
 
     @Test
@@ -150,12 +156,13 @@ public class QLExpressTest {
 
     @Test
     public void testClassString() {
-        Class classa="jjjj".getClass();
+        Class classa = "jjjj".getClass();
         System.out.println(classa);
-        String json="{\"name\":\"class java.lang.String\"}";
-        Map<String,Class> map=new HashMap<>();
-        map.put("class",classa);
+        String json = "{\"name\":\"class java.lang.String\"}";
+        Map<String, Class> map = new HashMap<>();
+        map.put("class", classa);
         System.out.println(JSON.toJSONString(map));
-        System.out.println(JSON.parseObject(JSON.toJSONString(map),new TypeReference<Map<String,Class>>(){}));
+        System.out.println(JSON.parseObject(JSON.toJSONString(map), new TypeReference<Map<String, Class>>() {
+        }));
     }
 }

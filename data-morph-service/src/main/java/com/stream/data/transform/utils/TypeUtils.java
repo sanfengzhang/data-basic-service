@@ -13,19 +13,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TypeUtils {
 
-    public static final String STRING = "String";
+    public static final String STRING = "java.lang.String";
 
-    public static final String INT = "Integer";
+    public static final String INT = "java.lang.Integer";
 
-    public static final String FLOAT = "Float";
+    public static final String FLOAT = "java.lang.Float";
 
-    public static final String DOUBLE = "Double";
+    public static final String DOUBLE = "java.lang.Double";
 
-    public static final String LONG = "Long";
+    public static final String LONG = "java.lang.Long";
 
-    public static final String SHORT = "Short";
+    public static final String SHORT = "java.lang.Short";
 
-    public static final String DATE = "Date";
+    public static final String DATE = "java.util.Date";
 
     public static Map<String, Class<?>> TYPE_FOR_CLAZZ = new ConcurrentHashMap<>();
 

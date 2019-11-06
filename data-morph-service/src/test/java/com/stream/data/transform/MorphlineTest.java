@@ -64,7 +64,7 @@ public class MorphlineTest {
 
 
         Map<String, String> expressMap = new HashMap<>();
-        expressMap.put("trans_return_code<0 \"?\" 99999 \":\"trans_return_code", "java.lang.Integer,trans_return_code");
+        expressMap.put("trans_return_code<0\"?\"'失败'\":\"'成功'", "returnCodeDesc");
         Map<String, Object> cacheWarmingData = new HashMap<>();
         cacheWarmingData.put("trans_return_code", "999");
         Map<String, Object> expressCommand = CommandBuildService.elExpress(expressMap, cacheWarmingData);
@@ -78,8 +78,9 @@ public class MorphlineTest {
 
         Map<String, String> recordFieldType = new HashMap<>();
         recordFieldType.put("trans_channel_id", TypeUtils.INT);
+        recordFieldType.put("trans_end_datetime", TypeUtils.DATE);
+        recordFieldType.put("trans_return_code", TypeUtils.INT);
         Map<String, Object> recordFieldTypeCommand = CommandBuildService.recordFieldType(recordFieldType);
-
 
         List<String> imports = new ArrayList<>();
         imports.add("com.stream.data.transform.command.*");
@@ -94,19 +95,17 @@ public class MorphlineTest {
         Collector finalChid = new Collector();
         Command cmd = new Compiler().compile(config, morphlineContext, finalChid);
 
-
-
         Notifications.notifyStartSession(cmd);
-
         long start = System.currentTimeMillis();
         int total = 1;
         for (int i = 0; i < total; i++) {
-            String msg = i+"|801507|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1";
+            String msg = i + "|801507|234|2018-04-17 17:05:08.478679|2018-04-17 17:05:08.483580|0.00|8020800|020777|-100|读取保函注销接口表失败[BHZX201803251590217],记录不存在|1.1.1.1";
             Record record = new Record();
             record.put(Fields.MESSAGE, msg);
             cmd.process(record);
-           // record = finalChid.getRecords().get(0);
-          //  System.out.println(record);
+            record = finalChid.getRecords().get(0);
+            System.out.println(record.getFirstValue("trans_end_datetime"));
+            System.out.println(record);
         }
         long end = System.currentTimeMillis();
         double cust = (end - start);
@@ -119,8 +118,6 @@ public class MorphlineTest {
         Integer a = 234;
         System.out.println(a.hashCode());
     }
-
-
 
 
     @Test

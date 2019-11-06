@@ -55,7 +55,7 @@ public class ELExpressBuilder implements CommandBuilder {
             }
             validateArguments();
             runner = new ExpressRunner();
-            if(!cacheWarming.isEmpty()){
+            if (!cacheWarming.isEmpty()) {
                 DefaultContext defaultContext = new DefaultContext();
                 new Configs().getEntrySet(cacheWarming).forEach(k -> {
                     defaultContext.put(k.getKey(), k.getValue());
@@ -99,8 +99,7 @@ public class ELExpressBuilder implements CommandBuilder {
                     //EL表达式必须缓存起来，否则性能下降贼多
                     Object result = runner.execute(k, context, null, true, false);
                     if (record != null) {
-                        Class clazz = Class.forName(v);
-                        put(record, expressesToKey.get(k), result);
+                        put(record, expresses.get(k), result);
                     }
                 } catch (Exception e) {
                     throw new MorphlineCompilationException("ELExpressBuilder", getConfig(), new Throwable(e));

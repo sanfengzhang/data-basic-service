@@ -90,7 +90,7 @@ public class CommandBuildService {
         Map<String, Object> recordFieldTypeMap = new HashMap<>();
         Map<String, Object> propsMap = new HashMap<>();
         propsMap.put("fieldTypeMap", recordFieldType);
-        recordFieldTypeMap.put("recordFieldType", propsMap);
+        recordFieldTypeMap.put("fieldTypeConvert", propsMap);
         return recordFieldTypeMap;
     }
 
