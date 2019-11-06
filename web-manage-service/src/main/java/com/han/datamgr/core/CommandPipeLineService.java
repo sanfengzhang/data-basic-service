@@ -4,6 +4,7 @@ import com.han.datamgr.exception.BusException;
 import com.stream.data.transform.model.CommandPipeline;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Hanl
@@ -20,5 +21,8 @@ public interface CommandPipeLineService {
      * @throws BusException
      */
     public List<CommandPipeline> buildCommandPipeline(String DataProcessFlowId) throws BusException;
+
+
+    public List<Map<String,Object>> buildCommandMapConfig(String DataProcessFlowId) throws BusException;
 
 }

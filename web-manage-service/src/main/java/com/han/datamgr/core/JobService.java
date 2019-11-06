@@ -3,6 +3,8 @@ package com.han.datamgr.core;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.vo.JobVO;
 
+import java.util.Map;
+
 /**
  * @author: Hanl
  * @date :2019/9/29
@@ -11,30 +13,33 @@ import com.han.datamgr.vo.JobVO;
 public interface JobService {
 
     /**
-     *
      * @param jobVO
      * @throws BusException
      */
     public void crateJob(JobVO jobVO) throws BusException;
 
     /**
-     *
      * @param jobVO
      * @throws BusException
      */
     public void updateJob(JobVO jobVO) throws BusException;
 
     /**
-     *
      * @param jobVO
      * @throws BusException
      */
     public void removeJob(JobVO jobVO) throws BusException;
 
     /**
-     * 
      * @throws BusException
      */
     public void queryJobs() throws BusException;
+
+    /**
+     *
+     * @param jobId
+     * @throws BusException
+     */
+    public Map<String, Object> getJobConfig(String jobId) throws BusException;
 
 }

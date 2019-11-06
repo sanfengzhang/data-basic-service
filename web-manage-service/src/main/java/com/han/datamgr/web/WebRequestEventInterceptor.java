@@ -31,7 +31,9 @@ public class WebRequestEventInterceptor implements HandlerInterceptor {
             eventVO.setInput(input);
             userEventVOThreadLocal.set(eventVO);
         }
-        log.info("before request event={}", eventVO);
+        if (log.isDebugEnabled()) {
+            log.debug("before request event={}", eventVO);
+        }
         return true;
     }
 

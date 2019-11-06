@@ -2,6 +2,7 @@ package com.han.datamgr.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.han.datamgr.core.CommandPipeLineService;
+import com.han.datamgr.core.JobService;
 import com.han.datamgr.exception.BusException;
 import com.han.datamgr.web.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,40 +23,11 @@ import java.util.Map;
 public class JobController {
 
     @Autowired
-    private CommandPipeLineService commandPipeLineService;
+    private JobService jobService;
 
-    /**
-     * 运行ETL_JOB，可以下发该Job下关联的数据流程配置，指定需要下发的流程
-     * 不指定的时候，就根据数据库配置的job-flow关系进行下发
-     *
-     * @param id
-     * @param flowIds
-     * @return
-     * @throws BusException
-     */
     @GetMapping("/{id}")
-    public CommonResponse runJob(@PathVariable String id, @RequestParam String flowIds) throws BusException {
-
-        return CommonResponse.buildWithSuccess();
-    }
-
-
-    @GetMapping
-    public CommonResponse getJobConfig() throws BusException {
-        Map<String, Object> jobParams = new HashMap<>();
-        jobParams.put("restartAttempts", 3);
-        jobParams.put("delayBetweenAttempts", 30000);
-        jobParams.put("timeCharacteristic", "EventTime");
-        jobParams.put("checkpointInterval", 15000);
-        jobParams.put("checkpointTimeout", 30000);
-        jobParams.put("parallelism", 2);
-        jobParams.put("flink.source.socket.host", "10.91.18.27");
-        jobParams.put("flink.source.socket.port", "8085");
-        jobParams.put("flink.source.socket.data_type", "数据处理流程测试1");
-        Map<String, Object> cmdMap =null;
-        List<Map<String,Object>> list=new ArrayList<>();
-        list.add(cmdMap);
-        jobParams.put("flink.etl.morph_flow", list);
+    public CommonResponse getJobConfig(@PathVariable String id) throws BusException {
+        Map<String, Object> jobParams = jobService.getJobConfig(id);
         return CommonResponse.buildWithSuccess(jobParams);
     }
 }

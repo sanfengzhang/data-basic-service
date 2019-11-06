@@ -2,8 +2,10 @@ package com.han.datamgr.core;
 
 import com.han.datamgr.entity.CanvasCommandInstanceEntity;
 import com.han.datamgr.entity.CommandInstanceEntity;
+import com.han.datamgr.entity.FlowLineEntity;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: Hanl
@@ -12,9 +14,11 @@ import java.util.Map;
  */
 public interface FlowLineService {
 
-    public static final String START_CMD="from";
+    public static final String START_CMD = "from";
 
-    public static final String END_CMD="to";
+    public static final String END_CMD = "to";
 
     public Map<String, CanvasCommandInstanceEntity> findStartAndEndCmd(String flowId);
+
+    public Map<String, CanvasCommandInstanceEntity> findStartAndEndCmd(Set<FlowLineEntity> flowLineEntitySet);
 }

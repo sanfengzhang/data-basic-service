@@ -36,11 +36,22 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
     @Autowired
     private CanvasCommandInstanceRepository canvasCommandInstanceRepository;
 
+
     @Override
-    public List<CommandPipeline> buildCommandPipeline(String DataProcessFlowId) throws BusException {
-        Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findById(DataProcessFlowId);
+    public List<Map<String, Object>> buildCommandMapConfig(String dataProcessFlowId) throws BusException {
+        List<CommandPipeline> commandPipelines = this.buildCommandPipeline(dataProcessFlowId);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (CommandPipeline commandPipeline : commandPipelines) {
+            result.add(commandPipeline.get());
+        }
+        return result;
+    }
+
+    @Override
+    public List<CommandPipeline> buildCommandPipeline(String dataProcessFlowId) throws BusException {
+        Optional<DataProcessFlowEntity> optional = dataProcessFlowRepository.findById(dataProcessFlowId);
         if (!optional.isPresent()) {
-            throw new BusException("没有找到对应的数据流程,id=" + DataProcessFlowId);
+            throw new BusException("没有找到对应的数据流程,id=" + dataProcessFlowId);
         }
         //-----------------------获取所有需要初始化的流程--------
         DataProcessFlowEntity flowEntity = optional.get();
@@ -48,7 +59,7 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
         List<String> flowNameSet = new ArrayList<>();
         findAllSubFlowName(flowNme, flowNameSet);
         flowNameSet.add(flowNme);//将原始的流程加入到集合中去
-        findAllBranchFlowName(flowNme,flowNameSet);
+        findAllBranchFlowName(flowNme, flowNameSet);
 
 
         List<CommandPipeline> result = new ArrayList<>();
@@ -122,20 +133,22 @@ public class CommandPipeLineServiceImpl implements CommandPipeLineService {
      */
     private CommandPipeline buildCommandPipe(DataProcessFlowEntity flowEntity) throws BusException {
         //先计算主流程的命令构建------------------
-        Map<String, CanvasCommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(flowEntity.getId());
 
+        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
+        Map<String, CanvasCommandInstanceEntity> startAndEnd = flowLineService.findStartAndEndCmd(flowLineEntitySet);
         String start = startAndEnd.get(FlowLineService.START_CMD).getId();
         String end = startAndEnd.get(FlowLineService.END_CMD) == null ? null : startAndEnd.get(FlowLineService.END_CMD).getId();
-        Set<FlowLineEntity> flowLineEntitySet = flowEntity.getFlowLineSet();
         List<Map<String, String>> flowLine = FlowUtils.fromFlowLineEntityToId(flowLineEntitySet);
-        List<String> mainFlowIdsOrder = FlowUtils.findMainFlowLine(flowLine, start, end);
 
+        List<String> mainFlowIdsOrder = FlowUtils.findMainFlowLine(flowLine, start, end);
         CommandPipeline commandPipeline = CommandPipeline.build(flowEntity.getDataProcessFlowName());
         for (String canvasCommandInstanceEntityId : mainFlowIdsOrder) {
             commandPipeline.addCommand(buildCommandMapByConfig(canvasCommandInstanceRepository.getOne(canvasCommandInstanceEntityId).getCommandInstanceEntity(), commandPipeline));
         }
         return commandPipeline;
     }
+
+
 
 
     public Map<String, Object> buildCommandMapByConfig(CommandInstanceEntity commandInstanceEntity, CommandPipeline commandPipeline) throws BusException {
