@@ -67,6 +67,7 @@ public class JobServiceImpl implements JobService {
                 jobParams.put("flink.etl.job.sink", sink);
             }
         }
+        jobParams.put("flink.etl.main_flow_name", flowEntity.getDataProcessFlowName());
         jobParams.put("flink.etl.morph_flow", list);
         return jobParams;
     }

@@ -41,17 +41,20 @@ public class DefaultTransformFunction extends ProcessFunction<Message, Map<Strin
 
     private List<Map<String, Object>> morphFlows;
 
+    private String mainFlowName;
+
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public DefaultTransformFunction(String transformContextName, List<Map<String, Object>> morphFlows) {
+    public DefaultTransformFunction(String transformContextName, String mainFlowName, List<Map<String, Object>> morphFlows) {
         this.morphFlows = morphFlows;
+        this.mainFlowName = mainFlowName;
         this.transformContextName = transformContextName;
     }
 
     @Override
     public void open(Configuration parameters) throws Exception {
-        transform = new DefaultMorphlineTransform(transformContextName, morphFlows);
+        transform = new DefaultMorphlineTransform(transformContextName, mainFlowName, morphFlows);
         this.successProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(TRANSFORM_SUCCEEDED_METRICS_COUNTER);
         this.failedProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(TRANSFORM_FAILED_METRICS_COUNTER);
     }

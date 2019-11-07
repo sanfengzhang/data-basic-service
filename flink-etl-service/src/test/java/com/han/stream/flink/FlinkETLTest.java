@@ -75,7 +75,7 @@ public class FlinkETLTest {
                 return message;
             }
         });
-        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.process(new DefaultTransformFunction("Flink_Transform_Context", morphFlows));
+        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.process(new DefaultTransformFunction("Flink_Transform_Context", "", morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         mapDataStream.print();
@@ -100,7 +100,7 @@ public class FlinkETLTest {
         DataStream<ConfigParameters> configEventStream = env.socketTextStream("127.0.0.1", 8086).name("Socket Source Config").map(new ConfigFunction());
         BroadcastStream<ConfigParameters> configEventStream1 = configEventStream.broadcast(new MapStateDescriptor<>("config_descriptor", String.class, Map.class));
         SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSource.connect(configEventStream1).
-                process(new ConfigurableMorphlineTransformFunction("Flink_Transform_Context", morphFlows));
+                process(new ConfigurableMorphlineTransformFunction("Flink_Transform_Context", "", morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.UPDATE_CONFIG_PARAMETERS) {

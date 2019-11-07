@@ -1,5 +1,6 @@
 package com.han.stream.flink.function.transform;
 
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.exception.TransformException;
@@ -32,46 +33,40 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT> {
 
-    //FIXME 在Flink流式处理中不存在这种并发操作的问题
-    private Map<String, Command> morphFlows = new ConcurrentHashMap<>();
-
-    private Map<String, Collector> collectors = new ConcurrentHashMap<>();
-
     private MorphlineContext morphlineContext;
 
-    protected MorphlineTransform(String transformContextName, List<Map<String,Object>> morphFlowsConfig) {
+    private Command mainFlow;
+
+    private Collector finalChild;
+
+    private String mainFlowName;
+
+    protected MorphlineTransform(String transformContextName, String mainFlowName, List<Map<String, Object>> morphFlows) {
         morphlineContext = new MorphlineContext.Builder().setExceptionHandler(new FaultTolerance(false, false))
                 .setMetricRegistry(SharedMetricRegistries.getOrCreate(transformContextName)).build();
+        this.morphlineContext.getSettings().put("parserConfig", new ParserConfig());
+        this.mainFlowName = mainFlowName;
         Compiler compiler = new Compiler();
-        morphFlowsConfig.forEach(flow -> {
+        for (Map<String, Object> flow : morphFlows) {
             Config config = ConfigFactory.parseMap(flow);
-            Collector finalChild = new Collector();
-            Command cmd = compiler.compile(config, morphlineContext, finalChild);
-            String flowId = flow.get("id").toString();
-            morphFlows.put(flowId, cmd);
-            collectors.put(flowId, finalChild);
-        });
+            String id = flow.get("id").toString();
+            if (mainFlowName.equals(id)) {
+                finalChild = new Collector();
+                mainFlow = compiler.compile(config, morphlineContext, finalChild);
+            } else {
+                compiler.compile(config, morphlineContext, null);
+            }
+        }
     }
 
     @Override
     public Map<String, Collection<Object>> process(Message message) {
-        String dataType = message.getType();
-        Command cmd = morphFlows.get(dataType);
-        Collector finalChild = collectors.get(dataType);
         try {
-            if (null == cmd) {
-                throw new TransformException("Failed to transform record,because command null,dataType=" + dataType);
-            }
-            if (null == finalChild) {
-                finalChild = new Collector();
-                collectors.put(dataType, finalChild);
-            }
             Record record = new Record();
-
             //FIXME 这里目前就是支持String类型的数据
             record.put(Fields.MESSAGE, message.getValue());
-            Notifications.notifyStartSession(cmd);
-            if (!cmd.process(record)) {
+            Notifications.notifyStartSession(mainFlow);
+            if (!mainFlow.process(record)) {
 
                 throw new TransformException("Failed to process record,dataType=" + message + ",message=" + message);
             }
@@ -84,8 +79,8 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
             if (null != finalChild) {
                 finalChild.reset();
             }
-            if (null != cmd) {
-                Notifications.notifyShutdown(cmd);
+            if (null != mainFlow) {
+                Notifications.notifyShutdown(mainFlow);
             }
         }
     }
@@ -97,20 +92,20 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
      *
      * @param configParameters
      */
-    public void updateOrAddCommand(ConfigParameters configParameters) {
-        configParameters.getConfig().forEach((dataType, commandPipelineObj) -> {
-            Map<String, Object> commandMap = null;
-            CommandPipeline commandPipeline = null;
-            if (commandPipelineObj instanceof CommandPipeline) {
-                commandPipeline = (CommandPipeline) commandPipelineObj;
-                commandMap = commandPipeline.get();
+    public void updateFlow(ConfigParameters configParameters) {
+        Map<String, Object> flowMap = configParameters.getConfig();
+        List<Map<String, Object>> morphFlows = (List<Map<String, Object>>) flowMap.get(mainFlowName);
+        Compiler compiler = new Compiler();
+        for (Map<String, Object> flow : morphFlows) {
+            Config config = ConfigFactory.parseMap(flow);
+            String id = flow.get("id").toString();
+            if (mainFlowName.equals(id)) {
+                Collector finalChild = new Collector();
+                mainFlow = compiler.compile(config, morphlineContext, finalChild);
+            } else {
+                compiler.compile(config, morphlineContext, null);
             }
-            Config config = ConfigFactory.parseMap(commandMap);
-            Collector finalChild = new Collector();
-            Command cmd = new Compiler().compile(config, morphlineContext, finalChild);
-            morphFlows.put(dataType, cmd);
-            collectors.put(dataType, finalChild);
-        });
-        log.info("Update morphline config success,config={}", configParameters);
+        }
+        log.info("Update Flow config success,config={}", configParameters);
     }
 }

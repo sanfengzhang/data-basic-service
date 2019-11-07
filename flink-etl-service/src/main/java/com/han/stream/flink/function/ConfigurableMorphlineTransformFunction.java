@@ -34,14 +34,17 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
 
     private List<Map<String, Object>> morphFlows;
 
+    private String mainFlowName;
+
     private OutputTag<Map<String, Object>> failedTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
     private OutputTag<Map<String, Object>> updateConfigResponseTag = new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
     };
 
-    public ConfigurableMorphlineTransformFunction(String transformContextName, List<Map<String, Object>> morphFlows) {
+    public ConfigurableMorphlineTransformFunction(String transformContextName, String mainFlowName, List<Map<String, Object>> morphFlows) {
         this.transformContextName = transformContextName;
+        this.mainFlowName = mainFlowName;
         this.morphFlows = morphFlows;
     }
 
@@ -49,7 +52,7 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
     @Override
     public void open(Configuration parameters) throws Exception {
 
-        transform = new DefaultMorphlineTransform(transformContextName, morphFlows);
+        transform = new DefaultMorphlineTransform(transformContextName, mainFlowName, morphFlows);
         this.successProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(DefaultTransformFunction.TRANSFORM_SUCCEEDED_METRICS_COUNTER);
         this.failedProcessRecordsNum = this.getRuntimeContext().getMetricGroup().counter(DefaultTransformFunction.TRANSFORM_FAILED_METRICS_COUNTER);
     }
@@ -77,7 +80,7 @@ public class ConfigurableMorphlineTransformFunction extends BroadcastProcessFunc
         Map<String, Object> result = new HashMap<>();
         try {
             log.info("Start updating the command information,commands={}", value);
-            transform.updateOrAddCommand(value);
+            transform.updateFlow(value);
             result.put(Constants.UPDATE_CONFIG_PARAMETERS, value);
             result.put(Constants.UPDATE_CONFIG_PARAMETERS_STATUS, "true");
             result.put(Constants.UPDATE_CONFIG_PARAMETERS_EXECUTE_DATE, new Date());

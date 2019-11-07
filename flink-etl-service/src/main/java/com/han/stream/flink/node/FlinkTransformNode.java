@@ -57,10 +57,10 @@ public class FlinkTransformNode extends AbstractFlinkNode {
 
     public DataStream<Map<String, Object>> process(DataStream<Message> preDataStream) {
         if (!configurable)
-            return preDataStream.process(new DefaultTransformFunction(transformContextName, morphFlows)).name(getDataProcessNodeName());
+            return preDataStream.process(new DefaultTransformFunction(transformContextName,"", morphFlows)).name(getDataProcessNodeName());
         else {
 
-            return preDataStream.connect(broadcastStream).process(new ConfigurableMorphlineTransformFunction(transformContextName, morphFlows)).name(getDataProcessNodeName());
+            return preDataStream.connect(broadcastStream).process(new ConfigurableMorphlineTransformFunction(transformContextName,"", morphFlows)).name(getDataProcessNodeName());
         }
     }
 

@@ -44,7 +44,7 @@ public class ETLConfigFlinkJob extends BaseFlinkJob {
         BroadcastStream<ConfigParameters> broadcastConfigStream = configStream.broadcast(new MapStateDescriptor<>("config_descriptor", String.class, Map.class));
 
         SingleOutputStreamOperator<Map<String, Object>> etlDataStream = dataStream.connect(broadcastConfigStream).
-                process(new ConfigurableMorphlineTransformFunction("Flink_ETL_Context", morphFlows));
+                process(new ConfigurableMorphlineTransformFunction("Flink_ETL_Context",jobConfigContext.getString("flink.etl.main_flow_name"), morphFlows));
         etlDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         etlDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.UPDATE_CONFIG_PARAMETERS) {

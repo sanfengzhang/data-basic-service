@@ -9,11 +9,10 @@ import java.util.*;
  */
 public class DefaultMorphlineTransform extends MorphlineTransform<Map<String, Object>> {
 
-    public DefaultMorphlineTransform(String transformContextName, List<Map<String,Object>> morphFlowConfigs) {
+    public DefaultMorphlineTransform(String transformContextName,String mainFlowName, List<Map<String, Object>> morphFlowConfigs) {
 
-        super(transformContextName, morphFlowConfigs);
+        super(transformContextName, mainFlowName, morphFlowConfigs);
     }
-
 
 
     @Override

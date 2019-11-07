@@ -37,7 +37,7 @@ public class ETLFlinkJob extends BaseFlinkJob {
         StreamExecutionEnvironment env = creatStreamExecutionEnvironment();
         DataStream<Message> dataStreamSourceMessage = new SocketSource(jobConfigContext).getSource(env);
 
-        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSourceMessage.process(new DefaultTransformFunction("Flink_Transform_Context", morphFlows));
+        SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSourceMessage.process(new DefaultTransformFunction("Flink_Transform_Context", jobConfigContext.getString("flink.etl.main_flow_name"), morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
         mapDataStream.print();
