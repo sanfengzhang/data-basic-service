@@ -27,6 +27,7 @@ public class SocketSource {
 
     private JobConfigContext jobConfigContext;
 
+    @SuppressWarnings("unchecked")
     public SocketSource(JobConfigContext jobConfigContext) throws Exception {
         this.jobConfigContext = jobConfigContext;
         this.socketSource = jobConfigContext.getMap("flink.etl.job.source");

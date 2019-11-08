@@ -1,7 +1,5 @@
 package com.han.stream.flink.node;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.han.stream.flink.JobConfigContext;
 import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;
 import com.han.stream.flink.support.Message;
@@ -23,6 +21,18 @@ import java.util.regex.Pattern;
 @Data
 public class KafkaSource {
 
+    //这个时flink里面会自动发现Kafka分区数量的变化,多久查询一次,ms
+
+    //还可以控制Kafka的偏移量提交的三种方式
+
+    public static final String KEY_TOPICS = "topic";
+
+    public static final String KEY_PATTERN = "pattern";
+
+    public static final String KEY_KAFKA_SOURCE = "kafkaSource";
+
+    public static final String KEY_CHARSET = "charset";
+
     private List<String> topics;
 
     private Properties props;
@@ -31,17 +41,19 @@ public class KafkaSource {
 
     private String charSet;
 
+    private Map<String, Object> kafkaSource;
+
     private JobConfigContext jobConfigContext;
 
+    @SuppressWarnings("unchecked")
     public KafkaSource(JobConfigContext jobConfigContext) throws Exception {
         this.jobConfigContext = jobConfigContext;
-        this.topics = JSON.parseObject(jobConfigContext.getString("flink.etl.kafka.topics"), new TypeReference<List<String>>() {
-        });
-        Map<String, Object> propsMap = JSON.parseObject(jobConfigContext.getString("flink.etl.kafka.props"), new TypeReference<Map<String, Object>>() {
-        });
+        this.kafkaSource = jobConfigContext.getMap("flink.etl.job.source");
+        kafkaSource = (Map<String, Object>) kafkaSource.get(KEY_KAFKA_SOURCE);
         this.props = new Properties();
-        this.props.putAll(propsMap);
-        this.charSet = jobConfigContext.getString("flink.etl.kafka.charset");
+        this.props.putAll(kafkaSource);
+        this.charSet = kafkaSource.get(KEY_CHARSET).toString();
+        this.topics = (List<String>) kafkaSource.get(KEY_TOPICS);
     }
 
     public DataStream<Message> getSource(StreamExecutionEnvironment env) {

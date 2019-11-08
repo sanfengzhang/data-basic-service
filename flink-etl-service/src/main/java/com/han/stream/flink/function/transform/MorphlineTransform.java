@@ -66,9 +66,14 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
             //FIXME 这里目前就是支持String类型的数据
             record.put(Fields.MESSAGE, message.getValue());
             Notifications.notifyStartSession(mainFlow);
+            long start = System.currentTimeMillis();
             if (!mainFlow.process(record)) {
 
                 throw new TransformException("Failed to process record,dataType=" + message + ",message=" + message);
+            }
+            long end = System.currentTimeMillis();
+            if (end - start > 20) {
+                log.info("Record process took time={}ms", end - start);
             }
             record = finalChild.getRecords().get(0);
             Map<String, Collection<Object>> result = record.getFields().asMap();
@@ -100,7 +105,6 @@ public abstract class MorphlineTransform<OUT> implements Transform<Message, OUT>
             Config config = ConfigFactory.parseMap(flow);
             String id = flow.get("id").toString();
             if (mainFlowName.equals(id)) {
-                Collector finalChild = new Collector();
                 mainFlow = compiler.compile(config, morphlineContext, finalChild);
             } else {
                 compiler.compile(config, morphlineContext, null);
