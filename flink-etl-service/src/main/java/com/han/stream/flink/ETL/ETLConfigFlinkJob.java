@@ -6,7 +6,7 @@ import com.han.stream.flink.BaseFlinkJob;
 import com.han.stream.flink.config.ConfigParameters;
 import com.han.stream.flink.function.ConfigFunction;
 import com.han.stream.flink.function.ConfigurableMorphlineTransformFunction;
-import com.han.stream.flink.node.KafkaSource;
+import com.han.stream.flink.connectors.KafkaSource;
 import com.han.stream.flink.support.Constants;
 import com.han.stream.flink.support.Message;
 import lombok.extern.slf4j.Slf4j;

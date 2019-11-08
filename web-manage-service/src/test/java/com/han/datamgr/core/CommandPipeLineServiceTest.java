@@ -35,6 +35,13 @@ public class CommandPipeLineServiceTest {
     }
 
     @Test
+    public void testPipelineAddValueTest() throws Exception {
+        List<CommandPipeline> commandPipeline = commandPipeLineService.buildCommandPipeline("8adb929b6e341b71016e343db7f90009");
+        MorphTest morphTest = new MorphTest();
+        morphTest.testMorphlin(commandPipeline, "|解析流程");
+    }
+
+    @Test
     public void testCommandListMapTest() throws Exception {
         List<Map<String, Object>> commandPipeline = commandPipeLineService.buildCommandMapConfig("8adb929b6dcf4089016dcf40b16c0000");
         System.out.println(commandPipeline);

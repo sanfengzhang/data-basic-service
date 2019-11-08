@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.han.stream.flink.BaseFlinkJob;
 import com.han.stream.flink.function.DefaultTransformFunction;
-import com.han.stream.flink.node.KafkaSource;
-import com.han.stream.flink.node.SocketSource;
+import com.han.stream.flink.connectors.DefaultElasticsearchSink;
+import com.han.stream.flink.connectors.KafkaSource;
+import com.han.stream.flink.connectors.SocketSource;
 import com.han.stream.flink.support.Constants;
 import com.han.stream.flink.support.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class ETLFlinkJob extends BaseFlinkJob {
 
     public ETLFlinkJob() {
         log.info("*************Start ETL Job*******");
-        this.initJobConfigContextByHttp("http://127.0.0.1:8080/ETL/api/v1/job/8adb929b6dcf4089016dcf40b1b70002");
+        this.initJobConfigContextByHttp("http://127.0.0.1:8080/ETL/api/v1/job/8adb929b6dcf4089016dcf40b1b70003");
     }
 
     @Override
@@ -46,7 +47,9 @@ public class ETLFlinkJob extends BaseFlinkJob {
         SingleOutputStreamOperator<Map<String, Object>> mapDataStream = dataStreamSourceMessage.process(new DefaultTransformFunction("Flink_Transform_Context", jobConfigContext.getString("flink.etl.main_flow_name"), morphFlows));
         mapDataStream.getSideOutput(new OutputTag<Map<String, Object>>(Constants.FLINK_FAILED) {
         }).print();
-        mapDataStream.print();
+
+
+        mapDataStream.addSink(new DefaultElasticsearchSink(jobConfigContext).elasticsearchSink());
         env.execute();
     }
 

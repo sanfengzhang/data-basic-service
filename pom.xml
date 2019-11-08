@@ -23,6 +23,7 @@
 	    <module>web-manage-service</module>
         <module>data-process-flow-service</module>
         <module>flink-etl-service</module>
+        <module>data-rule-engine</module>
 
     </modules>
 	

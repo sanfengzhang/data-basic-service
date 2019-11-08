@@ -1,4 +1,4 @@
-package com.han.stream.flink.node;
+package com.han.stream.flink.connectors;
 
 import com.han.stream.flink.JobConfigContext;
 import com.han.stream.flink.support.DefaultKafkaDeserializationSchema;
@@ -22,10 +22,11 @@ import java.util.regex.Pattern;
 public class KafkaSource {
 
     //这个时flink里面会自动发现Kafka分区数量的变化,多久查询一次,ms
+    public static final String KEY_PARTITION_DISCOVERY_INTERVAL_MILLIS = "flink.partition-discovery.interval-millis";
 
     //还可以控制Kafka的偏移量提交的三种方式
 
-    public static final String KEY_TOPICS = "topic";
+    public static final String KEY_TOPICS = "topics";
 
     public static final String KEY_PATTERN = "pattern";
 
